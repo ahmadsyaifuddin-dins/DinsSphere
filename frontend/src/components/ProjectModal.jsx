@@ -17,7 +17,7 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
   const [endDate, setEndDate] = useState(
     project && project.endDate ? project.endDate.split("T")[0] : ""
   );
-  const [status, setStatus] = useState(project ? project.status : "Developing");
+  const [status, setStatus] = useState(project ? project.status : "In Progress");
 
   if (!isOpen) return null;
 
@@ -211,7 +211,7 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
                 onChange={(e) => setStatus(e.target.value)}
                 className={inputClasses}
               >
-                <option value="Developing">Developing</option>
+                <option value="In Progress">In Progress</option>
                 <option value="Completed">Completed</option>
               </select>
             </div>

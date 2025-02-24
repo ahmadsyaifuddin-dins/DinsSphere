@@ -8,7 +8,7 @@ const ProjectCard = ({ project }) => {
         <img
           src={project.thumbnail}
           alt="Project Thumbnail"
-          className="w-full h-48 object-cover rounded-md mb-3"
+          className="w-full h-48 object-contain rounded-md mb-3"
         />
       )}
 
@@ -80,7 +80,7 @@ const ProjectCard = ({ project }) => {
                 hour: "2-digit",
                 minute: "2-digit",
               }).format(new Date(project.endDate))
-            : "Developing..."}
+            : "In Progress..."} 
         </span>
       </div>
 
