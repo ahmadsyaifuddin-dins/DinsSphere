@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Plus, LogOut } from "lucide-react";
+import { Plus, LogOut, List, Grid, Search, SortAsc, Filter, ChevronRight, Edit, Trash2, Eye } from "lucide-react";
 import ProjectCard from "../components/ProjectCard";
 import ProjectModal from "../components/ProjectModal";
-import FilterBar from "../components/FilterBar";
+import Sidebar from "../components/Sidebar";
 
 const Dashboard = () => {
   const [projects, setProjects] = useState([]);
@@ -12,18 +12,17 @@ const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [viewMode, setViewMode] = useState("list"); // default view: list
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchProjects();
-    // Check if user is admin
     const token = localStorage.getItem("token");
     setIsAdmin(!!token);
   }, []);
 
   const fetchProjects = async () => {
     try {
-      // Fetch projects without token for guest view
       const res = await axios.get("http://localhost:5000/api/projects");
       setProjects(res.data);
     } catch (err) {
@@ -38,9 +37,7 @@ const Dashboard = () => {
         "http://localhost:5000/api/projects",
         newProject,
         {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
       setProjects([...projects, res.data]);
@@ -55,16 +52,10 @@ const Dashboard = () => {
   const handleLogout = async () => {
     try {
       setIsLoggingOut(true);
-      
-      // Clear all auth-related data
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      
-      // Update admin status
       setIsAdmin(false);
-      
-      // Stay on dashboard as guest
-      await fetchProjects(); // Refresh projects as guest
+      await fetchProjects();
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
@@ -76,68 +67,218 @@ const Dashboard = () => {
     project.title.toLowerCase().includes(filterText.toLowerCase())
   );
 
+  // Helper functions for status and progress colors
+  const getStatusColorClass = (status) => {
+    switch (status) {
+      case "Done":
+        return "bg-emerald-500 border-emerald-600";
+      case "In Progress":
+        return "bg-amber-500 border-amber-600";
+      case "Paused":
+        return "bg-purple-500 border-purple-600";
+      case "Backlog":
+        return "bg-blue-500 border-blue-600";
+      default:
+        return "bg-gray-500 border-gray-600";
+    }
+  };
+
+  const getProgressColorClass = (progress) => {
+    if (progress >= 80) return "bg-emerald-500";
+    if (progress >= 50) return "bg-amber-500";
+    return "bg-rose-500";
+  };
+
   return (
-    <div className="min-h-screen bg-[#121212]">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header Section */}
-        <div className="flex flex-col justify-between mb-8">
-          <div className="text-center sm:text-left mb-6 sm:mb-0">
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-white mb-3 bg-gradient-to-r from-blue-500 to-purple-500 bg-clip-text text-transparent">
+    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header Section with enhanced styling */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 pb-6 border-b border-gray-700">
+          <div className="text-center md:text-left mb-6 md:mb-0">
+            <h1 className="text-3xl sm:text-4xl font-extrabold mb-3 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
               DinsSphere InterConnected
             </h1>
             <p className="text-gray-300 text-lg">
-              {isAdmin 
+              {isAdmin
                 ? "Kelola dan lihat semua Project Kamu"
                 : "Lihat semua Project Syaifuddin"}
             </p>
           </div>
-          
-          <div className="flex items-center space-x-4 mt-4">
+          <div className="flex flex-wrap items-center gap-4 justify-center md:justify-end">
             {isAdmin && (
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="group flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-medium rounded-lg shadow-lg hover:from-blue-700 hover:to-blue-600 transition-all duration-200 transform hover:-translate-y-1"
+                className="group flex items-center px-5 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-lg shadow-lg hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-1"
               >
-                <Plus className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-200" />
+                <Plus className="w-5 h-5 mr-2 group-hover:rotate-90 transition-transform duration-300" />
                 <span>Tambah Project</span>
               </button>
             )}
-            
-            {isAdmin ? (
+            {isAdmin && (
               <button
                 onClick={handleLogout}
                 disabled={isLoggingOut}
-                className="group flex items-center px-6 py-3 bg-gradient-to-r from-red-600 to-red-500 text-white font-medium rounded-lg shadow-lg hover:from-red-700 hover:to-red-600 transition-all duration-200 transform hover:-translate-y-1"
+                className="group flex items-center px-5 py-2.5 bg-gradient-to-r from-rose-600 to-red-600 text-white font-medium rounded-lg shadow-lg hover:shadow-red-500/30 transition-all duration-300 transform hover:-translate-y-1"
               >
-                <LogOut className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform duration-200" />
+                <LogOut className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform duration-300" />
                 <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
               </button>
-            ) : null}
+            )}
           </div>
         </div>
 
-        {/* Search / Filter Bar */}
-        <FilterBar filterText={filterText} onFilterChange={setFilterText} />
-
-        {/* Projects Grid */}
-        <div className="mt-8 grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-          {filteredProjects.length > 0 ? (
-            filteredProjects.map((project) => (
-              <ProjectCard 
-                key={project._id} 
-                project={project}
-                isAdmin={isAdmin} 
-                onEdit={fetchProjects} 
-              />
-            ))
-          ) : (
-            <div className="col-span-full text-center py-12">
-              <p className="text-gray-400 text-lg">
-                {filterText ? "No projects found matching your search" : "No projects added yet"}
-              </p>
+        {/* Enhanced Search / Filter Bar */}
+        <div className="mb-6">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <Search className="w-5 h-5 text-gray-400" />
             </div>
-          )}
+            <input
+              type="text"
+              className="bg-gray-800 border border-gray-700 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
+              placeholder="Cari project berdasarkan judul..."
+              value={filterText}
+              onChange={(e) => setFilterText(e.target.value)}
+            />
+          </div>
         </div>
+
+        {/* View Mode Toggle with better styling */}
+        <div className="flex justify-end mb-6">
+          <div className="inline-flex rounded-md shadow-sm" role="group">
+            <button
+              onClick={() => setViewMode("list")}
+              className={`px-4 py-2.5 text-sm font-medium rounded-l-lg border ${
+                viewMode === "list"
+                  ? "bg-blue-600 text-white border-blue-700"
+                  : "bg-gray-800 text-gray-300 border-gray-700 hover:bg-gray-700"
+              }`}
+            >
+              <div className="flex items-center">
+                <List className="w-4 h-4 mr-2" />
+                Table View
+              </div>
+            </button>
+            <button
+              onClick={() => setViewMode("grid")}
+              className={`px-4 py-2.5 text-sm font-medium rounded-r-lg border ${
+                viewMode === "grid"
+                  ? "bg-blue-600 text-white border-blue-700"
+                  : "bg-gray-800 text-gray-300 border-gray-700 hover:bg-gray-700"
+              }`}
+            >
+              <div className="flex items-center">
+                <Grid className="w-4 h-4 mr-2" />
+                Card View
+              </div>
+            </button>
+          </div>
+        </div>
+
+        {/* Render Projects */}
+        {viewMode === "list" ? (
+          <div className="overflow-x-auto relative shadow-md sm:rounded-lg">
+            <table className="w-full text-sm text-left text-gray-300">
+              <thead className="text-xs uppercase bg-gray-700 text-gray-300">
+                <tr>
+                  <th scope="col" className="py-3 px-6">Nama Project</th>
+                  <th scope="col" className="py-3 px-6">Status</th>
+                  <th scope="col" className="py-3 px-6 hidden md:table-cell">Deskripsi</th>
+                  <th scope="col" className="py-3 px-6">Progress</th>
+                  <th scope="col" className="py-3 px-6 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredProjects.length > 0 ? (
+                  filteredProjects.map((project, index) => (
+                    <tr 
+                      key={project._id} 
+                      className={`border-b border-gray-700 ${
+                        index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-900'
+                      } hover:bg-gray-700 transition-colors duration-150`}
+                    >
+                      <td className="py-4 px-6">
+                        <div className="flex items-center space-x-3">
+                          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold">
+                            {project.title.charAt(0)}
+                          </div>
+                          <div>
+                            <h3 className="font-medium text-white">{project.title}</h3>
+                            {project.subtitle && (
+                              <p className="text-xs text-gray-400">
+                                {project.subtitle}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        <span
+                          className={`px-2.5 py-1 rounded-full text-xs font-medium text-white ${getStatusColorClass(
+                            project.status
+                          )} border`}
+                        >
+                          {project.status}
+                        </span>
+                      </td>
+                      <td className="py-4 px-6 max-w-xs truncate hidden md:table-cell">
+                        {project.description}
+                      </td>
+                      <td className="py-4 px-6">
+                        <div className="flex items-center">
+                          <div className="w-full bg-gray-700 rounded-full h-2.5 mr-2">
+                            <div
+                              className={`h-2.5 rounded-full ${getProgressColorClass(
+                                project.progress
+                              )}`}
+                              style={{ width: `${project.progress}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-xs w-9 text-right font-medium">
+                            {project.progress}%
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-6">
+                        <div className="flex items-center justify-end space-x-2">
+                          <button className="text-gray-400 hover:text-blue-500 focus:outline-none p-1">
+                            <Eye className="w-5 h-5" />
+                          </button>
+                          {isAdmin && (
+                            <>
+                              <button className="text-gray-400 hover:text-yellow-500 focus:outline-none p-1">
+                                <Edit className="w-5 h-5" />
+                              </button>
+                              <button className="text-gray-400 hover:text-rose-500 focus:outline-none p-1">
+                                <Trash2 className="w-5 h-5" />
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr className="bg-gray-800 border-b border-gray-700">
+                    <td colSpan="5" className="py-8 px-6 text-center">
+                      <div className="flex flex-col items-center">
+                        <SortAsc className="w-12 h-12 text-gray-500 mb-3" />
+                        <p className="text-gray-400">Tidak ada project yang ditemukan</p>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          // Grid View
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredProjects.map((project) => (
+              <ProjectCard key={project._id} project={project} />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Project Modal */}
