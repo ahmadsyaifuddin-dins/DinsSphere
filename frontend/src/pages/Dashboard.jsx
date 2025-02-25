@@ -93,7 +93,7 @@ const Dashboard = () => {
 
   // Function to display compact status for mobile
   const getCompactStatus = (status) => {
-    if (status === "In Progress") return "In Prog";
+    if (status === "In Progress") return "In Progress";
     return status;
   };
 
