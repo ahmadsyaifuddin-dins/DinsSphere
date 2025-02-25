@@ -102,23 +102,28 @@ const Dashboard = () => {
     project.title.toLowerCase().includes(filterText.toLowerCase())
   );
 
-  // Helper functions for colors
-  const getStatusColorClass = (status) => {
-    switch (status) {
-      case "Done":
-        return "bg-emerald-500 border-emerald-600";
-      case "In Progress":
-        return "bg-amber-500 border-amber-600";
-      case "Paused":
-        return "bg-purple-500 border-purple-600";
-      case "Backlog":
-        return "bg-blue-500 border-blue-600";
-      case "Developing":
-        return "bg-teal-500 border-teal-600";
-      default:
-        return "bg-gray-500 border-gray-600";
-    }
-  };
+ // Helper functions for colors with enhanced visual appeal
+const getStatusColorClass = (status) => {
+  switch (status) {
+    case "Done":
+      return "bg-emerald-500/20 text-emerald-400 border-emerald-600";
+    case "In Progress":
+      return "bg-blue-500/20 text-blue-400 border-blue-500";
+    case "Paused":
+      return "bg-red-500/20 text-red-400 border-red-500";
+    case "Backlog":
+      return "bg-purple-500/20 text-purple-400 border-purple-500";
+    case "Developing":
+      return "bg-teal-500/20 text-teal-400 border-teal-600";
+    case "Cancelled":
+      return "bg-red-500/20 text-red-400 border-red-600";
+    case "Planning":
+      return "bg-indigo-500/20 text-indigo-400 border-indigo-600";
+    default:
+      return "bg-gray-500/20 text-gray-400 border-gray-600";
+  }
+};
+
 
   const getProgressColorClass = (progress) => {
     if (progress >= 80) return "bg-emerald-500";
@@ -274,7 +279,7 @@ const Dashboard = () => {
                       </td>
                       <td className="py-2 px-2 sm:py-4 sm:px-6">
                         <span
-                          className={`inline-block px-2 py-1 rounded-full text-xs font-medium text-white ${getStatusColorClass(project.status)} border whitespace-nowrap`}
+                          className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColorClass(project.status)} border whitespace-nowrap`}
                         >
                           {project.status}
                         </span>
