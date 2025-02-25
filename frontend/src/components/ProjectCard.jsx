@@ -20,7 +20,21 @@ const ProjectCard = ({ project }) => {
       <div className="flex flex-wrap items-center text-sm mb-2">
         <span className="mr-4 text-gray-400">
           Status:{" "}
-          <span className="font-semibold text-[#3A86FF]">{project.status}</span>
+          <span
+            className={`font-semibold ${
+              project.status === "In Progress"
+                ? "text-[#3A86FF]"
+                : project.status === "Done"
+                ? "text-[#34C759]"
+                : project.status === "Paused"
+                ? "text-[#FFA07A]"
+                : project.status === "Backlog"
+                ? "text-[#F7DC6F]"
+                : ""
+            }`}
+          >
+            {project.status}
+          </span>
         </span>
         <span className="text-gray-400">
           Difficulty:{" "}
