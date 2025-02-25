@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
   const [title, setTitle] = useState(project ? project.title : "");
+  const [subtitle, setSubtitle] = useState(project ? project.subtitle : "");
   const [description, setDescription] = useState(project ? project.description : "");
   const [thumbnail, setThumbnail] = useState(project ? project.thumbnail : "");
   const [icon, setIcon] = useState(project ? project.icon : "");
@@ -31,6 +32,7 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
     const techArray = technologies.trim() ? technologies.trim().split(/\s+/) : [];
     const formData = {
       title,
+      subtitle,
       description,
       thumbnail,
       icon, // field icon/logo
@@ -60,7 +62,7 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
         
         <div className="overflow-y-auto flex-grow pr-4 custom-scrollbar">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Name */}
+            {/* Title */}
             <div>
               <label className={labelClasses} htmlFor="title">
                 Nama Project *
@@ -73,6 +75,20 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
                 className={inputClasses}
                 required
                 placeholder="Masukkan nama project"
+              />
+            </div>
+            {/* Subtitle */}
+            <div>
+              <label className={labelClasses} htmlFor="subtitle">
+                Subtitle Project *
+              </label>
+              <input
+                type="text"
+                id="subtitle"
+                value={subtitle}
+                onChange={(e) => setSubtitle(e.target.value)}
+                className={inputClasses}
+                placeholder="Masukkan subtitle project (misal : Dibuat dengan ReactJS)"
               />
             </div>
 

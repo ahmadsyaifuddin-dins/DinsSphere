@@ -6,6 +6,10 @@ const projectSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    subtitle: {
+      type: String,
+      required: true,
+    },
     description: {
       type: String,
       required: true,
@@ -47,10 +51,12 @@ const projectSchema = new mongoose.Schema(
       type: String,
       enum: ["In Progress", "Done", "Paused", "Backlog"],
       default: "In Progress",
+      required: true,
     },
     progress: {
       type: Number,
       default: 0, // Default 0 jika kosong
+      required: true,
     },
   },
   {

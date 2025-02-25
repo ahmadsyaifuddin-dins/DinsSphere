@@ -239,7 +239,7 @@ const Dashboard = () => {
                 <tr>
                   <th scope="col" className="py-2 px-3 sm:py-3 sm:px-6">Nama Project</th>
                   <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6">Status</th>
-                  <th scope="col" className="py-2 px-3 sm:py-3 sm:px-6 hidden md:table-cell">Tanggal Mulai</th>
+                  <th scope="col" className="py-2 px-3 sm:py-3 sm:px-6 md:table-cell">Tanggal Mulai</th>
                   <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6">Progress</th>
                   <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6 text-right">Aksi</th>
                 </tr>
@@ -264,9 +264,9 @@ const Dashboard = () => {
                           </div>
                           <div>
                             <h3 className="font-medium text-white text-xs sm:text-sm">{project.title}</h3>
-                            {project.description && (
+                            {project.subtitle && (
                               <p className="text-xs text-gray-400 hidden sm:block">
-                                {project.description}
+                                {project.subtitle}
                               </p>
                             )}
                           </div>
@@ -279,7 +279,7 @@ const Dashboard = () => {
                           {project.status}
                         </span>
                       </td>
-                      <td className="py-2 px-3 sm:py-4 sm:px-6 max-w-xs truncate hidden md:table-cell">
+                      <td className="py-2 px-3 sm:py-4 sm:px-6 max-w-xs truncate md:table-cell">
                         {project.startDate ? new Date(project.startDate).toLocaleString() : "Not Available"}
                       </td>
                       <td className="py-2 px-2 sm:py-4 sm:px-6">
