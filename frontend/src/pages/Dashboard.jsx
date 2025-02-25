@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Plus, LogOut, List, Grid, Search, SortAsc, Edit, Trash2, Eye } from "lucide-react";
+import { Plus, LogOut, List, Grid, SortAsc, Edit, Trash2, Eye } from "lucide-react";
 import ProjectCard from "../components/ProjectCard";
 import ProjectModal from "../components/ProjectModal";
-import FilterBar from "../components/FilterBar";
-import Sidebar from "../components/Sidebar";
+import FilterSearch from "../components/FilterSearch"; // Import the new component
 
 const Dashboard = () => {
   const [projects, setProjects] = useState([]);
@@ -16,6 +15,10 @@ const Dashboard = () => {
   const [viewMode, setViewMode] = useState("list"); // default view: list
   const [projectToEdit, setProjectToEdit] = useState(null);
   const navigate = useNavigate();
+
+  const filteredProjects = projects.filter((project) =>
+    project.title.toLowerCase().includes(filterText.toLowerCase())
+  );
 
   useEffect(() => {
     fetchProjects();
@@ -97,10 +100,6 @@ const Dashboard = () => {
       setIsLoggingOut(false);
     }
   };
-
-  const filteredProjects = projects.filter((project) =>
-    project.title.toLowerCase().includes(filterText.toLowerCase())
-  );
 
  // Helper functions for colors with enhanced visual appeal
 const getStatusColorClass = (status) => {
@@ -187,20 +186,10 @@ const getStatusColorClass = (status) => {
         </div>
 
         {/* Search / Filter Bar */}
-        <div className="mb-4 sm:mb-6">
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <Search className="w-4 h-4 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              className="bg-gray-800 border border-gray-700 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2"
-              placeholder="Cari project berdasarkan judul..."
-              value={filterText}
-              onChange={(e) => setFilterText(e.target.value)}
-            />
-          </div>
-        </div>
+        <FilterSearch 
+        filterText={filterText} 
+        setFilterText={setFilterText} 
+      />
 
         {/* View Mode Toggle */}
         <div className="flex justify-end mb-4">
