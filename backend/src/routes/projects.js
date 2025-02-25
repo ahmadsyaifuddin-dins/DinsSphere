@@ -20,13 +20,15 @@ router.post("/", verifyAdmin, async (req, res) => {
         title,
         description,
         thumbnail,
+        icon,
         linkDemo,
         linkSource,
         technologies,
         difficulty,
         startDate,
         endDate,
-        status
+        status,
+        progress
       } = req.body;
   
       // technologies bisa berupa string (dipisahkan spasi) atau array. 
@@ -37,6 +39,7 @@ router.post("/", verifyAdmin, async (req, res) => {
         title,
         description,
         thumbnail,
+        icon,
         linkDemo,
         linkSource,
         // Jika perlu parse: technologies: techArray,
@@ -44,7 +47,8 @@ router.post("/", verifyAdmin, async (req, res) => {
         difficulty,
         startDate,
         endDate,
-        status
+        status,
+        progress
       });
       await newProject.save();
       res.json(newProject);

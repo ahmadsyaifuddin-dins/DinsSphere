@@ -4,9 +4,12 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
   const [title, setTitle] = useState(project ? project.title : "");
   const [description, setDescription] = useState(project ? project.description : "");
   const [thumbnail, setThumbnail] = useState(project ? project.thumbnail : "");
+  const [icon, setIcon] = useState(project ? project.icon : "");
   const [linkDemo, setLinkDemo] = useState(project ? project.linkDemo : "");
   const [linkSource, setLinkSource] = useState(project ? project.linkSource : "");
-  const [technologies, setTechnologies] = useState(project ? project.technologies.join(" ") : "");
+  const [technologies, setTechnologies] = useState(
+    project && project.technologies ? project.technologies.join(" ") : ""
+  );
   const [difficulty, setDifficulty] = useState(project ? project.difficulty : "");
   const [startDate, setStartDate] = useState(
     project && project.startDate ? project.startDate.split("T")[0] : ""
@@ -18,17 +21,19 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
     project && project.endDate ? project.endDate.split("T")[0] : ""
   );
   const [status, setStatus] = useState(project ? project.status : "In Progress");
+  // Field baru:
+  const [progress, setProgress] = useState(project ? project.progress : "");
 
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const techArray = technologies.trim().split(/\s+/);
-
+    const techArray = technologies.trim() ? technologies.trim().split(/\s+/) : [];
     const formData = {
       title,
       description,
       thumbnail,
+      icon, // field icon/logo
       linkDemo,
       linkSource,
       technologies: techArray,
@@ -36,12 +41,14 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
       startDate: startDate && startTime ? `${startDate}T${startTime}:00` : startDate,
       endDate: endDate ? endDate : null,
       status,
+      progress: progress ? Number(progress) : 0, // convert progress to number; default 0 jika kosong
     };
 
     onSave(formData);
   };
 
-  const inputClasses = "w-full p-3 rounded-lg bg-[#121212] text-[#F4F4F8] border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors";
+  const inputClasses =
+    "w-full p-3 rounded-lg bg-[#121212] text-[#F4F4F8] border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors";
   const labelClasses = "block mb-2 font-semibold text-[#F4F4F8]";
 
   return (
@@ -55,7 +62,7 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name */}
             <div>
-              <label className={labelClasses} htmlFor="name">
+              <label className={labelClasses} htmlFor="title">
                 Nama Project *
               </label>
               <input
@@ -94,6 +101,21 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
                 id="thumbnail"
                 value={thumbnail}
                 onChange={(e) => setThumbnail(e.target.value)}
+                className={inputClasses}
+                placeholder="https://..."
+              />
+            </div>
+
+            {/* Icon/Logo App */}
+            <div>
+              <label className={labelClasses} htmlFor="icon">
+                Icon/Logo App (Opsional)
+              </label>
+              <input
+                type="url"
+                id="icon"
+                value={icon}
+                onChange={(e) => setIcon(e.target.value)}
                 className={inputClasses}
                 placeholder="https://..."
               />
@@ -147,7 +169,7 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
             {/* Difficulty */}
             <div>
               <label className={labelClasses} htmlFor="difficulty">
-                Tingkat Kesulitan
+                Tingkat Kesulitan *
               </label>
               <select
                 id="difficulty"
@@ -167,7 +189,7 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className={labelClasses} htmlFor="startDate">
-                  Tanggal Pembuatan
+                  Tanggal Pembuatan *
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <input
@@ -215,10 +237,27 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
                 <option value="Completed">Completed</option>
               </select>
             </div>
+
+            {/* Persentase Progress Project */}
+            <div>
+              <label className={labelClasses} htmlFor="progress">
+                Persentase Progress Project (Opsional)
+              </label>
+              <input
+                type="number"
+                id="progress"
+                value={progress}
+                onChange={(e) => setProgress(e.target.value)}
+                className={inputClasses}
+                placeholder="0 - 100"
+                min="0"
+                max="100"
+              />
+            </div>
           </form>
         </div>
 
-        {/* Action Buttons - Fixed at bottom */}
+        {/* Action Buttons */}
         <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-gray-700">
           <button
             type="button"

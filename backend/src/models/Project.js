@@ -14,6 +14,10 @@ const projectSchema = new mongoose.Schema(
       type: String, // Bisa simpan URL gambar, atau path file
       default: "",
     },
+    icon: {
+      type: String, // Bisa simpan URL gambar, atau path file
+      default: "",
+    },
     linkDemo: {
       type: String,
       default: "",
@@ -29,10 +33,12 @@ const projectSchema = new mongoose.Schema(
     difficulty: {
       type: String, // Bisa "Easy", "Medium", "Hard", atau level lain
       default: "",
+      required: true,
     },
     startDate: {
       type: Date,
       default: Date.now, // Diisi saat pertama kali input
+      required: true,
     },
     endDate: {
       type: Date, // Opsi, bisa di-update nanti
@@ -41,6 +47,10 @@ const projectSchema = new mongoose.Schema(
       type: String,
       enum: ["In Progress", "Completed"],
       default: "In Progress",
+    },
+    progress: {
+      type: Number,
+      default: 0, // Default 0 jika kosong
     },
   },
   {
