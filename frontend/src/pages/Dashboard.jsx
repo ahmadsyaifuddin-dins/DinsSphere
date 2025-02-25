@@ -239,7 +239,7 @@ const Dashboard = () => {
                 <tr>
                   <th scope="col" className="py-2 px-3 sm:py-3 sm:px-6">Nama Project</th>
                   <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6">Status</th>
-                  <th scope="col" className="py-2 px-3 sm:py-3 sm:px-6 hidden md:table-cell">Deskripsi</th>
+                  <th scope="col" className="py-2 px-3 sm:py-3 sm:px-6 hidden md:table-cell">Tanggal Mulai</th>
                   <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6">Progress</th>
                   <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6 text-right">Aksi</th>
                 </tr>
@@ -280,7 +280,7 @@ const Dashboard = () => {
                         </span>
                       </td>
                       <td className="py-2 px-3 sm:py-4 sm:px-6 max-w-xs truncate hidden md:table-cell">
-                        {project.description}
+                        {project.startDate ? new Date(project.startDate).toLocaleString() : "Not Available"}
                       </td>
                       <td className="py-2 px-2 sm:py-4 sm:px-6">
                         <div className="flex items-center">
