@@ -238,7 +238,7 @@ const Dashboard = () => {
                             project.status
                           )} border whitespace-nowrap`}
                         >
-                          {project.status === "In Progress" ? "In Prog" : project.status}
+                          {project.status === "In Progress" ? "In Progress" : project.status}
                         </span>
                       </td>
                       <td className="py-2 px-3 sm:py-4 sm:px-6 max-w-xs truncate hidden md:table-cell">
