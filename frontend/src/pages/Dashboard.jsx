@@ -126,11 +126,6 @@ const Dashboard = () => {
     return "bg-rose-500";
   };
 
-  const getCompactStatus = (status) => {
-    if (status === "In Progress") return "In Progress";
-    return status;
-  };
-
   const handleEdit = (project) => {
     setProjectToEdit(project);
     setIsModalOpen(true);
@@ -243,9 +238,9 @@ const Dashboard = () => {
               <thead className="text-xs uppercase bg-gray-700 text-gray-300">
                 <tr>
                   <th scope="col" className="py-2 px-3 sm:py-3 sm:px-6">Nama Project</th>
-                  <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6 whitespace-nowrap">Status</th>
+                  <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6">Status</th>
                   <th scope="col" className="py-2 px-3 sm:py-3 sm:px-6 hidden md:table-cell">Deskripsi</th>
-                  <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6 whitespace-nowrap">Progress</th>
+                  <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6">Progress</th>
                   <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6 text-right">Aksi</th>
                 </tr>
               </thead>
@@ -279,7 +274,7 @@ const Dashboard = () => {
                       </td>
                       <td className="py-2 px-2 sm:py-4 sm:px-6">
                         <span
-                          className={`px-2 py-1 rounded-full text-xs font-medium text-white ${getStatusColorClass(project.status)} border`}
+                          className={`inline-block px-2 py-1 rounded-full text-xs font-medium text-white ${getStatusColorClass(project.status)} border whitespace-nowrap`}
                         >
                           {project.status}
                         </span>
