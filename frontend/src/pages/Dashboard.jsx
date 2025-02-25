@@ -126,6 +126,11 @@ const Dashboard = () => {
     return "bg-rose-500";
   };
 
+  const getCompactStatus = (status) => {
+    if (status === "In Progress") return "In Progress";
+    return status;
+  };
+
   const handleEdit = (project) => {
     setProjectToEdit(project);
     setIsModalOpen(true);
