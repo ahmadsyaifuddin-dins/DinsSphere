@@ -89,11 +89,11 @@ const ProjectDetail = () => {
           </div>
           <div>
             <span className="font-semibold">Difficulty: </span>
-            <span>{project.difficulty || "N/A"}</span>
+            <span>{project.difficulty || "Not Available"}</span>
           </div>
           <div>
             <span className="font-semibold">Start Date: </span>
-            <span>{project.startDate ? new Date(project.startDate).toLocaleString() : "N/A"}</span>
+            <span>{project.startDate ? new Date(project.startDate).toLocaleString() : "Not Available"}</span>
           </div>
           <div>
             <span className="font-semibold">End Date: </span>
@@ -110,7 +110,7 @@ const ProjectDetail = () => {
               </span>
             ))
           ) : (
-            <span>N/A</span>
+            <span>Not Available</span>
           )}
         </div>
         {/* Progress */}

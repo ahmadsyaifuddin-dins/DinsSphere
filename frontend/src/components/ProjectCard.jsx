@@ -37,7 +37,7 @@ const ProjectCard = ({ project }) => {
                 : ""
             }`}
           >
-            {project.difficulty || "N/A"}
+            {project.difficulty || "Not Available"}
           </span>
         </span>
       </div>
