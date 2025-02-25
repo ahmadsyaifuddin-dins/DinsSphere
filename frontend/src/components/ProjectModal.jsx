@@ -234,7 +234,9 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
                 className={inputClasses}
               >
                 <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
+                <option value="Done">Done</option>
+                <option value="Paused">Paused</option>
+                <option value="Backlog">Backlog</option>
               </select>
             </div>
 

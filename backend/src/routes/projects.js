@@ -13,6 +13,16 @@ router.get("/", async (req, res) => {
   }
 });
 
+// GET project berdasarkan ID
+router.get("/:id", async (req, res) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    res.json(project);
+  } catch (err) {
+    res.status(500).json({ message: "Error retrieving project" });
+  }
+});
+
 // POST project baru
 router.post("/", verifyAdmin, async (req, res) => {
     try {
@@ -60,10 +70,10 @@ router.post("/", verifyAdmin, async (req, res) => {
 // UPDATE project berdasarkan ID
 router.put("/:id", verifyAdmin, async (req, res) => {
   try {
-    const { title, description, demoLink } = req.body;
+    const { title, description, thumbnail, icon, linkDemo, linkSource, technologies, difficulty, startDate, endDate, status, progress } = req.body;
     const updatedProject = await Project.findByIdAndUpdate(
       req.params.id,
-      { title, description, demoLink },
+      { title, description, thumbnail, icon, linkDemo, linkSource, technologies, difficulty, startDate, endDate, status, progress },
       { new: true }
     );
     res.json(updatedProject);

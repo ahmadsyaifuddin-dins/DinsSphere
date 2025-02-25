@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Plus, LogOut, List, Grid, Search, SortAsc, Filter, ChevronRight, Edit, Trash2, Eye } from "lucide-react";
+import { Plus, LogOut, List, Grid, Search, SortAsc, Edit, Trash2, Eye } from "lucide-react";
 import ProjectCard from "../components/ProjectCard";
 import ProjectModal from "../components/ProjectModal";
+import FilterBar from "../components/FilterBar";
 import Sidebar from "../components/Sidebar";
 
 const Dashboard = () => {
@@ -13,6 +14,7 @@ const Dashboard = () => {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [viewMode, setViewMode] = useState("list"); // default view: list
+  const [projectToEdit, setProjectToEdit] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,28 +26,61 @@ const Dashboard = () => {
   const fetchProjects = async () => {
     try {
       const res = await axios.get("https://dinssphere-production.up.railway.app/api/projects");
+      // const res = await axios.get("http://localhost:5000/api/projects");
       setProjects(res.data);
     } catch (err) {
       console.error("Error fetching projects:", err);
     }
   };
 
+  const viewProjectDetail = (id) => {
+    // Navigasi ke halaman detail project
+    navigate(`/projectDetail/${id}`);
+  };
+
   const addProject = async (newProject) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.post(
-        "https://dinssphere-production.up.railway.app/api/projects",
-        newProject,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await axios.post("https://dinssphere-production.up.railway.app/api/projects", newProject, {
+      // const res = await axios.post("http://localhost:5000/api/projects", newProject, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setProjects([...projects, res.data]);
     } catch (err) {
       console.error("Error adding project:", err);
       if (err.response?.status === 401) {
         handleLogout();
       }
+    }
+  };
+
+  const handleUpdateProject = async (projectId, formData) => {
+    try {
+      const token = localStorage.getItem("token");
+      const res = await axios.put(`https://dinssphere-production.up.railway.app/api/projects/${projectId}`, formData, {
+      // const res = await axios.put(`http://localhost:5000/api/projects/${projectId}`, formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProjects(projects.map((proj) => (proj._id === projectId ? res.data : proj)));
+    } catch (err) {
+      console.error("Error updating project:", err);
+    }
+  };
+
+  const handleDelete = async (projectId) => {
+    if (!window.confirm("Apakah Anda yakin ingin menghapus project ini?")) {
+      return; // jika user membatalkan, keluar dari fungsi
+    }
+  
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`https://dinssphere-production.up.railway.app/api/projects/${projectId}`, {
+      // await axios.delete(`http://localhost:5000/api/projects/${projectId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProjects(projects.filter((project) => project._id !== projectId));
+    } catch (err) {
+      console.error("Error deleting project:", err);
     }
   };
 
@@ -67,7 +102,7 @@ const Dashboard = () => {
     project.title.toLowerCase().includes(filterText.toLowerCase())
   );
 
-  // Helper functions for status and progress colors
+  // Helper functions for colors
   const getStatusColorClass = (status) => {
     switch (status) {
       case "Done":
@@ -91,31 +126,42 @@ const Dashboard = () => {
     return "bg-rose-500";
   };
 
-  // Function to display compact status for mobile
-  const getCompactStatus = (status) => {
-    if (status === "In Progress") return "In Progress";
-    return status;
+  const handleEdit = (project) => {
+    setProjectToEdit(project);
+    setIsModalOpen(true);
+  };
+
+  const handleSave = async (formData) => {
+    if (projectToEdit) {
+      await handleUpdateProject(projectToEdit._id, formData);
+      setProjectToEdit(null);
+      setIsModalOpen(false);
+    } else {
+      await addProject(formData);
+      setIsModalOpen(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100">
       <div className="max-w-8xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8">
-        {/* Header Section with enhanced styling */}
+        {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 pb-4 border-b border-gray-700">
           <div className="text-center md:text-left mb-4 md:mb-0">
             <h1 className="text-2xl sm:text-4xl font-extrabold mb-2 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
               DinsSphere InterConnected
             </h1>
             <p className="text-gray-300 text-sm sm:text-lg">
-              {isAdmin
-                ? "Kelola dan lihat semua Project Kamu"
-                : "Lihat semua Project Syaifuddin"}
+              {isAdmin ? "Kelola dan lihat semua Project Kamu" : "Lihat semua Project Syaifuddin"}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3 justify-center md:justify-end">
             {isAdmin && (
               <button
-                onClick={() => setIsModalOpen(true)}
+                onClick={() => {
+                  setProjectToEdit(null);
+                  setIsModalOpen(true);
+                }}
                 className="group flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-lg shadow-lg hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-1 text-sm"
               >
                 <Plus className="w-4 h-4 mr-1.5 group-hover:rotate-90 transition-transform duration-300" />
@@ -135,7 +181,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Enhanced Search / Filter Bar */}
+        {/* Search / Filter Bar */}
         <div className="mb-4 sm:mb-6">
           <div className="relative">
             <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -151,7 +197,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* View Mode Toggle with better styling */}
+        {/* View Mode Toggle */}
         <div className="flex justify-end mb-4">
           <div className="inline-flex rounded-md shadow-sm" role="group">
             <button
@@ -185,7 +231,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Render Projects - Modified Table for better mobile display */}
+        {/* Render Projects */}
         {viewMode === "list" ? (
           <div className="overflow-x-auto relative shadow-md sm:rounded-lg">
             <table className="w-full text-xs sm:text-sm text-left text-gray-300">
@@ -195,7 +241,7 @@ const Dashboard = () => {
                   <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6 whitespace-nowrap">Status</th>
                   <th scope="col" className="py-2 px-3 sm:py-3 sm:px-6 hidden md:table-cell">Deskripsi</th>
                   <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6 whitespace-nowrap">Progress</th>
-                  <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6 text-right">Action</th>
+                  <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6 text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -204,41 +250,33 @@ const Dashboard = () => {
                     <tr 
                       key={project._id} 
                       className={`border-b border-gray-700 ${
-                        index % 2 === 0 ? 'bg-gray-800' : 'bg-gray-900'
+                        index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"
                       } hover:bg-gray-700 transition-colors duration-150`}
                     >
                       <td className="py-2 px-3 sm:py-4 sm:px-6">
                         <div className="flex items-center space-x-2 sm:space-x-3">
-                          <div className="flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold">
-                            {project.title.charAt(0)}
+                          <div className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full ${project.icon ? "" : "bg-gradient-to-br from-blue-500 to-indigo-600"} flex items-center justify-center text-white font-bold`}>
+                            {project.icon ? (
+                              <img src={project.icon} alt={project.title} className="w-full h-full rounded-full" />
+                            ) : (
+                              project.title.charAt(0)
+                            )}
                           </div>
                           <div>
                             <h3 className="font-medium text-white text-xs sm:text-sm">{project.title}</h3>
-                            {project.subtitle && (
+                            {project.description && (
                               <p className="text-xs text-gray-400 hidden sm:block">
-                                {project.subtitle}
+                                {project.description}
                               </p>
                             )}
                           </div>
                         </div>
                       </td>
                       <td className="py-2 px-2 sm:py-4 sm:px-6">
-                        {/* Desktop status badge */}
                         <span
-                          className={`hidden sm:inline-block px-2.5 py-1 rounded-full text-xs font-medium text-white ${getStatusColorClass(
-                            project.status
-                          )} border`}
+                          className={`px-2 py-1 rounded-full text-xs font-medium text-white ${getStatusColorClass(project.status)} border`}
                         >
                           {project.status}
-                        </span>
-                        
-                        {/* Mobile status badge with smaller text */}
-                        <span
-                          className={`sm:hidden inline-block px-2 py-1 rounded-full text-xs font-medium text-white ${getStatusColorClass(
-                            project.status
-                          )} border whitespace-nowrap`}
-                        >
-                          {project.status === "In Progress" ? "In Progress" : project.status}
                         </span>
                       </td>
                       <td className="py-2 px-3 sm:py-4 sm:px-6 max-w-xs truncate hidden md:table-cell">
@@ -261,15 +299,21 @@ const Dashboard = () => {
                       </td>
                       <td className="py-2 px-2 sm:py-4 sm:px-6">
                         <div className="flex items-center justify-end space-x-1 sm:space-x-2">
-                          <button className="text-gray-400 hover:text-blue-500 focus:outline-none p-1">
+                          <button className="text-gray-400 hover:text-blue-500 focus:outline-none p-1" onClick={() => viewProjectDetail(project._id)}>
                             <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
                           </button>
                           {isAdmin && (
                             <>
-                              <button className="text-gray-400 hover:text-yellow-500 focus:outline-none p-1">
+                              <button
+                                onClick={() => handleEdit(project)}
+                                className="text-gray-400 hover:text-yellow-500 focus:outline-none p-1"
+                              >
                                 <Edit className="w-4 h-4 sm:w-5 sm:h-5" />
                               </button>
-                              <button className="text-gray-400 hover:text-rose-500 focus:outline-none p-1">
+                              <button
+                                onClick={() => handleDelete(project._id)}
+                                className="text-gray-400 hover:text-rose-500 focus:outline-none p-1"
+                              >
                                 <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
                               </button>
                             </>
@@ -292,7 +336,6 @@ const Dashboard = () => {
             </table>
           </div>
         ) : (
-          // Grid View
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredProjects.map((project) => (
               <ProjectCard key={project._id} project={project} />
@@ -305,11 +348,12 @@ const Dashboard = () => {
       {isModalOpen && isAdmin && (
         <ProjectModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
-          onSave={async (formData) => {
-            await addProject(formData);
+          onClose={() => {
             setIsModalOpen(false);
+            setProjectToEdit(null);
           }}
+          project={projectToEdit}
+          onSave={handleSave}
         />
       )}
     </div>
