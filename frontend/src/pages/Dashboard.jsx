@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 import ProjectCard from "../components/ProjectCard";
 import ProjectList from "../components/ProjectList";
 import ProjectModal from "../components/ProjectModal";
-import FilterSearch from "../components/FilterSearch"; // Import the new component
+import FilterSearch from "../components/FilterSearch";
+import SortOrder from "../components/SortOrder";
 import ViewMode from "../components/ViewMode";
 import Header from "../layout/Header";
 
@@ -17,11 +18,28 @@ const Dashboard = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [viewMode, setViewMode] = useState("list"); // default view: list
   const [projectToEdit, setProjectToEdit] = useState(null);
+  const [sortOrder, setSortOrder] = useState("newest"); // default: newest first
   const navigate = useNavigate();
 
-  const filteredProjects = projects.filter((project) =>
-    project.title.toLowerCase().includes(filterText.toLowerCase())
-  );
+  // Apply filter and sort to projects
+  const processedProjects = projects
+    .filter((project) =>
+      project.title.toLowerCase().includes(filterText.toLowerCase())
+    )
+    .sort((a, b) => {
+      // Sort by creation date or start date
+      const dateA = new Date(a.createdAt || a.startDate || 0);
+      const dateB = new Date(b.createdAt || b.startDate || 0);
+      
+      // For newest first (descending order)
+      if (sortOrder === "newest") {
+        return dateB - dateA;
+      } 
+      // For oldest first (ascending order)
+      else {
+        return dateA - dateB;
+      }
+    });
 
   useEffect(() => {
     fetchProjects();
@@ -57,7 +75,7 @@ const Dashboard = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setProjects([...projects, res.data]);
+      setProjects([res.data, ...projects]); // Add new project to the beginning of the array
     } catch (err) {
       console.error("Error adding project:", err);
       if (err.response?.status === 401) {
@@ -176,16 +194,30 @@ const Dashboard = () => {
           isLoggingOut={isLoggingOut}
         />
 
-        {/* Search / Filter Bar */}
-        <FilterSearch filterText={filterText} setFilterText={setFilterText} />
-
-        {/* View Mode Toggle */}
-        <ViewMode viewMode={viewMode} setViewMode={setViewMode} />
+        {/* Search Filter Section */}
+        <div className="mb-4">
+          <FilterSearch 
+            filterText={filterText} 
+            setFilterText={setFilterText} 
+          />
+        </div>
+        
+        {/* Controls Section - View Mode and Sort Order in same row */}
+        <div className="flex justify-between items-center mb-4">
+          {/* Sort Order on the left */}
+          <SortOrder 
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+          />
+          
+          {/* View Mode Toggle on the right */}
+          <ViewMode viewMode={viewMode} setViewMode={setViewMode} />
+        </div>
 
         {/* Render Projects */}
         {viewMode === "list" ? (
           <ProjectList
-            projects={filteredProjects}
+            projects={processedProjects}
             getStatusColorClass={getStatusColorClass}
             getProgressColorClass={getProgressColorClass}
             viewProjectDetail={viewProjectDetail}
@@ -195,7 +227,7 @@ const Dashboard = () => {
           />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {filteredProjects.map((project) => (
+            {processedProjects.map((project) => (
               <ProjectCard key={project._id} project={project} />
             ))}
           </div>

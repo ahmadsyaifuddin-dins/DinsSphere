@@ -1,17 +1,18 @@
 import React from "react";
-import { List, Grid } from "lucide-react";
+import { SortAsc, SortDesc } from "lucide-react";
 import { motion } from "framer-motion";
 
-const ViewMode = ({ viewMode, setViewMode }) => {
+const SortOrder = ({ sortOrder, setSortOrder }) => {
   return (
     <div className="flex gap-2">
+      <span className="text-sm text-gray-400"></span>
       <div className="flex items-center space-x-0 bg-gray-700 p-0.5 rounded-lg relative overflow-hidden">
-        {/* Background indicator - matches SortOrder style */}
+        {/* Background indicator - full width per button */}
         <motion.div 
           className="absolute z-0 bg-blue-600 rounded-md"
           initial={false}
           animate={{
-            x: viewMode === "list" ? 0 : "100%"
+            x: sortOrder === "newest" ? 0 : "100%"
           }}
           transition={{
             type: "spring",
@@ -27,53 +28,51 @@ const ViewMode = ({ viewMode, setViewMode }) => {
         />
         
         <motion.button
-          onClick={() => setViewMode("list")}
           className={`flex items-center justify-center gap-1 px-3 py-1.5 text-sm rounded-md relative z-10 w-full ${
-            viewMode === "list" 
-              ? "text-white" 
+            sortOrder === "newest"
+              ? "text-white"
               : "text-gray-300 hover:text-gray-100"
           }`}
+          onClick={() => setSortOrder("newest")}
           whileTap={{ scale: 0.95 }}
         >
           <motion.div
-            animate={{ rotate: viewMode === "list" ? -5 : 0 }}
+            animate={{ rotate: sortOrder === "newest" ? -5 : 0 }}
             transition={{ 
               type: "spring", 
               stiffness: 400, 
               damping: 15 
             }}
           >
-            <List className="w-4 h-4" />
+            <SortDesc className="w-4 h-4" />
           </motion.div>
-          <span className="hidden xs:inline">Table View</span>
-          <span className="xs:hidden">List</span>
+          <span>Terbaru</span>
         </motion.button>
         
         <motion.button
-          onClick={() => setViewMode("grid")}
           className={`flex items-center justify-center gap-1 px-3 py-1.5 text-sm rounded-md relative z-10 w-full ${
-            viewMode === "grid" 
+            sortOrder === "oldest"
               ? "text-white" 
               : "text-gray-300 hover:text-gray-100"
           }`}
+          onClick={() => setSortOrder("oldest")}
           whileTap={{ scale: 0.95 }}
         >
           <motion.div
-            animate={{ rotate: viewMode === "grid" ? 5 : 0 }}
+            animate={{ rotate: sortOrder === "oldest" ? 5 : 0 }}
             transition={{ 
               type: "spring", 
               stiffness: 400, 
               damping: 15 
             }}
           >
-            <Grid className="w-4 h-4" />
+            <SortAsc className="w-4 h-4" />
           </motion.div>
-          <span className="hidden xs:inline">Card View</span>
-          <span className="xs:hidden">Card</span>
+          <span>Terlama</span>
         </motion.button>
       </div>
     </div>
   );
 };
 
-export default ViewMode;
+export default SortOrder;
