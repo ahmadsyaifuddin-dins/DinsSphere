@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
   const [title, setTitle] = useState(project ? project.title : "");
+  const [type, setType] = useState(project ? project.type : "");
   const [subtitle, setSubtitle] = useState(project ? project.subtitle : "");
   const [description, setDescription] = useState(project ? project.description : "");
   const [thumbnail, setThumbnail] = useState(project ? project.thumbnail : "");
@@ -32,6 +33,7 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
     const techArray = technologies.trim() ? technologies.trim().split(/\s+/) : [];
     const formData = {
       title,
+      type,
       subtitle,
       description,
       thumbnail,
@@ -76,6 +78,29 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
                 required
                 placeholder="Masukkan nama project"
               />
+            </div>
+            {/* Jenis Project */}
+            <div>
+              <label className={labelClasses} htmlFor="type">
+                Jenis Project *
+              </label>
+              <select
+                id="type"
+                value={type}
+                onChange={(e) => setType(e.target.value)}
+                className={inputClasses}
+              >
+                <option value="">Pilih Tipe Project</option>
+                <option value="Website">Website</option>
+                <option value="Web Application">Web Application</option>
+                <option value="Mobile Application">Mobile Application</option>
+                <option value="Desktop Application">Desktop Application</option>
+                <option value="Artificial Intelligence">Artificial Intelligence</option>
+                <option value="Data Science">Data Science</option>
+                <option value="Bot Chat">Bot Chat</option>
+                <option value="Game">Game</option>
+                <option value="Other">Other</option>
+              </select>
             </div>
             {/* Subtitle */}
             <div>

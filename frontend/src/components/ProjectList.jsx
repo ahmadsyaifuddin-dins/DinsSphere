@@ -16,6 +16,7 @@ const ProjectList = ({
         <thead className="text-xs uppercase bg-gray-700 text-gray-300">
           <tr>
             <th scope="col" className="py-2 px-3 sm:py-3 sm:px-6">Nama Project</th>
+            <th scope="col" className="py-2 px-3 sm:py-3 sm:px-6">Type</th>
             <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6">Status</th>
             <th scope="col" className="py-2 px-3 sm:py-3 sm:px-6 md:table-cell">Tanggal Mulai</th>
             <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6">Progress</th>
@@ -50,7 +51,10 @@ const ProjectList = ({
                     </div>
                   </div>
                 </td>
-                <td className="py-2 px-2 sm:py-4 sm:px-6">
+                <td className="py-2 px-3 sm:py-4 sm:px-6 max-w-xs truncate md:table-cell">
+                  {project.type || "Not specified"}
+                </td>
+                <td className="py-2 px-3 sm:py-4 sm:px-6 max-w-xs truncate md:table-cell">
                   <span
                     className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColorClass(project.status)} border whitespace-nowrap`}
                   >

@@ -28,6 +28,7 @@ router.post("/", verifyAdmin, async (req, res) => {
     try {
       const {
         title,
+        type,
         subtitle,
         description,
         thumbnail,
@@ -48,6 +49,7 @@ router.post("/", verifyAdmin, async (req, res) => {
       
       const newProject = new Project({
         title,
+        type,
         subtitle,
         description,
         thumbnail,
@@ -72,10 +74,10 @@ router.post("/", verifyAdmin, async (req, res) => {
 // UPDATE project berdasarkan ID
 router.put("/:id", verifyAdmin, async (req, res) => {
   try {
-    const { title, subtitle, description, thumbnail, icon, linkDemo, linkSource, technologies, difficulty, startDate, endDate, status, progress } = req.body;
+    const { title, type, subtitle, description, thumbnail, icon, linkDemo, linkSource, technologies, difficulty, startDate, endDate, status, progress } = req.body;
     const updatedProject = await Project.findByIdAndUpdate(
       req.params.id,
-      { title, subtitle, description, thumbnail, icon, linkDemo, linkSource, technologies, difficulty, startDate, endDate, status, progress },
+      { title, type, subtitle, description, thumbnail, icon, linkDemo, linkSource, technologies, difficulty, startDate, endDate, status, progress },
       { new: true }
     );
     res.json(updatedProject);
