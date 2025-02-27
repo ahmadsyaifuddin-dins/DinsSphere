@@ -106,7 +106,7 @@ const ProjectList = ({
             ))
           ) : (
             <tr className="bg-gray-800 border-b border-gray-700">
-              <td colSpan="5" className="py-6 px-4 sm:py-8 sm:px-6 text-center">
+              <td colSpan="6" className="py-6 px-4 sm:py-8 sm:px-6 text-center">
                 <div className="flex flex-col items-center">
                   <SortAsc className="w-8 h-8 sm:w-12 sm:h-12 text-gray-500 mb-2 sm:mb-3" />
                   <p className="text-gray-400 text-sm">Tidak ada project yang ditemukan</p>

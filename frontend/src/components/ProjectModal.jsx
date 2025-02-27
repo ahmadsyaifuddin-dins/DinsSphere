@@ -278,6 +278,7 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
                 <option value="Done">Done</option>
                 <option value="Paused">Paused</option>
                 <option value="Backlog">Backlog</option>
+                <option value="Planning">Planning</option>      
               </select>
             </div>
 

@@ -52,7 +52,7 @@ const Dashboard = () => {
       const res = await axios.get(
         "https://dinssphere-production.up.railway.app/api/projects"
       );
-      // const res = await axios.get("http://localhost:5000/api/projects");
+      // const res = await axios.get("https://dinssphere-production.up.railway.app/api/projects");
       setProjects(res.data);
     } catch (err) {
       console.error("Error fetching projects:", err);
@@ -71,7 +71,7 @@ const Dashboard = () => {
         "https://dinssphere-production.up.railway.app/api/projects",
         newProject,
         {
-          // const res = await axios.post("http://localhost:5000/api/projects", newProject, {
+          // const res = await axios.post("https://dinssphere-production.up.railway.app/api/projects", newProject, {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
@@ -91,7 +91,7 @@ const Dashboard = () => {
         `https://dinssphere-production.up.railway.app/api/projects/${projectId}`,
         formData,
         {
-          // const res = await axios.put(`http://localhost:5000/api/projects/${projectId}`, formData, {
+          // const res = await axios.put(`https://dinssphere-production.up.railway.app/api/projects/${projectId}`, formData, {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
@@ -113,7 +113,7 @@ const Dashboard = () => {
       await axios.delete(
         `https://dinssphere-production.up.railway.app/api/projects/${projectId}`,
         {
-          // await axios.delete(`http://localhost:5000/api/projects/${projectId}`, {
+          // await axios.delete(`https://dinssphere-production.up.railway.app/api/projects/${projectId}`, {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
@@ -228,7 +228,10 @@ const Dashboard = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {processedProjects.map((project) => (
-              <ProjectCard key={project._id} project={project} />
+              <ProjectCard key={project._id} project={project} 
+              viewProjectDetail={viewProjectDetail}
+            />
+              
             ))}
           </div>
         )}

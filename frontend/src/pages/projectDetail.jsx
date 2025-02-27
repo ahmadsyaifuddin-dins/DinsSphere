@@ -25,7 +25,7 @@ const ProjectDetail = () => {
     const fetchProject = async () => {
       try {
         const res = await axios.get(`https://dinssphere-production.up.railway.app/api/projects/${id}`);
-        // const res = await axios.get(`http://localhost:5000/api/projects/${id}`);
+        // const res = await axios.get(`https://dinssphere-production.up.railway.app/api/projects/${id}`);
         setProject(res.data);
         setLoading(false);
       } catch (err) {
@@ -71,7 +71,7 @@ const ProjectDetail = () => {
       "Done": "bg-green-500/20 text-green-400 border-green-500",
       "Backlog": "bg-purple-500/20 text-purple-400 border-purple-500",
       "Paused": "bg-red-500/20 text-red-400 border-red-500",
-      "Planning": "bg-purple-500/20 text-purple-400 border-purple-500"
+      "Planning": "bg-yellow-500/20 text-yellow-400 border-yellow-500"
     };
     
     return statusStyles[status] || "bg-gray-500/20 text-gray-400 border-gray-500";

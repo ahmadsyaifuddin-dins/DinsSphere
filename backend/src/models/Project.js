@@ -8,6 +8,7 @@ const projectSchema = new mongoose.Schema(
     },
     type: {
       type: String,
+      default: "",
       required: true,
     },
     subtitle: {
@@ -53,8 +54,8 @@ const projectSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["In Progress", "Done", "Paused", "Backlog"],
-      default: "In Progress",
+      enum: ["In Progress", "Done", "Paused", "Backlog", "Planning"],
+      default: "Planning",
       required: true,
     },
     progress: {
