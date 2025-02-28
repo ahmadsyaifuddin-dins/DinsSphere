@@ -306,13 +306,13 @@ const ProjectModal = ({ isOpen, onClose, project, onSave }) => {
           <button
             type="button"
             onClick={onClose}
-            className="px-6 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors duration-200"
+            className="px-6 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors duration-200 cursor-pointer" 
           >
             Batal
           </button>
           <button
             onClick={handleSubmit}
-            className="px-6 py-2.5 rounded-lg bg-[#3A86FF] hover:bg-blue-500 transition-colors duration-200"
+            className="px-6 py-2.5 rounded-lg bg-[#3A86FF] hover:bg-blue-500 transition-colors duration-200 cursor-pointer"
           >
             Simpan
           </button>

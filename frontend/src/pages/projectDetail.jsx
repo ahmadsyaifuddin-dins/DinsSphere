@@ -105,7 +105,7 @@ const ProjectDetail = () => {
       {/* Header with Back Button */}
       <div className="max-w-6xl mx-auto mb-6">
         <button 
-          className="flex items-center text-gray-400 hover:text-white transition-colors bg-gray-800/50 hover:bg-gray-700/50 px-4 py-2 rounded-full" 
+          className="cursor-pointer flex items-center text-gray-400 hover:text-white transition-colors bg-gray-800/50 hover:bg-gray-700/50 px-4 py-2 rounded-full" 
           onClick={() => navigate(-1)}
         >
           <ArrowLeft className="w-5 h-5 mr-2" />

@@ -27,7 +27,7 @@ const Header = ({
               setProjectToEdit(null);
               setIsModalOpen(true);
             }}
-            className="group flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-lg shadow-lg hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-1 text-sm"
+            className="group flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-lg shadow-lg hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-1 text-sm cursor-pointer"
           >
             <Plus className="w-4 h-4 mr-1.5 group-hover:rotate-90 transition-transform duration-300" />
             <span>Tambah Project</span>
@@ -37,7 +37,7 @@ const Header = ({
           <button
             onClick={handleLogout}
             disabled={isLoggingOut}
-            className="group flex items-center px-4 py-2 bg-gradient-to-r from-rose-600 to-red-600 text-white font-medium rounded-lg shadow-lg hover:shadow-red-500/30 transition-all duration-300 transform hover:-translate-y-1 text-sm"
+            className="group flex items-center px-4 py-2 bg-gradient-to-r from-rose-600 to-red-600 text-white font-medium rounded-lg shadow-lg hover:shadow-red-500/30 transition-all duration-300 transform hover:-translate-y-1 text-sm cursor-pointer"
           >
             <LogOut className="w-4 h-4 mr-1.5 group-hover:translate-x-1 transition-transform duration-300" />
             <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>

@@ -212,7 +212,7 @@ const ProjectCard = ({ project, getPriorityClass, viewProjectDetail }) => {
               <GitBranch className="w-3.5 h-3.5 mr-1.5" /> Source
             </a>
           )}
-          <button onClick={() => viewProjectDetail(project._id)} className="flex items-center ml-auto px-3 py-1.5 bg-gray-800 hover:bg-gray-700 transition-colors rounded-md text-sm font-medium text-gray-400 hover:text-white">
+          <button onClick={() => viewProjectDetail(project._id)} className="flex items-center ml-auto px-3 py-1.5 bg-gray-800 hover:bg-gray-700 transition-colors rounded-md text-sm font-medium text-gray-400 hover:text-white cursor-pointer">
             Detail <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
           </button>
         </div>

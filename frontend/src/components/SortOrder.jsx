@@ -28,7 +28,7 @@ const SortOrder = ({ sortOrder, setSortOrder }) => {
         />
         
         <motion.button
-          className={`flex items-center justify-center gap-1 px-3 py-1.5 text-sm rounded-md relative z-10 w-full ${
+          className={`flex items-center cursor-pointer justify-center gap-1 px-3 py-1.5 text-sm rounded-md relative z-10 w-full ${
             sortOrder === "newest"
               ? "text-white"
               : "text-gray-300 hover:text-gray-100"
@@ -44,13 +44,13 @@ const SortOrder = ({ sortOrder, setSortOrder }) => {
               damping: 15 
             }}
           >
-            <SortDesc className="w-4 h-4" />
+            <SortAsc className="w-4 h-4" />
           </motion.div>
           <span>Terbaru</span>
         </motion.button>
         
         <motion.button
-          className={`flex items-center justify-center gap-1 px-3 py-1.5 text-sm rounded-md relative z-10 w-full ${
+          className={`flex items-center cursor-pointer justify-center gap-1 px-3 py-1.5 text-sm rounded-md relative z-10 w-full ${
             sortOrder === "oldest"
               ? "text-white" 
               : "text-gray-300 hover:text-gray-100"
@@ -66,7 +66,7 @@ const SortOrder = ({ sortOrder, setSortOrder }) => {
               damping: 15 
             }}
           >
-            <SortAsc className="w-4 h-4" />
+            <SortDesc className="w-4 h-4" />
           </motion.div>
           <span>Terlama</span>
         </motion.button>

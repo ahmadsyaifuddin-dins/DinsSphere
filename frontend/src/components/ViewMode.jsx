@@ -28,7 +28,7 @@ const ViewMode = ({ viewMode, setViewMode }) => {
         
         <motion.button
           onClick={() => setViewMode("list")}
-          className={`flex items-center justify-center gap-1 px-3 py-1.5 text-sm rounded-md relative z-10 w-full ${
+          className={`flex items-center justify-center gap-1 px-3 py-1.5 text-sm rounded-md relative z-10 w-full cursor-pointer ${
             viewMode === "list" 
               ? "text-white" 
               : "text-gray-300 hover:text-gray-100"
@@ -51,7 +51,7 @@ const ViewMode = ({ viewMode, setViewMode }) => {
         
         <motion.button
           onClick={() => setViewMode("grid")}
-          className={`flex items-center justify-center gap-1 px-3 py-1.5 text-sm rounded-md relative z-10 w-full ${
+          className={`flex items-center justify-center gap-1 px-3 py-1.5 text-sm rounded-md relative z-10 w-full cursor-pointer ${
             viewMode === "grid" 
               ? "text-white" 
               : "text-gray-300 hover:text-gray-100"

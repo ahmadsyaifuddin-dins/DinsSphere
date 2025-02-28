@@ -81,22 +81,22 @@ const ProjectList = ({
                 </td>
                 <td className="py-2 px-2 sm:py-4 sm:px-6">
                   <div className="flex items-center justify-end space-x-1 sm:space-x-2">
-                    <button className="text-gray-400 hover:text-blue-500 focus:outline-none p-1" onClick={() => viewProjectDetail(project._id)}>
-                      <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <button className="text-gray-400 hover:text-blue-500 focus:outline-none p-1 cursor-pointer" onClick={() => viewProjectDetail(project._id)}>
+                      <Eye className="w-4 h-4 sm:w-5 sm:h-5 " />
                     </button>
                     {isAdmin && (
                       <>
                         <button
                           onClick={() => handleEdit(project)}
-                          className="text-gray-400 hover:text-yellow-500 focus:outline-none p-1"
+                          className="text-gray-400 hover:text-yellow-500 focus:outline-none p-1 cursor-pointer"
                         >
-                          <Edit className="w-4 h-4 sm:w-5 sm:h-5" />
+                          <Edit className="w-4 h-4 sm:w-5 sm:h-5 " />
                         </button>
                         <button
                           onClick={() => handleDelete(project._id)}
-                          className="text-gray-400 hover:text-rose-500 focus:outline-none p-1"
+                          className="text-gray-400 hover:text-rose-500 focus:outline-none p-1 cursor-pointer"
                         >
-                          <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                          <Trash2 className="w-4 h-4 sm:w-5 sm:h-5 " />
                         </button>
                       </>
                     )}
