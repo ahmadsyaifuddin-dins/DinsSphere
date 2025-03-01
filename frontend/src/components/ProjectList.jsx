@@ -36,7 +36,7 @@ const ProjectList = ({
                   <div className="flex items-center space-x-2 sm:space-x-3">
                     <div className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full ${project.icon ? "" : "bg-gradient-to-br from-blue-500 to-indigo-600"} flex items-center justify-center text-white font-bold`}>
                       {project.icon ? (
-                        <img src={project.icon} alt={project.title} className="w-full h-full rounded-full" />
+                        <img src={project.icon} alt={project.title} className="w-full h-full rounded-full object-cover" />
                       ) : (
                         project.title.charAt(0)
                       )}
