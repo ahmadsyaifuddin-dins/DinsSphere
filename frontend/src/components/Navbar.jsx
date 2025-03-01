@@ -102,26 +102,22 @@ const Navbar = () => {
               >
                 Dashboard
               </Link>
-              <Link 
-                to="/portfolio" 
-                className="text-white hover:text-gray-300 text-2xl font-medium transition-colors duration-300"
-                onClick={() => setIsMenuOpen(false)}
+              <span 
+                className="text-gray-500 text-2xl font-medium cursor-not-allowed"
               >
-                Portfolio
+                Jokian
+              </span>
+              <Link 
+                className="text-gray-500 text-2xl font-medium cursor-not-allowed"
+              >
+                Tugas Kuliah
               </Link>
               <Link 
-                to="/projects" 
+                to="#" 
                 className="text-white hover:text-gray-300 text-2xl font-medium transition-colors duration-300"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Projects
-              </Link>
-              <Link 
-                to="/contact" 
-                className="text-white hover:text-gray-300 text-2xl font-medium transition-colors duration-300"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Contact
+                Coming Soon!
               </Link>
             </motion.div>
           </nav>
