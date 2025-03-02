@@ -53,7 +53,7 @@ const Navbar = () => {
     <div className="navbar-container">
       {/* Toggle button on the left */}
       <button 
-        className="fixed z-50 top-6 left-6 bg-transparent border-none cursor-pointer p-2 focus:outline-none"
+        className="fixed z-50 top-2 left-2 md:left-6 bg-transparent border-none cursor-pointer p-2 focus:outline-none"
         onClick={toggleMenu}
         aria-label="Toggle menu"
       >
@@ -90,7 +90,7 @@ const Navbar = () => {
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            className="fixed top-0 left-0 w-64 h-full bg-gray-900/95 backdrop-blur-sm z-40 overflow-hidden"
+            className="fixed top-0 left-0 w-64 h-full bg-gray-900/95 backdrop-blur-xs z-40 overflow-hidden"
             initial="closed"
             animate="open"
             exit="closed"
