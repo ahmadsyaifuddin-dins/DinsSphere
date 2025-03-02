@@ -12,6 +12,7 @@ import {
   Award,
   BarChart,
   Sparkles,
+  Eye,
 } from "lucide-react";
 
 const ProjectDetail = () => {
@@ -20,22 +21,69 @@ const ProjectDetail = () => {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [viewCount, setViewCount] = useState(0);
 
   useEffect(() => {
-    const fetchProject = async () => {
+    let isMounted = true;
+    
+    const fetchProjectAndViews = async () => {
       try {
-        const res = await axios.get(`https://dinssphere-production.up.railway.app/api/projects/${id}`);
-        // const res = await axios.get(`https://dinssphere-production.up.railway.app/api/projects/${id}`);
-        setProject(res.data);
-        setLoading(false);
+        // Fetch project details
+        const projectRes = await axios.get(`https://dinssphere-production.up.railway.app/api/projects/${id}`);
+        
+        if (isMounted) {
+          setProject(projectRes.data);
+          setLoading(false);
+          
+          // Hanya fetch view count tanpa update
+          // Ini hanya untuk menampilkan, supaya tidak memicu pemanggilan ganda
+          const viewRes = await axios.get(`https://dinssphere-production.up.railway.app/api/projects/${id}/views`);
+          setViewCount(viewRes.data.count || 0);
+        }
       } catch (err) {
-        setError("Error fetching project details");
-        setLoading(false);
-        console.error(err);
+        if (isMounted) {
+          setError("Error fetching project details");
+          setLoading(false);
+          console.error(err);
+        }
       }
     };
-    fetchProject();
-  }, [id]);
+    
+    // Fetch project dan view count
+    fetchProjectAndViews();
+    
+    // Function untuk update view count hanya sekali per session
+    const updateViewCount = async () => {
+      // Cek localStorage untuk melihat apakah proyek ini sudah dilihat
+      const viewedKey = `viewed_project_${id}`;
+      const hasViewed = localStorage.getItem(viewedKey);
+      
+      if (!hasViewed) {
+        try {
+          // Update view count sekali saja
+          await axios.post(`https://dinssphere-production.up.railway.app/api/projects/${id}/views`);
+          // Tandai sebagai sudah dilihat
+          localStorage.setItem(viewedKey, 'true');
+          
+          // Refresh view count setelah update
+          if (isMounted) {
+            const viewRes = await axios.get(`https://dinssphere-production.up.railway.app/api/projects/${id}/views`);
+            setViewCount(viewRes.data.count || 0);
+          }
+        } catch (err) {
+          console.error("Error updating view count:", err);
+        }
+      }
+    };
+    
+    // Update view count terpisah dari fetching data
+    updateViewCount();
+    
+    // Cleanup function untuk mencegah memory leak
+    return () => {
+      isMounted = false;
+    };
+  }, [id]); // Hanya bergantung pada id
 
   if (loading) {
     return (
@@ -100,6 +148,11 @@ const ProjectDetail = () => {
     });
   };
 
+  // Format view count with thousand separator
+  const formatViewCount = (count) => {
+    return count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100 p-4 sm:p-8">
       {/* Header with Back Button */}
@@ -125,9 +178,21 @@ const ProjectDetail = () => {
                 className="w-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-transparent to-transparent"></div>
+              
+              {/* View Counter Badge */}
+              <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center">
+                <Eye className="w-4 h-4 mr-2 text-blue-400" />
+                <span className="text-sm font-medium">{formatViewCount(viewCount)} views</span>
+              </div>
             </div>
           ) : (
-            <div className="h-32 bg-gradient-to-r from-blue-900 to-indigo-900"></div>
+            <div className="h-32 bg-gradient-to-r from-blue-900 to-indigo-900 relative">
+              {/* View Counter Badge for projects without thumbnail */}
+              <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center">
+                <Eye className="w-4 h-4 mr-2 text-blue-400" />
+                <span className="text-sm font-medium">{formatViewCount(viewCount)} views</span>
+              </div>
+            </div>
           )}
           
           {/* Project Title and Icon Section */}
@@ -302,6 +367,15 @@ const ProjectDetail = () => {
                   <div>
                     <p className="text-sm text-gray-500">Achievement</p>
                     <p className="font-medium">{project.achievement || "Not Specified"}</p>
+                  </div>
+                </div>
+                
+                {/* View Count */}
+                <div className="flex items-start">
+                  <Eye className="w-5 h-5 mr-3 text-gray-500 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-gray-500">Views</p>
+                    <p className="font-medium">{formatViewCount(viewCount)}</p>
                   </div>
                 </div>
               </div>
