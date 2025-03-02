@@ -18,8 +18,8 @@ const Navbar = () => {
       borderBottomRightRadius: "100%",
       transition: {
         type: "spring",
-        stiffness: 400,
-        damping: 40
+        stiffness: 200,
+        damping: 60
       }
     },
     open: {
@@ -28,10 +28,10 @@ const Navbar = () => {
       borderBottomRightRadius: "0%",
       transition: {
         type: "spring",
-        stiffness: 400,
-        damping: 40,
-        staggerChildren: 0.1,
-        delayChildren: 0.2
+        stiffness: 200,
+        damping: 60,
+        staggerChildren: 0.4,
+        delayChildren: 0.3
       }
     }
   };
@@ -65,7 +65,7 @@ const Navbar = () => {
               y: isMenuOpen ? 10 : 0,
               width: isMenuOpen ? 24 : 8
             }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.5 }}
           />
           <motion.span
             className="absolute left-0 top-[10px] h-0.5 w-6 bg-white rounded-sm"
@@ -81,7 +81,7 @@ const Navbar = () => {
               y: isMenuOpen ? -10 : 0,
               width: isMenuOpen ? 24 : 8
             }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.5 }}
           />
         </div>
       </button>
