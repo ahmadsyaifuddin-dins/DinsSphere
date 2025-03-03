@@ -120,7 +120,9 @@ const Navbar = () => {
                 
                 <motion.div variants={linkVariants}>
                   <Link 
-                    className="text-gray-500 text-2xl font-medium cursor-not-allowed"
+                    to="/dashboardTugasKuliah"
+                    className="text-white hover:text-gray-300 text-2xl font-medium transition-colors duration-300"
+                    onClick={() => setIsMenuOpen(false)}
                   >
                     Tugas Kuliah
                   </Link>

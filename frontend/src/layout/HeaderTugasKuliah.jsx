@@ -1,7 +1,7 @@
 import React from "react";
 import { Plus, LogOut } from "lucide-react";
 
-const Header = ({ 
+const HeaderTugasKuliah = ({ 
   isAdmin, 
   setProjectToEdit, 
   setIsModalOpen, 
@@ -16,8 +16,8 @@ const Header = ({
         </h1>
         <p className="text-gray-300 text-sm sm:text-lg">
           {isAdmin
-            ? "Kelola dan lihat semua Project Kamu"
-            : "Lihat semua Project Syaifuddin"}
+            ? "Kelola dan lihat semua Tugas Kuliah Kamu"
+            : "Lihat semua Tugas Kuliah Syaifuddin"}
         </p>
       </div>
       <div className="flex flex-wrap items-center gap-3 justify-center md:justify-end">
@@ -30,7 +30,7 @@ const Header = ({
             className="group flex items-center px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-medium rounded-lg shadow-lg hover:shadow-blue-500/30 transition-all duration-300 transform hover:-translate-y-1 text-sm cursor-pointer"
           >
             <Plus className="w-4 h-4 mr-1.5 group-hover:rotate-90 transition-transform duration-300" />
-            <span>Tambah Project</span>
+            <span>Tambah Tugas Kuliah</span>
           </button>
         )}
         {isAdmin && (
@@ -48,4 +48,4 @@ const Header = ({
   );
 };
 
-export default Header;
+export default HeaderTugasKuliah;

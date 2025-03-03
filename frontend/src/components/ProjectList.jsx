@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import axios from "axios";
 import { SortAsc, Eye, Edit, Trash2, GripVertical } from "lucide-react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
@@ -22,10 +23,7 @@ const DraggableRow = ({
     type: 'PROJECT_ROW',
     item: { index },
     end: (item, monitor) => {
-      // Setelah drag selesai, panggil onDragEnd untuk mengirim update ke backend
-      if (onDragEnd) {
-        onDragEnd();
-      }
+      if (onDragEnd) onDragEnd();
     },
     collect: (monitor) => ({
       isDragging: monitor.isDragging(),
@@ -50,12 +48,17 @@ const DraggableRow = ({
     },
   });
   
-  // Combine drag and drop refs
+  // Gabungkan drag dan drop refs
   drag(drop(rowRef));
-  
-  // Apply opacity when dragging
+
   const opacity = isDragging ? 0.5 : 1;
-  
+
+  // Karena viewCount sudah kita fetch, anggap nilainya valid (number)
+  const formatViewCount = (count) => {
+    if (count === undefined || count === null) return "0";
+    return count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
   return (
     <tr 
       ref={rowRef}
@@ -105,9 +108,7 @@ const DraggableRow = ({
         <div className="flex items-center">
           <div className="w-12 sm:w-24 bg-gray-700 rounded-full h-1.5 sm:h-2.5 mr-1 sm:mr-2">
             <div
-              className={`h-1.5 sm:h-2.5 rounded-full ${getProgressColorClass(
-                project.progress
-              )}`}
+              className={`h-1.5 sm:h-2.5 rounded-full ${getProgressColorClass(project.progress)}`}
               style={{ width: `${project.progress}%` }}
             ></div>
           </div>
@@ -118,7 +119,11 @@ const DraggableRow = ({
       </td>
       <td className="py-2 px-2 sm:py-4 sm:px-6">
         <div className="flex items-center justify-end space-x-1 sm:space-x-2">
-          <button className="text-gray-400 hover:text-blue-500 focus:outline-none p-1 cursor-pointer" onClick={() => viewProjectDetail(project._id)}>
+          <p className="font-medium">{formatViewCount(project.viewCount)}</p>
+          <button 
+            className="text-gray-400 hover:text-blue-500 focus:outline-none p-1 cursor-pointer" 
+            onClick={() => viewProjectDetail(project._id)}
+          >
             <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
           {isAdmin && (
@@ -156,8 +161,32 @@ const ProjectList = ({
   const [projects, setProjects] = useState(initialProjects);
 
   // Update state lokal ketika props berubah
-  React.useEffect(() => {
+  useEffect(() => {
     setProjects(initialProjects);
+  }, [initialProjects]);
+
+  // Fetch view counts untuk setiap project dari API
+  useEffect(() => {
+    const fetchViewCounts = async () => {
+      const updatedProjects = await Promise.all(
+        initialProjects.map(async (project) => {
+          try {
+            const response = await axios.get(
+              `https://dinssphere-production.up.railway.app/api/projects/${project._id}/views`
+            );
+            return { ...project, viewCount: response.data.count || 0 };
+          } catch (error) {
+            console.error("Error fetching view count for project", project._id, error);
+            return { ...project, viewCount: 0 };
+          }
+        })
+      );
+      setProjects(updatedProjects);
+    };
+
+    if (initialProjects.length > 0) {
+      fetchViewCounts();
+    }
   }, [initialProjects]);
 
   // Fungsi untuk mengubah urutan baris di state lokal
