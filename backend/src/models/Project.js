@@ -63,10 +63,22 @@ const projectSchema = new mongoose.Schema(
       default: 0, // Default 0 jika kosong
       required: true,
     },
+    order: {
+      type: Number,
+      default: 0
+    },
+  
   },
   {
     timestamps: true, // Mongoose akan otomatis menambahkan createdAt & updatedAt
   }
 );
+
+projectSchema.index({ order: 1 });
+
+projectSchema.pre('find', function() {
+  this.sort({ order: 1 });
+});
+
 
 module.exports = mongoose.model("Project", projectSchema, "projects");

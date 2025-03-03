@@ -16,28 +16,25 @@ const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [viewMode, setViewMode] = useState("list"); // default view: list
+  const [viewMode, setViewMode] = useState("list");
   const [projectToEdit, setProjectToEdit] = useState(null);
-  const [sortOrder, setSortOrder] = useState("newest"); // default: newest first
+  const [sortOrder, setSortOrder] = useState("newest"); // "newest" atau "oldest"
+  const [orderMode, setOrderMode] = useState("manual"); // pakai mode manual sebagai default
   const navigate = useNavigate();
 
-  // Apply filter and sort to projects
+  // Sorting: gunakan manual order (field order) dan toggle berdasarkan sortOrder
   const processedProjects = projects
     .filter((project) =>
       project.title.toLowerCase().includes(filterText.toLowerCase())
     )
     .sort((a, b) => {
-      // Sort by creation date or start date
-      const dateA = new Date(a.createdAt || a.startDate || 0);
-      const dateB = new Date(b.createdAt || b.startDate || 0);
-      
-      // For newest first (descending order)
-      if (sortOrder === "newest") {
-        return dateB - dateA;
-      } 
-      // For oldest first (ascending order)
-      else {
-        return dateA - dateB;
+      if (orderMode === "manual") {
+        return sortOrder === "newest" ? a.order - b.order : b.order - a.order;
+      } else {
+        // fallback kalau diperlukan
+        const dateA = new Date(a.createdAt || a.startDate || 0);
+        const dateB = new Date(b.createdAt || b.startDate || 0);
+        return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
       }
     });
 
@@ -49,10 +46,7 @@ const Dashboard = () => {
 
   const fetchProjects = async () => {
     try {
-      const res = await axios.get(
-        "https://dinssphere-production.up.railway.app/api/projects"
-      );
-      // const res = await axios.get("https://dinssphere-production.up.railway.app/api/projects");
+      const res = await axios.get("http://localhost:5000/api/projects");
       setProjects(res.data);
     } catch (err) {
       console.error("Error fetching projects:", err);
@@ -60,22 +54,16 @@ const Dashboard = () => {
   };
 
   const viewProjectDetail = (id) => {
-    // Navigasi ke halaman detail project
     navigate(`/projectDetail/${id}`);
   };
 
   const addProject = async (newProject) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.post(
-        "https://dinssphere-production.up.railway.app/api/projects",
-        newProject,
-        {
-          // const res = await axios.post("https://dinssphere-production.up.railway.app/api/projects", newProject, {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setProjects([res.data, ...projects]); // Add new project to the beginning of the array
+      const res = await axios.post("http://localhost:5000/api/projects", newProject, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setProjects([res.data, ...projects]);
     } catch (err) {
       console.error("Error adding project:", err);
       if (err.response?.status === 401) {
@@ -88,35 +76,23 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.put(
-        `https://dinssphere-production.up.railway.app/api/projects/${projectId}`,
+        `http://localhost:5000/api/projects/${projectId}`,
         formData,
-        {
-          // const res = await axios.put(`https://dinssphere-production.up.railway.app/api/projects/${projectId}`, formData, {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
-      setProjects(
-        projects.map((proj) => (proj._id === projectId ? res.data : proj))
-      );
+      setProjects(projects.map((proj) => (proj._id === projectId ? res.data : proj)));
     } catch (err) {
       console.error("Error updating project:", err);
     }
   };
 
   const handleDelete = async (projectId) => {
-    if (!window.confirm("Apakah Anda yakin ingin menghapus project ini?")) {
-      return; // jika user membatalkan, keluar dari fungsi
-    }
-
+    if (!window.confirm("Apakah Anda yakin ingin menghapus project ini?")) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(
-        `https://dinssphere-production.up.railway.app/api/projects/${projectId}`,
-        {
-          // await axios.delete(`https://dinssphere-production.up.railway.app/api/projects/${projectId}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await axios.delete(`http://localhost:5000/api/projects/${projectId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setProjects(projects.filter((project) => project._id !== projectId));
     } catch (err) {
       console.error("Error deleting project:", err);
@@ -137,7 +113,24 @@ const Dashboard = () => {
     }
   };
 
-  // Helper functions for colors with enhanced visual appeal
+  // Fungsi untuk handle drag & drop reorder
+  const handleOrderChange = async (newOrder) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.post(
+        "http://localhost:5000/api/projects/reorder",
+        { order: newOrder },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      // Tetap di mode manual karena urutan diupdate secara drag & drop
+      setOrderMode("manual");
+    } catch (error) {
+      console.error("Error reordering projects:", error);
+      fetchProjects();
+    }
+  };
+
+  // Helper functions buat UI
   const getStatusColorClass = (status) => {
     switch (status) {
       case "Done":
@@ -184,9 +177,8 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100">
       <div className="max-w-8xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8">
-        
         {/* Header Section */}
-        <Header 
+        <Header
           isAdmin={isAdmin}
           setProjectToEdit={setProjectToEdit}
           setIsModalOpen={setIsModalOpen}
@@ -196,21 +188,20 @@ const Dashboard = () => {
 
         {/* Search Filter Section */}
         <div className="mb-4">
-          <FilterSearch 
-            filterText={filterText} 
-            setFilterText={setFilterText} 
-          />
+          <FilterSearch filterText={filterText} setFilterText={setFilterText} />
         </div>
-        
-        {/* Controls Section - View Mode and Sort Order in same row */}
+
+        {/* Controls Section */}
         <div className="flex justify-between items-center mb-4">
-          {/* Sort Order on the left */}
-          <SortOrder 
+          {/* Sort Order */}
+          <SortOrder
             sortOrder={sortOrder}
-            setSortOrder={setSortOrder}
+            setSortOrder={(val) => {
+              setSortOrder(val);
+              // Tetap gunakan mode manual; toggle sort hanya membalik urutan
+              setOrderMode("manual");
+            }}
           />
-          
-          {/* View Mode Toggle on the right */}
           <ViewMode viewMode={viewMode} setViewMode={setViewMode} />
         </div>
 
@@ -224,14 +215,12 @@ const Dashboard = () => {
             handleEdit={handleEdit}
             handleDelete={handleDelete}
             isAdmin={isAdmin}
+            onOrderChange={handleOrderChange}
           />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {processedProjects.map((project) => (
-              <ProjectCard key={project._id} project={project} 
-              viewProjectDetail={viewProjectDetail}
-            />
-              
+              <ProjectCard key={project._id} project={project} viewProjectDetail={viewProjectDetail} />
             ))}
           </div>
         )}
