@@ -46,7 +46,9 @@ const Dashboard = () => {
 
   const fetchProjects = async () => {
     try {
-      const res = await axios.get("https://dinssphere-production.up.railway.app/api/projects");
+      const res = await axios.get(
+        "https://dinssphere-production.up.railway.app/api/projects"
+      );
       setProjects(res.data);
     } catch (err) {
       console.error("Error fetching projects:", err);
@@ -60,9 +62,13 @@ const Dashboard = () => {
   const addProject = async (newProject) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.post("https://dinssphere-production.up.railway.app/api/projects", newProject, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.post(
+        "https://dinssphere-production.up.railway.app/api/projects",
+        newProject,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setProjects([res.data, ...projects]);
     } catch (err) {
       console.error("Error adding project:", err);
@@ -80,19 +86,25 @@ const Dashboard = () => {
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setProjects(projects.map((proj) => (proj._id === projectId ? res.data : proj)));
+      setProjects(
+        projects.map((proj) => (proj._id === projectId ? res.data : proj))
+      );
     } catch (err) {
       console.error("Error updating project:", err);
     }
   };
 
   const handleDelete = async (projectId) => {
-    if (!window.confirm("Apakah Anda yakin ingin menghapus project ini?")) return;
+    if (!window.confirm("Apakah Anda yakin ingin menghapus project ini?"))
+      return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`https://dinssphere-production.up.railway.app/api/projects/${projectId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `https://dinssphere-production.up.railway.app/api/projects/${projectId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setProjects(projects.filter((project) => project._id !== projectId));
     } catch (err) {
       console.error("Error deleting project:", err);
@@ -186,6 +198,13 @@ const Dashboard = () => {
           isLoggingOut={isLoggingOut}
         />
 
+        {/* Project Count Section */}
+        <div className="mb-4 mt-2 flex justify-between items-center">
+          <div className="px-3 py-1.5 bg-blue-500/20 text-blue-400 border border-blue-500 rounded-lg">
+            <span className="font-medium">Total Projects: {projects.length}</span>
+          </div>
+        </div>
+
         {/* Search Filter Section */}
         <div className="mb-4">
           <FilterSearch filterText={filterText} setFilterText={setFilterText} />
@@ -220,7 +239,11 @@ const Dashboard = () => {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {processedProjects.map((project) => (
-              <ProjectCard key={project._id} project={project} viewProjectDetail={viewProjectDetail} />
+              <ProjectCard
+                key={project._id}
+                project={project}
+                viewProjectDetail={viewProjectDetail}
+              />
             ))}
           </div>
         )}
