@@ -46,7 +46,7 @@ const Dashboard = () => {
 
   const fetchProjects = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/projects");
+      const res = await axios.get("https://dinssphere-production.up.railway.app/api/projects");
       setProjects(res.data);
     } catch (err) {
       console.error("Error fetching projects:", err);
@@ -60,7 +60,7 @@ const Dashboard = () => {
   const addProject = async (newProject) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.post("http://localhost:5000/api/projects", newProject, {
+      const res = await axios.post("https://dinssphere-production.up.railway.app/api/projects", newProject, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProjects([res.data, ...projects]);
@@ -76,7 +76,7 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.put(
-        `http://localhost:5000/api/projects/${projectId}`,
+        `https://dinssphere-production.up.railway.app/api/projects/${projectId}`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -90,7 +90,7 @@ const Dashboard = () => {
     if (!window.confirm("Apakah Anda yakin ingin menghapus project ini?")) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`http://localhost:5000/api/projects/${projectId}`, {
+      await axios.delete(`https://dinssphere-production.up.railway.app/api/projects/${projectId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setProjects(projects.filter((project) => project._id !== projectId));
@@ -118,7 +118,7 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        "http://localhost:5000/api/projects/reorder",
+        "https://dinssphere-production.up.railway.app/api/projects/reorder",
         { order: newOrder },
         { headers: { Authorization: `Bearer ${token}` } }
       );

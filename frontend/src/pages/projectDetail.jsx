@@ -29,7 +29,7 @@ const ProjectDetail = () => {
     const fetchProjectAndViews = async () => {
       try {
         // Fetch project details
-        const projectRes = await axios.get(`http://localhost:5000/api/projects/${id}`);
+        const projectRes = await axios.get(`https://dinssphere-production.up.railway.app/api/projects/${id}`);
         
         if (isMounted) {
           setProject(projectRes.data);
@@ -37,7 +37,7 @@ const ProjectDetail = () => {
           
           // Hanya fetch view count tanpa update
           // Ini hanya untuk menampilkan, supaya tidak memicu pemanggilan ganda
-          const viewRes = await axios.get(`http://localhost:5000/api/projects/${id}/views`);
+          const viewRes = await axios.get(`https://dinssphere-production.up.railway.app/api/projects/${id}/views`);
           setViewCount(viewRes.data.count || 0);
         }
       } catch (err) {
@@ -61,13 +61,13 @@ const ProjectDetail = () => {
       if (!hasViewed) {
         try {
           // Update view count sekali saja
-          await axios.post(`http://localhost:5000/api/projects/${id}/views`);
+          await axios.post(`https://dinssphere-production.up.railway.app/api/projects/${id}/views`);
           // Tandai sebagai sudah dilihat
           localStorage.setItem(viewedKey, 'true');
           
           // Refresh view count setelah update
           if (isMounted) {
-            const viewRes = await axios.get(`http://localhost:5000/api/projects/${id}/views`);
+            const viewRes = await axios.get(`https://dinssphere-production.up.railway.app/api/projects/${id}/views`);
             setViewCount(viewRes.data.count || 0);
           }
         } catch (err) {
