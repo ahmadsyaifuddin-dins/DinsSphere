@@ -14,8 +14,8 @@ const Login = () => {
     setError("");
 
     try {
-      const res = await axios.post("https://dinssphere-production.up.railway.app/api/auth/login", {
-      // const res = await axios.post("https://dinssphere-production.up.railway.app/api/auth/login", {
+      const res = await axios.post("https://dins-sphere-backend.vercel.app/api/auth/login", {
+      // const res = await axios.post("https://dins-sphere-backend.vercel.app/api/auth/login", {
         email,
         password,
         nuclearCode,

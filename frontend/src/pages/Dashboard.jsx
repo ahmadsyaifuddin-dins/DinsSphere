@@ -47,7 +47,7 @@ const Dashboard = () => {
   const fetchProjects = async () => {
     try {
       const res = await axios.get(
-        "https://dinssphere-production.up.railway.app/api/projects"
+        "https://dins-sphere-backend.vercel.app/api/projects"
       );
       setProjects(res.data);
     } catch (err) {
@@ -63,7 +63,7 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.post(
-        "https://dinssphere-production.up.railway.app/api/projects",
+        "https://dins-sphere-backend.vercel.app/api/projects",
         newProject,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -82,7 +82,7 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.put(
-        `https://dinssphere-production.up.railway.app/api/projects/${projectId}`,
+        `https://dins-sphere-backend.vercel.app/api/projects/${projectId}`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -100,7 +100,7 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.delete(
-        `https://dinssphere-production.up.railway.app/api/projects/${projectId}`,
+        `https://dins-sphere-backend.vercel.app/api/projects/${projectId}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -130,7 +130,7 @@ const Dashboard = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.post(
-        "https://dinssphere-production.up.railway.app/api/projects/reorder",
+        "https://dins-sphere-backend.vercel.app/api/projects/reorder",
         { order: newOrder },
         { headers: { Authorization: `Bearer ${token}` } }
       );
