@@ -119,7 +119,7 @@ app.get("/", (req, res) => {
       </head>
       <body>
         <div class="container">
-          <h1>DinsSphere</h1>
+          <h1>DinsSphere InterConnected</h1>
           <p class="subtitle">Server is Running...</p>
           
           <div class="status-box">
