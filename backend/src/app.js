@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("Server DinsSphere InterConnected berjalan!");
+  res.send("Server DinsSphere InterConnected berjalan🚀");
 });
 
 app.use("/api/projects", projectRoutes);
