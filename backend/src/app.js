@@ -18,10 +18,3 @@ app.get("/", (req, res) => {
 app.use("/api/projects", projectRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api", viewsRoutes);
-
-// JANGAN panggil app.listen() di sini kalau mau serverless
-// const PORT = process.env.PORT || 5000;
-// app.listen(PORT, () => console.log(`Server berjalan di port ${PORT}`));
-
-module.exports = app;
-
