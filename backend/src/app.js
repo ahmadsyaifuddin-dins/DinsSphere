@@ -18,3 +18,5 @@ app.get("/", (req, res) => {
 app.use("/api/projects", projectRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api", viewsRoutes);
+
+module.exports = app;
