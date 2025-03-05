@@ -119,7 +119,7 @@ const ProjectDetail = () => {
       "Done": "bg-green-500/20 text-green-400 border-green-500",
       "Backlog": "bg-purple-500/20 text-purple-400 border-purple-500",
       "Paused": "bg-red-500/20 text-red-400 border-red-500",
-      "Planning": "bg-yellow-500/20 text-yellow-400 border-yellow-500"
+      "Planning": "bg-indigo-500/20 text-indigo-400 border-indigo-600"
     };
     
     return statusStyles[status] || "bg-gray-500/20 text-gray-400 border-gray-500";
