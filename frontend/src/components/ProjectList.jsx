@@ -102,7 +102,7 @@ const DraggableRow = ({
         </span>
       </td>
       <td className="py-2 px-3 sm:py-4 sm:px-6 max-w-xs truncate md:table-cell">
-        {project.startDate ? new Date(project.startDate).toLocaleString() : "Not Available"}
+        {project.startDate ? new Date(project.startDate).toLocaleString('en-US', { timeZone: 'UTC' }) : "Not Available"}
       </td>
       <td className="py-2 px-2 sm:py-4 sm:px-6">
         <div className="flex items-center">
