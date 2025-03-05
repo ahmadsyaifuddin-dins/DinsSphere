@@ -120,7 +120,7 @@ app.get("/", (req, res) => {
       <body>
         <div class="container">
           <h1>DinsSphere InterConnected</h1>
-          <p class="subtitle">Server is Running...</p>
+          <p class="subtitle">Server is Running 🚀</p>
           
           <div class="status-box">
             <div class="status">
@@ -130,8 +130,7 @@ app.get("/", (req, res) => {
           </div>
           
           <div class="info-text">
-            Version 2.1.0 • ${new Date().toLocaleString()}
-          </div>
+            Version 2.1.0 • ${new Date().toLocaleString('id-ID', { timeZone: 'Asia/Makassar' })}
         </div>
       </body>
     </html>
