@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 import ProjectCard from "../components/ProjectCard";
+import ProjectListSkeleton from "../loader/ProjectListSkeleton";
 import ProjectList from "../components/ProjectList";
 import ProjectModal from "../components/ProjectModal";
 import FilterSearch from "../components/FilterSearch";
@@ -11,6 +12,7 @@ import ViewMode from "../components/ViewMode";
 import HeaderProject from "../layout/HeaderProject";
 
 const Dashboard = () => {
+  const [isLoading, setIsLoading] = useState(true); // Add loading state
   const [projects, setProjects] = useState([]);
   const [filterText, setFilterText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,12 +48,15 @@ const Dashboard = () => {
 
   const fetchProjects = async () => {
     try {
+      setIsLoading(true); // Set loading to true before fetching
       const res = await axios.get(
         "https://dins-sphere-backend.vercel.app/api/projects"
       );
       setProjects(res.data);
     } catch (err) {
       console.error("Error fetching projects:", err);
+    } finally {
+      setIsLoading(false); // Set loading to false after fetching
     }
   };
 
@@ -224,8 +229,14 @@ const Dashboard = () => {
           <ViewMode viewMode={viewMode} setViewMode={setViewMode} />
         </div>
 
-        {/* Render Projects */}
-        {viewMode === "list" ? (
+        {/* Render Projects with Loading State */}
+        {isLoading ? (
+          <ProjectListSkeleton />
+        ) : processedProjects.length === 0 ? (
+          <div className="text-center py-8 text-gray-400">
+            No projects found
+          </div>
+        ) : viewMode === "list" ? (
           <ProjectList
             projects={processedProjects}
             getStatusColorClass={getStatusColorClass}
