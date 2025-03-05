@@ -11,7 +11,7 @@ const HeaderProject = ({
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 pb-4 border-b border-gray-700">
       <div className="text-center md:text-left mb-4 md:mb-0">
-        <h1 className="text-2xl sm:text-4xl font-extrabold mb-2 bg-gradient-to-r from-indigo-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+        <h1 className="text-2xl sm:text-4xl font-extrabold mb-2 bg-gradient-to-r from-indigo-400 via-purple-500 to-pink-500 bg-clip-text text-transparent font-['Oxanium'] tracking-tight">
           DinsSphere InterConnected
         </h1>
         <p className="text-gray-300 text-sm sm:text-lg">
