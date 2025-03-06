@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-import ProjectCard from "../components/ProjectCard";
+import ProjectList from "../components/projects/ProjectList";
+import ProjectModal from "../components/projects/ProjectModal";
+import ProjectCard from "../components/projects/ProjectCard";
 import ProjectListSkeleton from "../loader/ProjectListSkeleton";
-import ProjectList from "../components/ProjectList";
-import ProjectModal from "../components/ProjectModal";
 import FilterSearch from "../components/FilterSearch";
 import SortOrder from "../components/SortOrder";
 import ViewMode from "../components/ViewMode";

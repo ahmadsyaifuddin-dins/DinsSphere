@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import HeaderTugasKuliah from "../layout/HeaderTugasKuliah";
 import { useNavigate } from "react-router-dom";
-import TugasKuliahList from "../components/TugasKuliahList";
-import TugasKuliahModal from "../components/TugasKuliahModal";
+import TugasKuliahList from "../components/tasks/TugasKuliahList";
+import TugasKuliahModal from "../components/tasks/TugasKuliahModal";
 
 const DashboardTugasKuliah = () => {
   const [isAdmin, setIsAdmin] = useState(false);
