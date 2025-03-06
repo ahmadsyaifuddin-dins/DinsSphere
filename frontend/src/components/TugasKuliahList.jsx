@@ -270,7 +270,7 @@ const TugasKuliahList = ({
                   <div className="flex flex-col items-center">
                     <SortAsc className="w-8 h-8 sm:w-12 sm:h-12 text-gray-500 mb-2 sm:mb-3" />
                     <p className="text-gray-400 text-sm">
-                      Tidak ada tugas kuliah (COMING SOON !!!)
+                      Coming Soon!
                     </p>
                   </div>
                 </td>
