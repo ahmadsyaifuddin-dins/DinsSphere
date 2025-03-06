@@ -27,27 +27,32 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    const formData = {
-      gambaranTugas,
-      mataKuliah,
-      namaTugas,
-      deskripsiTugas,
-      tingkatKesulitan: tingkatKesulitan ? tingkatKesulitan : "Not Available",
-      tanggalDiberikan:
-        tanggalDiberikanDate && tanggalDiberikanTime
-          ? `${tanggalDiberikanDate}T${tanggalDiberikanTime}:00`
-          : tanggalDiberikanDate,
-      tanggalDeadline:
-        tanggalDeadlineDate && tanggalDeadlineTime
-          ? `${tanggalDeadlineDate}T${tanggalDeadlineTime}:00`
-          : tanggalDeadlineDate,
-      progress: progress ? Number(progress) : 0,
-      statusTugas,
-      tanggalSelesai,
-    };
-    onSave(formData);
+  e.preventDefault();
+  
+  const tanggalDiberikan =
+    tanggalDiberikanDate && tanggalDiberikanTime
+      ? `${tanggalDiberikanDate}T${tanggalDiberikanTime}:00`
+      : null;  // Jika kosong, set null
+
+  const tanggalDeadline =
+    tanggalDeadlineDate && tanggalDeadlineTime
+      ? `${tanggalDeadlineDate}T${tanggalDeadlineTime}:00`
+      : null; // Jika kosong, set null
+
+  const formData = {
+    gambaranTugas: gambaranTugas ? gambaranTugas : null, // ubah string kosong ke null
+    mataKuliah,
+    namaTugas,
+    deskripsiTugas,
+    tingkatKesulitan: tingkatKesulitan ? tingkatKesulitan : "Not Available",
+    tanggalDiberikan,
+    tanggalDeadline,
+    progress: progress ? Number(progress) : 0,
+    statusTugas,
+    tanggalSelesai: tanggalSelesai || null,
   };
+  onSave(formData);
+};
 
   const inputClasses =
     "w-full p-3 rounded-lg bg-[#121212] text-[#F4F4F8] border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors";
@@ -143,11 +148,11 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
                 className={inputClasses}
               >
                 <option value="">Not Available</option>
-                <option value="damai">Damai</option>
-                <option value="mudah">Mudah</option>
-                <option value="sedang">Sedang</option>
-                <option value="sulit">Sulit</option>
-                <option value="ngeri">Ngeri ☠️</option>
+                <option value="Damai">Damai</option>
+                <option value="Mudah">Mudah</option>
+                <option value="Sedang">Sedang</option>
+                <option value="Sulit">Sulit</option>
+                <option value="Ngeri ☠️">Ngeri ☠️</option>
               </select>
             </div>
 

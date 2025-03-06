@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const Project = require("../models/Project");
+const Task = require("../models/Tasks");
 const verifyAdmin = require("../middleware/verifyAdmin");
 
 // GET /api/tasks - ambil semua tugas, diurutkan berdasarkan order
@@ -14,7 +14,7 @@ router.get("/", async (req, res) => {
 });
 
 // POST /api/tasks - buat tugas baru
-router.post("/", async (req, res) => {
+router.post("/", verifyAdmin, async (req, res) => {
   try {
     const newTask = new Task(req.body);
     // Set order berdasarkan jumlah tugas yang ada (simple auto-order)
@@ -39,7 +39,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // PUT /api/tasks/:id - update tugas
-router.put("/:id", async (req, res) => {
+router.put("/:id", verifyAdmin, async (req, res) => {
   try {
     const updatedTask = await Task.findByIdAndUpdate(
       req.params.id,
@@ -54,7 +54,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE /api/tasks/:id - hapus tugas
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyAdmin, async (req, res) => {
   try {
     const deletedTask = await Task.findByIdAndDelete(req.params.id);
     if (!deletedTask) return res.status(404).json({ error: "Task not found" });
@@ -66,7 +66,7 @@ router.delete("/:id", async (req, res) => {
 
 // PUT /api/tasks/order - update urutan tugas
 // Diharapkan request body berupa array [{ id: "taskId", order: newOrder }, ...]
-router.put("/order", async (req, res) => {
+router.post("/order", verifyAdmin, async (req, res) => {
   try {
     const orders = req.body;
     const updatePromises = orders.map((item) =>

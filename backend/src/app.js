@@ -2,8 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/server");
 const projectRoutes = require("./routes/projects");
-const viewsProjectRoutes = require("./routes/viewProjects");
 const tasksRoutes = require("./routes/tasks");
+const viewsProjectRoutes = require("./routes/viewProjects");
+const viewTasksRoutes = require("./routes/viewTasks");
 const authRoutes = require("./routes/auth");
 
 connectDB();
@@ -142,6 +143,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/projects", projectRoutes);
 app.use("/api/tasks", tasksRoutes);
+app.use("/api/viewTasks", viewTasksRoutes);
 app.use("/api/viewProjects", viewsProjectRoutes);
 app.use("/api/auth", authRoutes);
 

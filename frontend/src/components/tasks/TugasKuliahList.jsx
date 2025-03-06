@@ -1,10 +1,8 @@
 import React, { useState, useCallback, useEffect } from "react";
-import axios from "axios";
 import { SortAsc, Eye, Edit, Trash2, GripVertical } from "lucide-react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
-// Komponen untuk baris yang bisa di-drag (tugas kuliah)
 const DraggableRow = ({
   task,
   index,
@@ -15,7 +13,8 @@ const DraggableRow = ({
   viewTaskDetail,
   handleEdit,
   handleDelete,
-  isAdmin
+  isAdmin,
+  mataKuliahOptions, // Diterima untuk lookup icon
 }) => {
   const rowRef = React.useRef(null);
 
@@ -26,8 +25,8 @@ const DraggableRow = ({
       if (onDragEnd) onDragEnd();
     },
     collect: (monitor) => ({
-      isDragging: monitor.isDragging()
-    })
+      isDragging: monitor.isDragging(),
+    }),
   });
 
   const [, drop] = useDrop({
@@ -38,20 +37,31 @@ const DraggableRow = ({
       const hoverIndex = index;
       if (dragIndex === hoverIndex) return;
       const hoverBoundingRect = rowRef.current.getBoundingClientRect();
-      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      const hoverMiddleY =
+        (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
       const clientOffset = monitor.getClientOffset();
       const hoverClientY = clientOffset.y - hoverBoundingRect.top;
       if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return;
       if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return;
       moveRow(dragIndex, hoverIndex);
       draggedItem.index = hoverIndex;
-    }
+    },
   });
 
-  // Gabungkan drag dan drop refs
   drag(drop(rowRef));
 
   const opacity = isDragging ? 0.5 : 1;
+
+  // Jika gambaranTugas ada, gunakan itu, kalau tidak, cari icon berdasarkan mataKuliah
+  const iconUrl =
+    task.gambaranTugas ||
+    (mataKuliahOptions &&
+      mataKuliahOptions.find((mk) => mk.value === task.mataKuliah)?.icon);
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "Not Available";
+    return new Date(dateStr).toLocaleString("id-ID", { timeZone: "UTC" });
+  };
 
   return (
     <tr
@@ -70,12 +80,12 @@ const DraggableRow = ({
           )}
           <div
             className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full ${
-              task.gambaranTugas ? "" : "bg-gradient-to-br from-blue-500 to-indigo-600"
+              iconUrl ? "" : "bg-gradient-to-br from-blue-500 to-indigo-600"
             } flex items-center justify-center text-white font-bold`}
           >
-            {task.gambaranTugas ? (
+            {iconUrl ? (
               <img
-                src={task.gambaranTugas}
+                src={iconUrl}
                 alt={task.namaTugas}
                 className="w-full h-full rounded-full object-cover"
               />
@@ -108,11 +118,7 @@ const DraggableRow = ({
         </span>
       </td>
       <td className="py-2 px-3 sm:py-4 sm:px-6 max-w-xs truncate md:table-cell">
-        {task.tanggalDeadline
-          ? new Date(task.tanggalDeadline).toLocaleString("id-ID", {
-              timeZone: "UTC"
-            })
-          : "Not Available"}
+        {formatDate(task.tanggalDeadline)}
       </td>
       <td className="py-2 px-2 sm:py-4 sm:px-6">
         <div className="flex items-center">
@@ -167,40 +173,15 @@ const TugasKuliahList = ({
   handleEdit,
   handleDelete,
   isAdmin,
-  onOrderChange // callback untuk update order ke backend
+  onOrderChange,
+  mataKuliahOptions, // terima juga dari parent
 }) => {
   const [tasks, setTasks] = useState(initialTasks);
 
-  // Update state lokal saat props berubah
   useEffect(() => {
     setTasks(initialTasks);
   }, [initialTasks]);
 
-  // Misal, fetch view counts untuk tiap tugas dari API (opsional)
-  useEffect(() => {
-    const fetchViewCounts = async () => {
-      const updatedTasks = await Promise.all(
-        initialTasks.map(async (task) => {
-          try {
-            const response = await axios.get(
-              `https://dins-sphere-backend.vercel.app/api/tasks/${task._id}/views`
-            );
-            return { ...task, viewCount: response.data.count || 0 };
-          } catch (error) {
-            console.error("Error fetching view count for task", task._id, error);
-            return { ...task, viewCount: 0 };
-          }
-        })
-      );
-      setTasks(updatedTasks);
-    };
-
-    if (initialTasks.length > 0) {
-      fetchViewCounts();
-    }
-  }, [initialTasks]);
-
-  // Fungsi untuk mengubah urutan baris di state lokal
   const moveRow = useCallback((dragIndex, hoverIndex) => {
     setTasks((prevTasks) => {
       const result = [...prevTasks];
@@ -210,12 +191,11 @@ const TugasKuliahList = ({
     });
   }, []);
 
-  // Callback setelah drag selesai, kirim order baru ke backend
   const handleDragEnd = useCallback(() => {
     if (onOrderChange) {
       const newOrder = tasks.map((task, index) => ({
         id: task._id,
-        order: index
+        order: index,
       }));
       onOrderChange(newOrder);
     }
@@ -231,7 +211,7 @@ const TugasKuliahList = ({
                 Nama Tugas
               </th>
               <th scope="col" className="py-2 px-3 sm:py-3 sm:px-6">
-                Tingkat Kesulitan
+                Kesulitan
               </th>
               <th scope="col" className="py-2 px-3 sm:py-3 sm:px-6">
                 Status
@@ -262,6 +242,7 @@ const TugasKuliahList = ({
                   handleEdit={handleEdit}
                   handleDelete={handleDelete}
                   isAdmin={isAdmin}
+                  mataKuliahOptions={mataKuliahOptions}
                 />
               ))
             ) : (
@@ -269,9 +250,7 @@ const TugasKuliahList = ({
                 <td colSpan="6" className="py-6 px-4 sm:py-8 sm:px-6 text-center">
                   <div className="flex flex-col items-center">
                     <SortAsc className="w-8 h-8 sm:w-12 sm:h-12 text-gray-500 mb-2 sm:mb-3" />
-                    <p className="text-gray-400 text-sm">
-                      Coming Soon!
-                    </p>
+                    <p className="text-gray-400 text-sm">Tidak ada tugas yang ditemukan</p>
                   </div>
                 </td>
               </tr>

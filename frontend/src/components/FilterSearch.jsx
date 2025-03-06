@@ -10,7 +10,7 @@ const FilterSearch = ({ filterText, setFilterText }) => {
       <input
         type="text"
         className="border border-gray-600 bg-gray-700 text-gray-200 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
-        placeholder="Cari project..."
+        placeholder="Cari ..."
         value={filterText}
         onChange={(e) => setFilterText(e.target.value)}
       />
