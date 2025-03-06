@@ -10,9 +10,11 @@ const ViewSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
-  // Opsional: Anda bisa menambahkan field lain seperti:
-  // lastUpdated: { type: Date, default: Date.now }
-  // uniqueIPs: [String] // Jika ingin melacak IP unik
+  lastUpdated: { 
+    type: Date, 
+    default: Date.now 
+  },
+  uniqueIPs: [String] 
 });
 
-module.exports = mongoose.model('View', ViewSchema);
+module.exports = mongoose.model('ViewProject', ViewSchema);

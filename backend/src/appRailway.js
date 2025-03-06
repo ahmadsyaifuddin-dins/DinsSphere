@@ -3,7 +3,7 @@ const cors = require("cors");
 const connectDB = require("./config/server")
 const projectRoutes = require("./routes/projects");
 const authRoutes = require("./routes/auth");
-const viewsRoutes = require('./routes/views');
+const viewsRoutes = require('./routes/viewProjects');
 
 // Inisialisasi koneksi ke MongoDB
 connectDB();

@@ -37,7 +37,7 @@ const ProjectDetail = () => {
           
           // Hanya fetch view count tanpa update
           // Ini hanya untuk menampilkan, supaya tidak memicu pemanggilan ganda
-          const viewRes = await axios.get(`https://dins-sphere-backend.vercel.app/api/projects/${id}/views`);
+          const viewRes = await axios.get(`https://dins-sphere-backend.vercel.app/api/viewProjects/${id}`);
           setViewCount(viewRes.data.count || 0);
         }
       } catch (err) {
@@ -61,13 +61,13 @@ const ProjectDetail = () => {
       if (!hasViewed) {
         try {
           // Update view count sekali saja
-          await axios.post(`https://dins-sphere-backend.vercel.app/api/projects/${id}/views`);
+          await axios.post(`https://dins-sphere-backend.vercel.app/api/viewProjects/${id}`);
           // Tandai sebagai sudah dilihat
           localStorage.setItem(viewedKey, 'true');
           
           // Refresh view count setelah update
           if (isMounted) {
-            const viewRes = await axios.get(`https://dins-sphere-backend.vercel.app/api/projects/${id}/views`);
+            const viewRes = await axios.get(`https://dins-sphere-backend.vercel.app/api/viewProjects/${id}`);
             setViewCount(viewRes.data.count || 0);
           }
         } catch (err) {

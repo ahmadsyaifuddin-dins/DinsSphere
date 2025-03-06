@@ -2,8 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const connectDB = require("./config/server");
 const projectRoutes = require("./routes/projects");
+const viewsProjectRoutes = require("./routes/viewProjects");
+const tasksRoutes = require("./routes/tasks");
 const authRoutes = require("./routes/auth");
-const viewsRoutes = require("./routes/views");
 
 connectDB();
 
@@ -140,7 +141,13 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/projects", projectRoutes);
+app.use("/api/tasks", tasksRoutes);
+app.use("/api/viewProjects", viewsProjectRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api", viewsRoutes);
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server berjalan di port ${PORT}`);
+});
 
 module.exports = app;

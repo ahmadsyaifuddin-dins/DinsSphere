@@ -234,7 +234,7 @@ const Dashboard = () => {
           <ProjectListSkeleton />
         ) : processedProjects.length === 0 ? (
           <div className="text-center py-8 text-gray-400">
-            No projects found
+            No projects found. Please try refreshing the page.
           </div>
         ) : viewMode === "list" ? (
           <ProjectList

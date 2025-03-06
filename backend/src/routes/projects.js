@@ -4,9 +4,7 @@ const Project = require("../models/Project");
 const verifyAdmin = require("../middleware/verifyAdmin");
 const projectController = require('../controllers/projectController');
 
-
 router.post('/reorder', verifyAdmin, projectController.reorderProjects);
-
 
 // GET semua project
 router.get("/", async (req, res) => {
