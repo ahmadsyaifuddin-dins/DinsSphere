@@ -3,7 +3,7 @@ import { Plus, LogOut } from "lucide-react";
 
 const HeaderTugasKuliah = ({ 
   isAdmin, 
-  setProjectToEdit, 
+  setTugasKuliahToEdit, 
   setIsModalOpen, 
   handleLogout, 
   isLoggingOut 
@@ -24,7 +24,7 @@ const HeaderTugasKuliah = ({
         {isAdmin && (
           <button
             onClick={() => {
-              setProjectToEdit(null);
+              setTugasKuliahToEdit(null);
               setIsModalOpen(true);
             }}
             className="group flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-teal-600 text-white font-medium rounded-lg shadow-lg hover:shadow-green-500/30 transition-all duration-300 transform hover:-translate-y-1 text-sm cursor-pointer"
