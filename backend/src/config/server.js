@@ -4,6 +4,9 @@ require("dotenv").config();
 const connectDB = async () => {
   try {
     const conn = await mongoose.connect(process.env.MONGO_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      poolSize: 10, // maksimal 10 koneksi dalam pool
       serverSelectionTimeoutMS: 5000,
       socketTimeoutMS: 45000,
     });
@@ -15,5 +18,3 @@ const connectDB = async () => {
 };
 
 module.exports = connectDB;
-
-
