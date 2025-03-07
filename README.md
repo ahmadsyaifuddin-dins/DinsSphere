@@ -2,7 +2,7 @@
 
 <div align="center">
   
-  ![Logo DinsSphere](https://github.com/ahmadsyaifuddin-dins/DinsSphere/blob/main/icon.png?raw=true)
+  ![Logo DinsSphere](https://raw.githubusercontent.com/ahmadsyaifuddin-dins/DinsSphere/8fe063a8a94792d2f62dab2af66fb028dc3919a7/frontend/public/icon.svg)
   
   ### Sistem Manajemen Proyek & Tugas Cerdas untuk Mahasiswa
   
