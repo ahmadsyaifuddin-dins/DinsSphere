@@ -110,7 +110,7 @@ const DraggableRow = ({
       </td>
       <td className="py-2 px-3 sm:py-4 sm:px-6 max-w-xs truncate md:table-cell">
         <span
-          className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColorClass(
+          className={`inline-block px-2 py-1 rounded-full text-xs font-medium capitalize ${getStatusColorClass(
             task.statusTugas
           )} border whitespace-nowrap`}
         >

@@ -160,10 +160,11 @@ const DetailTugasKuliah = () => {
   const getStatusBadge = (status) => {
     const statusConfig = {
       "Belum Dikerjakan": "bg-red-500",
-      "Sedang Dikerjakan": "bg-yellow-500",
+      "Sedang dikerjain...": "bg-blue-500",
+      "Tertunda": "bg-purple-500",
       Selesai: "bg-green-500",
-      "Menunggu Review": "bg-blue-500",
-      Revisi: "bg-purple-500",
+      "Menunggu Review": "bg-indigo-500",
+      Revisi: "bg-yellow-500",
     };
 
     const bgColor = statusConfig[status] || "bg-gray-500";
