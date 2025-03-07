@@ -65,12 +65,12 @@ const DashboardTugasKuliah = () => {
   .sort((a, b) => {
     if (orderMode === "manual") {
       // Manual mode: gunakan field order (pastikan field order di-update saat drag)
-      return sortOrder === "oldest" ? a.order - b.order : b.order - a.order;
+      return sortOrder === "newest" ? a.order - b.order : b.order - a.order;
     } else {
       // Auto mode: urutkan berdasarkan tanggal terbaru
       const dateA = new Date(a.createdAt || a.tanggalDiberikan || 0);
       const dateB = new Date(b.createdAt || b.tanggalDiberikan || 0);
-      return sortOrder === "oldest" ? dateA - dateB : dateB - dateA;
+      return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
     }
   });
 

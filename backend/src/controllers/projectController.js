@@ -19,7 +19,7 @@ exports.reorderProjects = async (req, res) => {
     }));
     
     await Project.bulkWrite(updateOperations);
-    
+    console.log('Projects reordered successfully');
     return res.status(200).json({ message: 'Projects reordered successfully' });
   } catch (error) {
     console.error('Error reordering projects:', error);

@@ -19,10 +19,7 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
     task && task.tanggalDeadline ? task.tanggalDeadline.split("T")[1]?.slice(0, 5) : ""
   );
   const [progress, setProgress] = useState(task ? task.progress : "");
-  const [statusTugas, setStatusTugas] = useState(task ? task.statusTugas : "Sedang dikerjain...");
-  const [tanggalSelesai, setTanggalSelesai] = useState(
-    task && task.tanggalSelesai ? task.tanggalSelesai : ""
-  );
+  const [statusTugas, setStatusTugas] = useState(task ? task.statusTugas : "Belum Dikerjakan");
 
   if (!isOpen) return null;
 
@@ -49,7 +46,6 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
     tanggalDeadline,
     progress: progress ? Number(progress) : 0,
     statusTugas,
-    tanggalSelesai: tanggalSelesai || null,
   };
   onSave(formData);
 };
@@ -244,24 +240,11 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
                 onChange={(e) => setStatusTugas(e.target.value)}
                 className={inputClasses}
               >
+                <option value="Belum Dikerjakan">Belum Dikerjakan</option>
                 <option value="Sedang dikerjain...">Sedang dikerjain...</option>
                 <option value="Tertunda">Tertunda</option>
                 <option value="Selesai">Selesai</option>
               </select>
-            </div>
-
-            {/* Tanggal Selesai */}
-            <div>
-              <label className={labelClasses} htmlFor="tanggalSelesai">
-                Tanggal Selesai (Opsional)
-              </label>
-              <input
-                type="datetime-local"
-                id="tanggalSelesai"
-                value={tanggalSelesai}
-                onChange={(e) => setTanggalSelesai(e.target.value)}
-                className={inputClasses}
-              />
             </div>
           </form>
         </div>

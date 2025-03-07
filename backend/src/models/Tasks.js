@@ -10,7 +10,7 @@ const TaskSchema = new mongoose.Schema(
     tanggalDiberikan: { type: Date },
     tanggalDeadline: { type: Date },
     progress: { type: Number, default: 0 },
-    statusTugas: { type: String, default: "Sedang dikerjain..." },
+    statusTugas: { type: String, default: "Belum Dikerjakan" },
     tanggalSelesai: { type: Date },
     order: { type: Number, default: 0 }
   },
