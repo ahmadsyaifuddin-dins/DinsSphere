@@ -46,7 +46,7 @@ const SortOrder = ({ sortOrder, setSortOrder }) => {
           >
             <SortAsc className="w-4 h-4" />
           </motion.div>
-          <span>Terbaru</span>
+          <span>Baru</span>
         </motion.button>
         
         <motion.button
@@ -68,7 +68,7 @@ const SortOrder = ({ sortOrder, setSortOrder }) => {
           >
             <SortDesc className="w-4 h-4" />
           </motion.div>
-          <span>Terlama</span>
+          <span>Lama</span>
         </motion.button>
       </div>
     </div>
