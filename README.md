@@ -89,10 +89,7 @@ DinsSphere dibangun di atas stack MERN modern dengan teknologi tambahan untuk fu
 
 <div align="center">
   
-  <img src="https://via.placeholder.com/60" alt="MongoDB" title="MongoDB" width="60" height="60" />
-  <img src="https://via.placeholder.com/60" alt="Express.js" title="Express.js" width="60" height="60" />
-  <img src="https://via.placeholder.com/60" alt="React" title="React" width="60" height="60" />
-  <img src="https://via.placeholder.com/60" alt="Node.js" title="Node.js" width="60" height="60" />
+![mongodb](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white) ![expressjs](https://img.shields.io/badge/Express%20js-000000?style=for-the-badge&logo=express&logoColor=white) ![react](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB) ![nodejs](https://img.shields.io/badge/Node%20js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
   
 </div>
 
