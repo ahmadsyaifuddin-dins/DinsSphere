@@ -1,25 +1,47 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { jsPDF } from "jspdf";
-import "jspdf-autotable"; // optional, kalau butuh auto table
+import { exportTaskToPDF } from "../utils/pdfExport";
+import {
+  getStatusBadgeClass,
+  getProgressColorClass,
+  getRemainingDays,
+} from "../utils/helpers";
+import {
+  getTask,
+  deleteTask,
+  toggleTaskCompletion,
+} from "../services/taskService";
 
 const DetailTugasKuliah = () => {
   const { id } = useParams();
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   const navigate = useNavigate();
+
+  // Fetch detail tugas
+  useEffect(() => {
+    const fetchTaskDetail = async () => {
+      try {
+        setLoading(true);
+        const response = await getTask(id);
+        setTask(response.data);
+      } catch (err) {
+        console.error("Error fetching task detail:", err);
+        setError("Gagal mengambil detail tugas");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTaskDetail();
+  }, [id]);
 
   const handleDeleteTask = async () => {
     if (window.confirm("Apakah Anda yakin ingin menghapus tugas ini?")) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`https://dins-sphere-backend.vercel.app/api/tasks/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        // Redirect ke dashboard
+        await deleteTask(id, token);
         navigate("/dashboardTugasKuliah");
       } catch (error) {
         console.error("Gagal menghapus tugas:", error);
@@ -29,21 +51,26 @@ const DetailTugasKuliah = () => {
   };
 
   const handleToggleCompletion = async () => {
+    // Optimistic update
+    const previousState = { ...task };
+    const optimisticTask = {
+      ...task,
+      tanggalSelesai: task.tanggalSelesai ? null : new Date().toISOString(),
+      statusTugas: task.tanggalSelesai ? "Belum Dikerjakan" : "Selesai",
+    };
+    setTask(optimisticTask);
+
     try {
-      // Toggle status dan tanggal selesai
       const updatedData = {
-        tanggalSelesai: task.tanggalSelesai ? null : new Date().toISOString(),
-        statusTugas: task.tanggalSelesai ? "Belum Dikerjakan" : "Selesai",
+        tanggalSelesai: optimisticTask.tanggalSelesai,
+        statusTugas: optimisticTask.statusTugas,
       };
-  
-      const response = await axios.patch(
-        `https://dins-sphere-backend.vercel.app/api/tasks/${id}/complete`,
-        updatedData
-      );
-      setTask(response.data);
+      await toggleTaskCompletion(id, updatedData);
     } catch (error) {
       console.error("Gagal memperbarui status tugas:", error);
       alert("Gagal memperbarui status tugas");
+      // Revert optimistic update
+      setTask(previousState);
     }
   };
 
@@ -57,145 +84,12 @@ const DetailTugasKuliah = () => {
         })
         .catch((error) => console.error("Error sharing:", error));
     } else {
-      // Fallback: copy link ke clipboard atau tampilkan modal dengan link
       navigator.clipboard.writeText(window.location.href);
       alert("Link tugas telah disalin ke clipboard");
     }
   };
 
-  const handlePrintTask = () => {
-  window.print();
-  };
-
-  const handleExportTask = () => {
-    const doc = new jsPDF();
-    const marginLeft = 14;
-    const pageWidth = doc.internal.pageSize.getWidth();
-  
-    // Buat header dengan background warna biru
-    doc.setFillColor(33, 150, 243); // Warna biru
-    doc.rect(0, 0, pageWidth, 30, "F"); // Header rectangle
-  
-    // Judul di header
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(22);
-    doc.setTextColor(255, 255, 255);
-    doc.text("Detail Tugas", pageWidth / 2, 20, { align: "center" });
-  
-    // Reset pengaturan font buat konten
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(12);
-    doc.setTextColor(33, 33, 33);
-  
-    let currentY = 40;
-  
-    // Tambah detail tugas
-    doc.text(`Nama Tugas: ${task.namaTugas}`, marginLeft, currentY);
-    currentY += 8;
-    doc.text(`Mata Kuliah: ${task.mataKuliah}`, marginLeft, currentY);
-    currentY += 8;
-    doc.text(`Status: ${task.statusTugas}`, marginLeft, currentY);
-    currentY += 8;
-    doc.text(`Progress: ${task.progress}%`, marginLeft, currentY);
-    currentY += 10;
-  
-    // Tampilkan deadline kalau ada
-    if (task.tanggalDeadline) {
-      const deadline = new Date(task.tanggalDeadline);
-      const deadlineString = deadline.toLocaleString("id-ID", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-      doc.text(`Deadline: ${deadlineString}`, marginLeft, currentY);
-      currentY += 10;
-    }
-  
-    // Tambah bagian deskripsi dengan judul bold dan box text
-    doc.setFont("helvetica", "bold");
-    doc.text("Deskripsi Tugas:", marginLeft, currentY);
-    currentY += 6;
-    doc.setFont("helvetica", "normal");
-    const deskripsi = task.deskripsiTugas || "Tidak ada deskripsi";
-    const splittedText = doc.splitTextToSize(deskripsi, pageWidth - marginLeft * 2);
-    doc.text(splittedText, marginLeft, currentY);
-    currentY += splittedText.length * 7;
-  
-    // Tambah garis horizontal sebagai pemisah
-    doc.setDrawColor(200);
-    doc.setLineWidth(0.5);
-    doc.line(marginLeft, currentY + 5, pageWidth - marginLeft, currentY + 5);
-  
-    // Footer dengan tanggal export
-    const exportDate = new Date().toLocaleString("id-ID");
-    doc.setFontSize(10);
-    doc.text(`Di-export pada: ${exportDate}`, marginLeft, doc.internal.pageSize.getHeight() - 10);
-  
-    // Save file PDF dengan nama tugas
-    doc.save(`${task.namaTugas}.pdf`);
-  };
-
-  useEffect(() => {
-    const fetchTaskDetail = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(
-          `https://dins-sphere-backend.vercel.app/api/tasks/${id}`
-        );
-        setTask(response.data);
-      } catch (err) {
-        console.error("Error fetching task detail:", err);
-        setError("Gagal mengambil detail tugas");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchTaskDetail();
-  }, [id]);
-
-  // Status badge with appropriate colors
-  const getStatusBadge = (status) => {
-    const statusConfig = {
-      "Belum Dikerjakan": "bg-red-500",
-      "Sedang dikerjain...": "bg-blue-500",
-      "Tertunda": "bg-purple-500",
-      Selesai: "bg-green-500",
-      "Menunggu Review": "bg-indigo-500",
-      Revisi: "bg-yellow-500",
-    };
-
-    const bgColor = statusConfig[status] || "bg-gray-500";
-
-    return (
-      <span
-        className={`${bgColor} text-white text-xs font-medium px-3 py-1 rounded-full`}
-      >
-        {status}
-      </span>
-    );
-  };
-
-  // Progress bar with appropriate colors based on percentage
-  const getProgressColorClass = (progress) => {
-    if (progress < 30) return "bg-red-500";
-    if (progress < 70) return "bg-yellow-500";
-    return "bg-green-500";
-  };
-
-  // Calculate remaining days
-  const getRemainingDays = (deadline) => {
-    if (!deadline) return null;
-
-    const today = new Date();
-    const deadlineDate = new Date(deadline);
-    const diffTime = deadlineDate - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-    return diffDays;
-  };
+  const handlePrintTask = () => window.print();
 
   if (loading) {
     return (
@@ -214,18 +108,7 @@ const DetailTugasKuliah = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
         <div className="bg-red-900/30 border border-red-500 rounded-xl p-6 max-w-md text-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-12 w-12 text-red-500 mx-auto mb-4"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-              clipRule="evenodd"
-            />
-          </svg>
+          {/* SVG error icon */}
           <h2 className="text-xl font-bold text-red-500 mb-2">Error</h2>
           <p className="text-gray-300">{error}</p>
           <Link
@@ -243,18 +126,7 @@ const DetailTugasKuliah = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900">
         <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 max-w-md text-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-12 w-12 text-gray-500 mx-auto mb-4"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z"
-              clipRule="evenodd"
-            />
-          </svg>
+          {/* SVG not found icon */}
           <h2 className="text-xl font-bold text-gray-300 mb-2">
             Tidak Ditemukan
           </h2>
@@ -353,8 +225,13 @@ const DetailTugasKuliah = () => {
                 <span className="text-gray-400 mr-2">
                   {task.tingkatKesulitan}
                 </span>
-                <span className="text-gray-400 mr-2">|</span>
-                {getStatusBadge(task.statusTugas)}
+                <span
+                  className={`${getStatusBadgeClass(
+                    task.statusTugas
+                  )} text-white text-xs font-medium px-3 py-1 rounded-full`}
+                >
+                  {task.statusTugas}
+                </span>
               </div>
             </div>
           </div>
@@ -452,23 +329,27 @@ const DetailTugasKuliah = () => {
               <h2 className="text-xl font-semibold text-white mb-3">
                 Status Penyelesaian
               </h2>
-              <div className="bg-gray-700/30 border border-gray-600 rounded-xl p-5">
-                <div className="flex items-center mb-3">
-                  <div
-                    className={`w-3 h-3 rounded-full mr-2 ${
-                      task.tanggalSelesai ? "bg-green-500" : "bg-gray-500"
-                    }`}
-                  ></div>
-                  <span className="text-gray-300">Status:</span>
-                  <span className="ml-2 font-medium text-white">
+              <div className="bg-gray-700/30 border border-gray-600 rounded-xl p-4 md:p-5">
+                <div className="flex flex-col sm:flex-row sm:items-center mb-3">
+                  <div className="flex items-center mb-2 sm:mb-0">
+                    <div
+                      className={`w-3 h-3 rounded-full mr-2 ${
+                        task.tanggalSelesai ? "bg-green-500" : "bg-red-500"
+                      }`}
+                    ></div>
+                    <span className="text-gray-300">Status:</span>
+                  </div>
+                  <span className="ml-0 sm:ml-2 font-medium text-white">
                     {task.tanggalSelesai ? "Selesai" : "Belum selesai"}
                   </span>
                 </div>
                 {task.tanggalSelesai && (
-                  <div className="flex items-center">
-                    <div className="w-3 h-3 rounded-full mr-2 bg-green-500"></div>
-                    <span className="text-gray-300">Diselesaikan pada:</span>
-                    <span className="ml-2 font-medium text-white">
+                  <div className="flex flex-col sm:flex-row sm:items-center">
+                    <div className="flex items-center mb-2 sm:mb-0">
+                      <div className="w-3 h-3 rounded-full mr-2 bg-green-500"></div>
+                      <span className="text-gray-300">Diselesaikan pada:</span>
+                    </div>
+                    <span className="ml-0 sm:ml-2 font-medium text-white break-words">
                       {new Date(task.tanggalSelesai).toLocaleDateString(
                         "id-ID",
                         {
@@ -637,7 +518,7 @@ const DetailTugasKuliah = () => {
               <button
                 className="cursor-pointer text-gray-400 hover:text-white transition-colors duration-300"
                 onClick={handleShareTask}
-                >
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5"
@@ -650,7 +531,7 @@ const DetailTugasKuliah = () => {
               <button
                 className="cursor-pointer text-gray-400 hover:text-white transition-colors duration-300"
                 onClick={handlePrintTask}
-                >
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5"
@@ -666,8 +547,8 @@ const DetailTugasKuliah = () => {
               </button>
               <button
                 className="cursor-pointer text-gray-400 hover:text-white transition-colors duration-300"
-                onClick={handleExportTask}
-                >
+                onClick={() => exportTaskToPDF(task)}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-5 w-5"
