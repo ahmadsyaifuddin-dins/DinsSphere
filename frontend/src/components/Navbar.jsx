@@ -97,6 +97,9 @@ const Navbar = () => {
             variants={menuVariants}
           >
             <nav className="flex flex-col justify-center items-center h-full">
+              <div className="mb-14">
+                <img src="/icon.svg" alt="logo" className="w-25 h-25" />
+              </div>
               <motion.div
                 className="flex flex-col items-center w-full space-y-8"
               >
