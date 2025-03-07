@@ -1,4 +1,4 @@
-# 🌟 DinsSphere
+# 🌟 DinsSphere InterConnected
 
 <div align="center">
   
