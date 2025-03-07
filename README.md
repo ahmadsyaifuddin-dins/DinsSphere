@@ -193,7 +193,7 @@ Proyek ini dilisensikan di bawah Lisensi MIT - lihat file [LICENSE](LICENSE) unt
 
 <div align="center">
   
-  **Dibuat dengan ❤️ oleh [Nama Anda]**
+  **Dibuat dengan oleh Ahmad Syaifuddin**
   
   [GitHub](https://github.com/username-anda) • [LinkedIn](https://linkedin.com/in/username-anda) • [Twitter](https://twitter.com/username-anda)
   
