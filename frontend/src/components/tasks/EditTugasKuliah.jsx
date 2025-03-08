@@ -7,32 +7,41 @@ const EditTugasKuliah = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // State buat form data
+  // Tambahkan properti jamDeadline dalam state
   const [formData, setFormData] = useState({
     namaTugas: "",
     tingkatKesulitan: "",
     deskripsiTugas: "",
     tanggalDeadline: "",
+    jamDeadline: "",
     progress: 0,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Ambil detail tugas pas mount
+  // Ambil detail tugas saat mount
   useEffect(() => {
     const fetchTask = async () => {
       try {
         setLoading(true);
         const response = await getTask(id);
         const task = response.data;
+        // Pisahkan tanggal dan jam dari tanggalDeadline jika ada
+        let tglDeadline = "";
+        let jamDeadline = "";
+        if (task.tanggalDeadline) {
+          const isoString = new Date(task.tanggalDeadline).toISOString();
+          const parts = isoString.split("T");
+          tglDeadline = parts[0];
+          // Ambil jam dan menit (HH:MM)
+          jamDeadline = parts[1].slice(0, 5);
+        }
         setFormData({
           namaTugas: task.namaTugas || "",
           tingkatKesulitan: task.tingkatKesulitan || "",
           deskripsiTugas: task.deskripsiTugas || "",
-          // Format ISO date ke format yyyy-mm-dd untuk input type date
-          tanggalDeadline: task.tanggalDeadline
-            ? new Date(task.tanggalDeadline).toISOString().split("T")[0]
-            : "",
+          tanggalDeadline: tglDeadline,
+          jamDeadline: jamDeadline,
           progress: task.progress || 0,
         });
       } catch (err) {
@@ -58,11 +67,23 @@ const EditTugasKuliah = () => {
   // Handle submit form buat update tugas
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Gabungkan tanggalDeadline dan jamDeadline
+    const { tanggalDeadline, jamDeadline, ...rest } = formData;
+    let deadline = null;
+    if (tanggalDeadline && jamDeadline) {
+      // Simpan sebagai string ISO tanpa mengubah ke UTC
+      deadline = `${tanggalDeadline}T${jamDeadline}:00`;
+    } else if (tanggalDeadline) {
+      deadline = `${tanggalDeadline}T00:00:00`;
+    }
+    const payload = { ...rest, tanggalDeadline: deadline };
+
     try {
       const token = localStorage.getItem("token");
       await axios.put(
         `https://dins-sphere-backend.vercel.app/api/tasks/${id}`,
-        formData,
+        payload,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -73,7 +94,6 @@ const EditTugasKuliah = () => {
       setError("Gagal memperbarui tugas");
     }
   };
-  
 
   if (loading) {
     return (
@@ -171,6 +191,20 @@ const EditTugasKuliah = () => {
               className="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100"
             />
           </div>
+          {/* Jam Deadline */}
+          <div className="mb-4">
+            <label htmlFor="jamDeadline" className="block text-gray-300 mb-2">
+              Jam Deadline
+            </label>
+            <input
+              type="time"
+              id="jamDeadline"
+              name="jamDeadline"
+              value={formData.jamDeadline || ""}
+              onChange={handleInputChange}
+              className="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 text-gray-100"
+            />
+          </div>
           {/* Progress */}
           <div className="mb-4">
             <label htmlFor="progress" className="block text-gray-300 mb-2">
@@ -197,7 +231,7 @@ const EditTugasKuliah = () => {
             </Link>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition duration-300"
+              className="cursor-pointer px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition duration-300"
             >
               Simpan Perubahan
             </button>

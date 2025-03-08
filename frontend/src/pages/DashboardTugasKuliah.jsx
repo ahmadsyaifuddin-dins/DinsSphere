@@ -73,6 +73,7 @@ const DashboardTugasKuliah = () => {
       return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
     }
   });
+  
 
   const viewTaskDetail = (id) => {
     navigate(`/DetailTugasKuliah/${id}`);
@@ -236,11 +237,17 @@ const DashboardTugasKuliah = () => {
           />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {/* Kalau ada grid view, implement TaskCard */}
-            {processedTasks.map((task) => (
-              <TugasKuliahCard key={task._id} task={task} viewTaskDetail={viewTaskDetail} />
-            ))}
-          </div>
+          {processedTasks.map((task) => (
+            <TugasKuliahCard
+              key={task._id}
+              task={task}
+              viewTaskDetail={viewTaskDetail}
+              handleEdit={handleEdit}
+              handleDelete={handleDelete}
+              isAdmin={isAdmin}
+            />
+          ))}
+        </div>
         )}
       </div>
 

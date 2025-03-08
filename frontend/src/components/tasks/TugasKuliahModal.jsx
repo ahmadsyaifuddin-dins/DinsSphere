@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 
 const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) => {
-  const [gambaranTugas, setGambaranTugas] = useState(task ? task.gambaranTugas : "");
-  const [mataKuliah, setMataKuliah] = useState(task ? task.mataKuliah : "");
-  const [namaTugas, setNamaTugas] = useState(task ? task.namaTugas : "");
-  const [deskripsiTugas, setDeskripsiTugas] = useState(task ? task.deskripsiTugas : "");
-  const [tingkatKesulitan, setTingkatKesulitan] = useState(task ? task.tingkatKesulitan : "");
+  const [gambaranTugas, setGambaranTugas] = useState(task ? task.gambaranTugas || "" : "");
+  const [mataKuliah, setMataKuliah] = useState(task ? task.mataKuliah || "" : "");
+  const [namaTugas, setNamaTugas] = useState(task ? task.namaTugas || "" : "");
+  const [deskripsiTugas, setDeskripsiTugas] = useState(task ? task.deskripsiTugas || "" : "");
+  const [tingkatKesulitan, setTingkatKesulitan] = useState(task ? task.tingkatKesulitan || "" : "");
   const [tanggalDiberikanDate, setTanggalDiberikanDate] = useState(
     task && task.tanggalDiberikan ? task.tanggalDiberikan.split("T")[0] : ""
   );
@@ -18,8 +18,8 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
   const [tanggalDeadlineTime, setTanggalDeadlineTime] = useState(
     task && task.tanggalDeadline ? task.tanggalDeadline.split("T")[1]?.slice(0, 5) : ""
   );
-  const [progress, setProgress] = useState(task ? task.progress : "");
-  const [statusTugas, setStatusTugas] = useState(task ? task.statusTugas : "Belum Dikerjakan");
+  const [progress, setProgress] = useState(task ? task.progress || 0 : 0);
+  const [statusTugas, setStatusTugas] = useState(task ? task.statusTugas || "Sedang dikerjain..." : "Sedang dikerjain...");
 
   if (!isOpen) return null;
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { Calendar, Code, ExternalLink, GitBranch, Clock, Award, ArrowRight } from "lucide-react";
 
-const ProjectCard = ({ project, getPriorityClass, viewProjectDetail }) => {
+const ProjectCard = ({ project, viewProjectDetail }) => {
   // Format tanggal dengan lebih bersih
   const formatDate = (dateString) => {
     if (!dateString) return "Belum ditentukan";
