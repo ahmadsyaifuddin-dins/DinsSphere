@@ -1,7 +1,9 @@
 import React, { useState, useCallback, useEffect } from "react";
+
 import { SortAsc, Eye, Edit, Trash2, GripVertical } from "lucide-react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import axios from "axios";
 
 const DraggableRow = ({
   task,
@@ -51,6 +53,12 @@ const DraggableRow = ({
   drag(drop(rowRef));
 
   const opacity = isDragging ? 0.5 : 1;
+
+  // Karena viewCount sudah kita fetch, anggap nilainya valid (number)
+  const formatViewCount = (count) => {
+    if (count === undefined || count === null) return "0";
+    return count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
 
   // Jika gambaranTugas ada, gunakan itu, kalau tidak, cari icon berdasarkan mataKuliah
   const iconUrl =
@@ -137,6 +145,7 @@ const DraggableRow = ({
       </td>
       <td className="py-2 px-2 sm:py-4 sm:px-6">
         <div className="flex items-center justify-end space-x-1 sm:space-x-2">
+        <p className="font-medium">{formatViewCount(task.viewCount)}</p>
           <button
             className="text-gray-400 hover:text-blue-500 focus:outline-none p-1 cursor-pointer"
             onClick={() => viewTaskDetail(task._id)}
@@ -180,6 +189,29 @@ const TugasKuliahList = ({
 
   useEffect(() => {
     setTasks(initialTasks);
+  }, [initialTasks]);
+
+  useEffect(() => {
+    const fetchViewCounts = async () => {
+      const updatedTasks = await Promise.all(
+        initialTasks.map(async (task) => {
+          try {
+            const response = await axios.get(
+              `https://dins-sphere-backend.vercel.app/api/viewTasks/${task._id}`
+            );
+            return { ...task, viewCount: response.data.count || 0 };
+          } catch (error) {
+            console.error("Error fetching view count for task", task._id, error);
+            return { ...task, viewCount: 0 };
+          }
+        })
+      );
+      setTasks(updatedTasks);
+    };
+
+    if (initialTasks.length > 0) {
+      fetchViewCounts();
+    }
   }, [initialTasks]);
 
   const moveRow = useCallback((dragIndex, hoverIndex) => {

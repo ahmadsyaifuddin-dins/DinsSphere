@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { exportTaskToPDF } from "../utils/pdfExport";
 import {
@@ -17,7 +18,70 @@ const DetailTugasKuliah = () => {
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [viewCount, setViewCount] = useState(0);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    let isMounted = true;
+    
+    const fetchTaskAndViews = async () => {
+      try {
+        // Fetch task details
+        const taskRes = await axios.get(`https://dins-sphere-backend.vercel.app/api/tasks/${id}`);
+        
+        if (isMounted) {
+          setTask(taskRes.data);
+          setLoading(false);
+          
+          // Hanya fetch view count tanpa update
+          // Ini hanya untuk menampilkan, supaya tidak memicu pemanggilan ganda
+          const viewRes = await axios.get(`https://dins-sphere-backend.vercel.app/api/viewTasks/${id}`);
+          setViewCount(viewRes.data.count || 0);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError("Error fetching task details");
+          setLoading(false);
+          console.error(err);
+        }
+      }
+    };
+    
+    // Fetch task dan view count
+    fetchTaskAndViews();
+    
+    // Function untuk update view count hanya sekali per session
+    const updateViewCount = async () => {
+      // Cek localStorage untuk melihat apakah proyek ini sudah dilihat
+      const viewedKey = `viewed_task_${id}`;
+      const hasViewed = localStorage.getItem(viewedKey);
+      
+      if (!hasViewed) {
+        try {
+          // Update view count sekali saja
+          await axios.post(`https://dins-sphere-backend.vercel.app/api/viewTasks/${id}`);
+          // Tandai sebagai sudah dilihat
+          localStorage.setItem(viewedKey, 'true');
+          
+          // Refresh view count setelah update
+          if (isMounted) {
+            const viewRes = await axios.get(`https://dins-sphere-backend.vercel.app/api/viewTasks/${id}`);
+            setViewCount(viewRes.data.count || 0);
+          }
+        } catch (err) {
+          console.error("Error updating view count:", err);
+        }
+      }
+    };
+    
+    // Update view count terpisah dari fetching data
+    updateViewCount();
+    
+    // Cleanup function untuk mencegah memory leak
+    return () => {
+      isMounted = false;
+    };
+  }, [id]); // Hanya bergantung pada id
 
   // Fetch detail tugas
   useEffect(() => {
