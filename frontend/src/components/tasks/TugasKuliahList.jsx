@@ -101,12 +101,14 @@ const DraggableRow = ({
               task.namaTugas.charAt(0)
             )}
           </div>
-          <div>
-            <h3 className="font-medium text-white text-xs sm:text-sm">
-              {task.namaTugas}
+          <div className="max-w-xs">
+            <h3 className="text-white text-xs truncate">
+              {task.namaTugas.length > 45
+                ? `${task.namaTugas.substring(0, 42)}...`
+                : task.namaTugas}
             </h3>
             {task.mataKuliah && (
-              <p className="text-xs text-gray-400 hidden sm:block">
+              <p className="text-xs text-gray-400 truncate">
                 {task.mataKuliah}
               </p>
             )}
@@ -145,7 +147,7 @@ const DraggableRow = ({
       </td>
       <td className="py-2 px-2 sm:py-4 sm:px-6">
         <div className="flex items-center justify-end space-x-1 sm:space-x-2">
-        <p className="font-medium">{formatViewCount(task.viewCount)}</p>
+          <p className="font-medium">{formatViewCount(task.viewCount)}</p>
           <button
             className="text-gray-400 hover:text-blue-500 focus:outline-none p-1 cursor-pointer"
             onClick={() => viewTaskDetail(task._id)}
@@ -201,7 +203,11 @@ const TugasKuliahList = ({
             );
             return { ...task, viewCount: response.data.count || 0 };
           } catch (error) {
-            console.error("Error fetching view count for task", task._id, error);
+            console.error(
+              "Error fetching view count for task",
+              task._id,
+              error
+            );
             return { ...task, viewCount: 0 };
           }
         })
@@ -248,7 +254,10 @@ const TugasKuliahList = ({
               <th scope="col" className="py-2 px-3 sm:py-3 sm:px-6">
                 Status
               </th>
-              <th scope="col" className="py-2 px-3 sm:py-3 sm:px-6 md:table-cell">
+              <th
+                scope="col"
+                className="py-2 px-3 sm:py-3 sm:px-6 md:table-cell"
+              >
                 Deadline
               </th>
               <th scope="col" className="py-2 px-2 sm:py-3 sm:px-6">
@@ -279,10 +288,15 @@ const TugasKuliahList = ({
               ))
             ) : (
               <tr className="bg-gray-800 border-b border-gray-700">
-                <td colSpan="6" className="py-6 px-4 sm:py-8 sm:px-6 text-center">
+                <td
+                  colSpan="6"
+                  className="py-6 px-4 sm:py-8 sm:px-6 text-center"
+                >
                   <div className="flex flex-col items-center">
                     <SortAsc className="w-8 h-8 sm:w-12 sm:h-12 text-gray-500 mb-2 sm:mb-3" />
-                    <p className="text-gray-400 text-sm">Tidak ada tugas yang ditemukan</p>
+                    <p className="text-gray-400 text-sm">
+                      Tidak ada tugas yang ditemukan
+                    </p>
                   </div>
                 </td>
               </tr>
