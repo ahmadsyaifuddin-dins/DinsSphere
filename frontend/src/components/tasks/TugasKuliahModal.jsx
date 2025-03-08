@@ -19,7 +19,7 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
     task && task.tanggalDeadline ? task.tanggalDeadline.split("T")[1]?.slice(0, 5) : ""
   );
   const [progress, setProgress] = useState(task ? task.progress || 0 : 0);
-  const [statusTugas, setStatusTugas] = useState(task ? task.statusTugas || "Sedang dikerjain..." : "Sedang dikerjain...");
+  const [statusTugas, setStatusTugas] = useState(task ? task.statusTugas || "Belum Dikerjakan" : "Belum Dikerjakan");
 
   if (!isOpen) return null;
 
