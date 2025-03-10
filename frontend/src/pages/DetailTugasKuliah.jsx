@@ -12,6 +12,7 @@ import {
   deleteTask,
   toggleTaskCompletion,
 } from "../services/taskService";
+import Swal from "sweetalert2";
 
 const DetailTugasKuliah = () => {
   const { id } = useParams();
@@ -110,7 +111,16 @@ const DetailTugasKuliah = () => {
   }, [id]);
 
   const handleDeleteTask = async () => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus tugas ini?")) {
+    const result = await Swal.fire({
+      title: "Hapus Tugas",
+      text: "Apakah Anda yakin ingin menghapus tugas ini?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Hapus",
+      cancelButtonText: "Batal",
+    });
+
+    if (result.isConfirmed) {
       try {
         const token = localStorage.getItem("token");
         await deleteTask(id, token);

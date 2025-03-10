@@ -10,6 +10,8 @@ import FilterSearch from "../components/FilterSearch";
 import SortOrder from "../components/SortOrder";
 import ViewMode from "../components/ViewMode";
 import HeaderProject from "../layout/HeaderProject";
+import api from "../services/api";
+import Swal from "sweetalert2";
 
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true); // Add loading state
@@ -49,9 +51,7 @@ const Dashboard = () => {
   const fetchProjects = async () => {
     try {
       setIsLoading(true); // Set loading to true before fetching
-      const res = await axios.get(
-        "https://dins-sphere-backend.vercel.app/api/projects"
-      );
+      const res = await axios.get("https://dins-sphere-backend.vercel.app/api/projects");
       setProjects(res.data);
     } catch (err) {
       console.error("Error fetching projects:", err);
@@ -67,8 +67,8 @@ const Dashboard = () => {
   const addProject = async (newProject) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.post(
-        "https://dins-sphere-backend.vercel.app/api/projects",
+      const res = await api.post(
+        "/projects",
         newProject,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -86,11 +86,9 @@ const Dashboard = () => {
   const handleUpdateProject = async (projectId, formData) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.put(
-        `https://dins-sphere-backend.vercel.app/api/projects/${projectId}`,
-        formData,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await api.put(`/projects/${projectId}`, formData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setProjects(
         projects.map((proj) => (proj._id === projectId ? res.data : proj))
       );
@@ -100,16 +98,20 @@ const Dashboard = () => {
   };
 
   const handleDelete = async (projectId) => {
-    if (!window.confirm("Apakah Anda yakin ingin menghapus project ini?"))
-      return;
+    const result = await Swal.fire({
+      title: "Hapus Project",
+      text: "Apakah Anda yakin ingin menghapus project ini?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Hapus",
+      cancelButtonText: "Batal",
+    });
+    if (!result.isConfirmed) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(
-        `https://dins-sphere-backend.vercel.app/api/projects/${projectId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await api.delete(`/projects/${projectId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setProjects(projects.filter((project) => project._id !== projectId));
     } catch (err) {
       console.error("Error deleting project:", err);
@@ -134,8 +136,8 @@ const Dashboard = () => {
   const handleOrderChange = async (newOrder) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.post(
-        "https://dins-sphere-backend.vercel.app/api/projects/reorder",
+      await api.post(
+        "/projects/reorder",
         { order: newOrder },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -206,7 +208,9 @@ const Dashboard = () => {
         {/* Project Count Section */}
         <div className="mb-4 mt-2 flex justify-between items-center">
           <div className="px-3 py-1.5 bg-blue-500/20 text-blue-400 border border-blue-500 rounded-lg">
-            <span className="font-medium">Total Projects: {projects.length}</span>
+            <span className="font-medium">
+              Total Projects: {projects.length}
+            </span>
           </div>
         </div>
 

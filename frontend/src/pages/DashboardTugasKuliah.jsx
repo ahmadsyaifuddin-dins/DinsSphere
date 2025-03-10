@@ -9,6 +9,8 @@ import TugasKuliahCard from "../components/tasks/TugasKuliahCard";
 import TugasKuliahModal from "../components/tasks/TugasKuliahModal";
 
 import { useNavigate } from "react-router-dom";
+import api from "../services/api";
+import Swal from "sweetalert2";
 
 const DashboardTugasKuliah = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -84,7 +86,7 @@ const DashboardTugasKuliah = () => {
   const addTugasKuliah = async (newTask) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.post("https://dins-sphere-backend.vercel.app/api/tasks", newTask, {
+      const res = await api.post("/tasks", newTask, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTugasKuliah([res.data, ...tugasKuliah]);
@@ -96,7 +98,7 @@ const DashboardTugasKuliah = () => {
   const updateTugasKuliah = async (id, formData) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.put(`https://dins-sphere-backend.vercel.app/api/tasks/${id}`, formData, {
+      const res = await api.put(`/tasks/${id}`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTugasKuliah(
@@ -108,10 +110,18 @@ const DashboardTugasKuliah = () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Apakah Anda yakin ingin menghapus tugas ini?")) return;
+    const result = await Swal.fire({
+      title: "Hapus Tugas",
+      text: "Apakah Anda yakin ingin menghapus tugas ini?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Hapus",
+      cancelButtonText: "Batal",
+    });
+    if (!result.isConfirmed) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`https://dins-sphere-backend.vercel.app/api/tasks/${id}`, {
+      await api.delete(`/tasks/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTugasKuliah(tugasKuliah.filter((task) => task._id !== id));
@@ -137,7 +147,7 @@ const DashboardTugasKuliah = () => {
   const handleOrderChange = async (newOrder) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.post("https://dins-sphere-backend.vercel.app/api/tasks/order", newOrder, {
+      await api.post("/tasks/order", newOrder, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOrderMode("manual");

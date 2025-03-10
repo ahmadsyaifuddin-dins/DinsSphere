@@ -82,7 +82,7 @@ const EditTugasKuliah = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `https://dins-sphere-backend.vercel.app/api/tasks/${id}`,
+        `http://localhost:5000/api/tasks/${id}`,
         payload,
         {
           headers: { Authorization: `Bearer ${token}` },
