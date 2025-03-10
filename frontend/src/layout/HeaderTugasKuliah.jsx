@@ -15,8 +15,8 @@ const HeaderTugasKuliah = ({
         </h1>
         <p className="text-gray-300 text-sm sm:text-lg">
           {isAdmin
-            ? "Kelola dan lihat semua Tugas Kuliah Kamu"
-            : "Lihat semua Tugas Kuliah Syaifuddin"}
+            ? "Kelola semua Tugas Kuliah Semester 6"
+            : "Lihat semua Tugas Kuliah Semester 6"}
         </p>
       </div>
       <div className="flex flex-wrap items-center gap-3 justify-center md:justify-end">
