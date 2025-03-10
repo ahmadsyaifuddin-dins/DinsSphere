@@ -172,7 +172,7 @@ const ProjectList = ({
         initialProjects.map(async (project) => {
           try {
             const response = await axios.get(
-              `http://localhost:5000/api/viewProjects/${project._id}`
+              `https://dins-sphere-backend.vercel.app/api/viewProjects/${project._id}`
             );
             return { ...project, viewCount: response.data.count || 0 };
           } catch (error) {

@@ -1,7 +1,7 @@
 // services/taskService.js
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/tasks";
+const API_URL = "https://dins-sphere-backend.vercel.app/api/tasks";
 
 export const getTask = (id) => {
   return axios.get(`${API_URL}/${id}`);
