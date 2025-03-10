@@ -11,6 +11,7 @@ import TugasKuliahModal from "../components/tasks/TugasKuliahModal";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Swal from "sweetalert2";
+import DetailTugasKuliah from "./DetailTugasKuliah";
 
 const DashboardTugasKuliah = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -27,16 +28,56 @@ const DashboardTugasKuliah = () => {
 
   // Tambahin properti icon untuk tiap Mata Kuliah
   const mataKuliahOptions = [
-    { value: "FTI2006 Etika Profesi", label: "Etika Profesi", icon: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj8_3o93ELYEGvrnRZoe0pZa-Fwzs71vnSOeth5vyVkyMghqgmiq5pW4s49PwJxEtvJNUHC2MLPaElx2Daka9l_78puO9zNRZBYKt7syatoHanPqXpcL47lglnK2U1KkXFvEsBebzkHqobV/s700/ilustrasi+Kode+Etik+%2528sumber-+pelajaran.co.id%2529.jpg" },
-    { value: "MGU1007 Fiqih", label: "Fiqih", icon: "https://www.sinarbarualgensindo.com/wp-content/uploads/2020/06/IMG-20200612-WA0030.jpg" },
-    { value: "TIF3601 Jaringan Syaraf Tiruan", label: "Jaringan Syaraf Tiruan", icon: "https://www.unite.ai/wp-content/uploads/2019/08/artificial-neural-network-3501528_1280.png" },
-    { value: "TIF3602 Riset Operasi", label: "Riset Operasi", icon: "https://github.com/ahmad-syaifuddin/image-flow/blob/main/riset-operasi.png?raw=true" },
-    { value: "TIF3603 Sistem Penunjang Keputusan", label: "Sistem Penunjang Keputusan", icon: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgOE-HwaJq1mw9ftv0ymXQtYgy68wXNA6VLIC6MrZ8YrF71EbOtGRwIRtO8V7RmHcZPZRPWoqCuI3ZQ6NDksSbyR8BOVjwFPiLsNoPQLYkHVvE8ihFDiRNRykyMvvf65X0BDD7c77jBq_w/s1600/Sistem+Pendukung+Keputusan+(SPK).jpg" },
-    { value: "TIF3604 Keamanan Sistem Komputer", label: "Keamanan Sistem Komputer", icon: "https://mohsai.com/wp-content/uploads/2023/07/Apa-itu-Keamanan-Jaringan-Macam-dan-Contohnya-keamanan-jariangan-adalah-1536x864.jpg" },
-    { value: "TIF3605 Manajemen Perangkat Lunak", label: "Manajemen Perangkat Lunak", icon: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiVwLf7P1LyGO11oeNaIgTYEWdFg6piiykL_EnXIQMZhk-RkEDPH9LTML31EZRKJlbgyB1opgl-80KoToZMpZ-hj-6Mbk2C6eoyE3SYKzNDHyfRneofNw0nLcuxR9TxnH-kpgsTe0YwKYU/s320/Manajemen+Proyek+Konsep+1.jpg" },
-    { value: "TIF3606 Testing & Implementasi di Bidang TI", label: "Testing & Implementasi di Bidang TI", icon: "https://matheusrumetna.com/wp-content/uploads/2020/09/testing-sistem.png" },
-    { value: "TIF3607 Metodologi & Penelitian di Bidang TI", label: "Metodologi & Penelitian di Bidang TI", icon: "https://d1e4pidl3fu268.cloudfront.net/0d9f11d4-bfd3-4da5-9e47-2cf846004b6c/6676678542_quantitativedescriptiveresearchquantitativeresearchdesigncliparthd.crop_844x633_8,0.preview.png" },
-    { value: "TIF3609 Pengolahan Citra", label: "Pengolahan Citra", icon: "https://elearning2.be.bisa.ai/course/media/2022-08-14_140142_course.png" },
+    {
+      value: "FTI2006 Etika Profesi",
+      label: "Etika Profesi",
+      icon: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj8_3o93ELYEGvrnRZoe0pZa-Fwzs71vnSOeth5vyVkyMghqgmiq5pW4s49PwJxEtvJNUHC2MLPaElx2Daka9l_78puO9zNRZBYKt7syatoHanPqXpcL47lglnK2U1KkXFvEsBebzkHqobV/s700/ilustrasi+Kode+Etik+%2528sumber-+pelajaran.co.id%2529.jpg",
+    },
+    {
+      value: "MGU1007 Fiqih",
+      label: "Fiqih",
+      icon: "https://www.sinarbarualgensindo.com/wp-content/uploads/2020/06/IMG-20200612-WA0030.jpg",
+    },
+    {
+      value: "TIF3601 Jaringan Syaraf Tiruan",
+      label: "Jaringan Syaraf Tiruan",
+      icon: "https://www.unite.ai/wp-content/uploads/2019/08/artificial-neural-network-3501528_1280.png",
+    },
+    {
+      value: "TIF3602 Riset Operasi",
+      label: "Riset Operasi",
+      icon: "https://github.com/ahmad-syaifuddin/image-flow/blob/main/riset-operasi.png?raw=true",
+    },
+    {
+      value: "TIF3603 Sistem Penunjang Keputusan",
+      label: "Sistem Penunjang Keputusan",
+      icon: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgOE-HwaJq1mw9ftv0ymXQtYgy68wXNA6VLIC6MrZ8YrF71EbOtGRwIRtO8V7RmHcZPZRPWoqCuI3ZQ6NDksSbyR8BOVjwFPiLsNoPQLYkHVvE8ihFDiRNRykyMvvf65X0BDD7c77jBq_w/s1600/Sistem+Pendukung+Keputusan+(SPK).jpg",
+    },
+    {
+      value: "TIF3604 Keamanan Sistem Komputer",
+      label: "Keamanan Sistem Komputer",
+      icon: "https://mohsai.com/wp-content/uploads/2023/07/Apa-itu-Keamanan-Jaringan-Macam-dan-Contohnya-keamanan-jariangan-adalah-1536x864.jpg",
+    },
+    {
+      value: "TIF3605 Manajemen Perangkat Lunak",
+      label: "Manajemen Perangkat Lunak",
+      icon: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiVwLf7P1LyGO11oeNaIgTYEWdFg6piiykL_EnXIQMZhk-RkEDPH9LTML31EZRKJlbgyB1opgl-80KoToZMpZ-hj-6Mbk2C6eoyE3SYKzNDHyfRneofNw0nLcuxR9TxnH-kpgsTe0YwKYU/s320/Manajemen+Proyek+Konsep+1.jpg",
+    },
+    {
+      value: "TIF3606 Testing & Implementasi di Bidang TI",
+      label: "Testing & Implementasi di Bidang TI",
+      icon: "https://matheusrumetna.com/wp-content/uploads/2020/09/testing-sistem.png",
+    },
+    {
+      value: "TIF3607 Metodologi & Penelitian di Bidang TI",
+      label: "Metodologi & Penelitian di Bidang TI",
+      icon: "https://d1e4pidl3fu268.cloudfront.net/0d9f11d4-bfd3-4da5-9e47-2cf846004b6c/6676678542_quantitativedescriptiveresearchquantitativeresearchdesigncliparthd.crop_844x633_8,0.preview.png",
+    },
+    {
+      value: "TIF3609 Pengolahan Citra",
+      label: "Pengolahan Citra",
+      icon: "https://elearning2.be.bisa.ai/course/media/2022-08-14_140142_course.png",
+    },
   ];
 
   useEffect(() => {
@@ -58,24 +99,23 @@ const DashboardTugasKuliah = () => {
   };
 
   const processedTasks = tugasKuliah
-  .filter((task) =>
-    (task.namaTugas.toLowerCase().includes(filterText.toLowerCase()) ||
-      task.mataKuliah.toLowerCase().includes(filterText.toLowerCase()) ||
-      task.deskripsiTugas.toLowerCase().includes(filterText.toLowerCase())
+    .filter(
+      (task) =>
+        task.namaTugas.toLowerCase().includes(filterText.toLowerCase()) ||
+        task.mataKuliah.toLowerCase().includes(filterText.toLowerCase()) ||
+        task.deskripsiTugas.toLowerCase().includes(filterText.toLowerCase())
     )
-  )
-  .sort((a, b) => {
-    if (orderMode === "manual") {
-      // Manual mode: gunakan field order (pastikan field order di-update saat drag)
-      return sortOrder === "newest" ? a.order - b.order : b.order - a.order;
-    } else {
-      // Auto mode: urutkan berdasarkan tanggal terbaru
-      const dateA = new Date(a.createdAt || a.tanggalDiberikan || 0);
-      const dateB = new Date(b.createdAt || b.tanggalDiberikan || 0);
-      return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
-    }
-  });
-  
+    .sort((a, b) => {
+      if (orderMode === "manual") {
+        // Manual mode: gunakan field order (pastikan field order di-update saat drag)
+        return sortOrder === "newest" ? a.order - b.order : b.order - a.order;
+      } else {
+        // Auto mode: urutkan berdasarkan tanggal terbaru
+        const dateA = new Date(a.createdAt || a.tanggalDiberikan || 0);
+        const dateB = new Date(b.createdAt || b.tanggalDiberikan || 0);
+        return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
+      }
+    });
 
   const viewTaskDetail = (id) => {
     navigate(`/DetailTugasKuliah/${id}`);
@@ -208,7 +248,9 @@ const DashboardTugasKuliah = () => {
         {/* Tugas Count */}
         <div className="mb-4 mt-2 flex justify-between items-center">
           <div className="px-3 py-1.5 bg-blue-500/20 text-blue-400 border border-blue-500 rounded-lg">
-            <span className="font-medium">Total Tugas: {tugasKuliah.length}</span>
+            <span className="font-medium">
+              Total Tugas: {tugasKuliah.length}
+            </span>
           </div>
         </div>
 
@@ -231,9 +273,11 @@ const DashboardTugasKuliah = () => {
         {isLoading ? (
           <div className="text-center py-8 text-gray-400">Loading tasks...</div>
         ) : processedTasks.length === 0 ? (
-          <div className="text-center py-8 text-gray-400">Coming Soon on 10 Maret 2025!</div>
-          // <div className="text-center py-8 text-gray-400">No tasks found. Try refreshing.</div>
-        ) : viewMode === "list" ? (
+          <div className="text-center py-8 text-gray-400">
+            Coming Soon on 10 Maret 2025!
+          </div>
+        ) : // <div className="text-center py-8 text-gray-400">No tasks found. Try refreshing.</div>
+        viewMode === "list" ? (
           <TugasKuliahList
             tasks={processedTasks}
             getStatusColorClass={getStatusColorClass}
@@ -247,17 +291,17 @@ const DashboardTugasKuliah = () => {
           />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-          {processedTasks.map((task) => (
-            <TugasKuliahCard
-              key={task._id}
-              task={task}
-              viewTaskDetail={viewTaskDetail}
-              handleEdit={handleEdit}
-              handleDelete={handleDelete}
-              isAdmin={isAdmin}
-            />
-          ))}
-        </div>
+            {processedTasks.map((task) => (
+              <TugasKuliahCard
+                key={task._id}
+                task={task}
+                viewTaskDetail={viewTaskDetail}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+                isAdmin={isAdmin}
+              />
+            ))}
+          </div>
         )}
       </div>
 

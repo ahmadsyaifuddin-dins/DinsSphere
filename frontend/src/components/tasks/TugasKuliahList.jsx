@@ -1,6 +1,14 @@
 import React, { useState, useCallback, useEffect } from "react";
 
-import { SortAsc, Eye, Edit, Trash2, GripVertical } from "lucide-react";
+import {
+  SortAsc,
+  Eye,
+  Edit,
+  Trash2,
+  GripVertical,
+  Check,
+  X,
+} from "lucide-react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import axios from "axios";
@@ -15,6 +23,7 @@ const DraggableRow = ({
   viewTaskDetail,
   handleEdit,
   handleDelete,
+  handleToggleCompletion,
   isAdmin,
   mataKuliahOptions, // Diterima untuk lookup icon
 }) => {
@@ -156,6 +165,27 @@ const DraggableRow = ({
           </button>
           {isAdmin && (
             <>
+              {/* Tombol toggle completion */}
+              <button
+                className={`text-gray-400 focus:outline-none p-1 cursor-pointer ${
+                  task.tanggalSelesai
+                    ? "hover:text-red-500"
+                    : "hover:text-green-500"
+                }`}
+                onClick={() => handleToggleCompletion(task)}
+                title={
+                  task.tanggalSelesai
+                    ? "Tandai Belum Selesai"
+                    : "Tandai Selesai"
+                }
+              >
+                {task.tanggalSelesai ? (
+                  <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                ) : (
+                  <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+                )}
+              </button>
+
               <button
                 onClick={() => handleEdit(task)}
                 className="text-gray-400 hover:text-yellow-500 focus:outline-none p-1 cursor-pointer"
@@ -239,6 +269,43 @@ const TugasKuliahList = ({
     }
   }, [onOrderChange, tasks]);
 
+  // Fungsi untuk toggle status tugas selesai
+  const toggleCompletion = async (task) => {
+    const taskIndex = tasks.findIndex((t) => t._id === task._id);
+    if (taskIndex === -1) return;
+
+    const previousTask = tasks[taskIndex];
+    const optimisticTask = {
+      ...previousTask,
+      tanggalSelesai: previousTask.tanggalSelesai
+        ? null
+        : new Date().toISOString(),
+      statusTugas: previousTask.tanggalSelesai ? "Belum Dikerjakan" : "Selesai",
+    };
+
+    const updatedTasks = [...tasks];
+    updatedTasks[taskIndex] = optimisticTask;
+    setTasks(updatedTasks);
+
+    try {
+      const updatedData = {
+        tanggalSelesai: optimisticTask.tanggalSelesai,
+        statusTugas: optimisticTask.statusTugas,
+      };
+      // Pastikan endpoint ini sesuai dengan API kamu
+      await axios.patch(
+        `https://dins-sphere-backend.vercel.app/api/tasks/${task._id}/complete`,
+        updatedData
+      );
+    } catch (error) {
+      console.error("Gagal memperbarui status tugas:", error);
+      alert("Gagal memperbarui status tugas");
+      // Revert optimistic update
+      updatedTasks[taskIndex] = previousTask;
+      setTasks(updatedTasks);
+    }
+  };
+
   return (
     <DndProvider backend={HTML5Backend}>
       <div className="overflow-x-auto relative shadow-md sm:rounded-lg">
@@ -282,6 +349,7 @@ const TugasKuliahList = ({
                   viewTaskDetail={viewTaskDetail}
                   handleEdit={handleEdit}
                   handleDelete={handleDelete}
+                  handleToggleCompletion={toggleCompletion} // pass fungsi toggle completion
                   isAdmin={isAdmin}
                   mataKuliahOptions={mataKuliahOptions}
                 />

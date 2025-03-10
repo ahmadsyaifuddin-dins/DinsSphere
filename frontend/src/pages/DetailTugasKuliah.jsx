@@ -13,8 +13,10 @@ import {
   toggleTaskCompletion,
 } from "../services/taskService";
 import Swal from "sweetalert2";
+import { Save } from "lucide-react";
 
 const DetailTugasKuliah = () => {
+  const [isAdmin, setIsAdmin] = useState(!!localStorage.getItem("token"));
   const { id } = useParams();
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -486,6 +488,8 @@ const DetailTugasKuliah = () => {
 
             {/* Action buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mt-8">
+            {isAdmin && (
+              <>
               <Link
                 to={`/editTugasKuliah/${id}`}
                 className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-xl font-medium flex items-center justify-center transition-all duration-300 shadow-lg shadow-blue-900/20"
@@ -540,6 +544,8 @@ const DetailTugasKuliah = () => {
                 </svg>
                 Hapus Tugas
               </button>
+                </>
+            )}
             </div>
 
             {/* Notes section */}
@@ -556,14 +562,7 @@ const DetailTugasKuliah = () => {
                     className="cursor-pointer absolute right-3 bottom-3 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-all duration-300"
                     onClick={() => alert("Simpan catatan belum berfungsi")}
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h1a2 2 0 012 2v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h1v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z" />
-                    </svg>
+                    <Save className="w-5 h-5" />
                   </button>
                 </div>
               </div>

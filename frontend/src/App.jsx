@@ -9,15 +9,7 @@ import EditTugasKuliah from './components/tasks/EditTugasKuliah';
 import Navbar from "./components/Navbar";
 
 function App() {
-  const navigate = useNavigate();
-  // Deklarasikan token di sini, ambil dari localStorage
   const token = localStorage.getItem("token");
-
-  useEffect(() => {
-    if (!token) {
-      navigate("/login"); // Redirect ke login kalau token tidak ada
-    }
-  }, [token, navigate]);
 
   return (
     <>
