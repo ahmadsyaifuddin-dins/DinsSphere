@@ -274,7 +274,7 @@ const DashboardTugasKuliah = () => {
           <div className="text-center py-8 text-gray-400">Loading tasks...</div>
         ) : processedTasks.length === 0 ? (
           <div className="text-center py-8 text-gray-400">
-            Coming Soon on 10 Maret 2025!
+            Coming Soon on 8 or 14 Apr 2025!
           </div>
         ) : // <div className="text-center py-8 text-gray-400">No tasks found. Try refreshing.</div>
         viewMode === "list" ? (
