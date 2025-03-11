@@ -13,7 +13,12 @@ import ViewMode from "../components/ViewMode";
 import HeaderProject from "../layout/HeaderProject";
 import api from "../services/api";
 import Swal from "sweetalert2";
-import { getProgressColorClass, getStatusProjectColorClass, projectTypes, projectStatuses } from "../utils/helpers";
+import {
+  getProgressColorClass,
+  getStatusProjectColorClass,
+  projectTypes,
+  projectStatuses,
+} from "../utils/helpers";
 
 // Import komponen baru
 import ProjectFilters from "../components/ProjectFilters";
@@ -28,49 +33,21 @@ const Dashboard = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [viewMode, setViewMode] = useState("list");
   const [projectToEdit, setProjectToEdit] = useState(null);
-  const [sortOrder, setSortOrder] = useState("newest"); 
+  const [sortOrder, setSortOrder] = useState("newest");
   const [orderMode, setOrderMode] = useState("manual");
-  
+  const [totalProjects, setTotalProjects] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   // State untuk filter tipe dan status
-  const [selectedType, setSelectedType] = useState("");    // "" artinya semua
+  const [selectedType, setSelectedType] = useState(""); // "" artinya semua
   const [selectedStatus, setSelectedStatus] = useState(""); // "" artinya semua
-  
+
   // State untuk pagination
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15; // Tampilkan 15 data per halaman
   const navigate = useNavigate();
 
-  // Sorting & Filtering
-  const processedProjects = projects
-    .filter((project) => {
-      // Filter berdasarkan text
-      const matchText = project.title
-        .toLowerCase()
-        .includes(filterText.toLowerCase());
-
-      // Filter berdasarkan tipe (jika ada pilihan)
-      const matchType = !selectedType || project.type === selectedType;
-
-      // Filter berdasarkan status (jika ada pilihan)
-      const matchStatus = !selectedStatus || project.status === selectedStatus;
-
-      return matchText && matchType && matchStatus;
-    })
-    .sort((a, b) => {
-      if (orderMode === "manual") {
-        return sortOrder === "newest" ? a.order - b.order : b.order - a.order;
-      } else {
-        const dateA = new Date(a.createdAt || a.startDate || 0);
-        const dateB = new Date(b.createdAt || b.startDate || 0);
-        return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
-      }
-    });
-
-  // Hitung total halaman & potong data sesuai halaman
-  const totalPages = Math.ceil(processedProjects.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedProjects = processedProjects.slice(startIndex, endIndex);
+  // Karena API sudah menghandle filtering, kita cukup gunakan data dari backend
+  const displayedProjects = projects;
 
   // Reset halaman ke 1 saat filter berubah
   useEffect(() => {
@@ -81,31 +58,37 @@ const Dashboard = () => {
     fetchProjects();
     const token = localStorage.getItem("token");
     setIsAdmin(!!token);
-  }, []);
+  }, [selectedType, selectedStatus, filterText, currentPage, sortOrder]);
 
   const fetchProjects = async () => {
     try {
       setIsLoading(true);
-      const res = await axios.get("https://dins-sphere-backend.vercel.app/api/projects", {
-        params: {
-          type: selectedType,     // pastikan lo kirim param
-          status: selectedStatus,
-          search: filterText,
-          page: currentPage,
-          limit: itemsPerPage,
-          sortOrder: sortOrder,
-        },
-      });
-      console.log("API Response:", res.data);
-      setProjects(res.data || []);
+      const res = await axios.get(
+        "https://dins-sphere-backend.vercel.app/api/projects",
+        {
+          params: {
+            type: selectedType,
+            status: selectedStatus,
+            search: filterText,
+            page: currentPage,
+            limit: itemsPerPage,
+            sortOrder: sortOrder,
+          },
+        }
+      );
+      const data = res.data;
+      console.log("API Response:", data);
+      // Simpan data yang sudah dipaginasi dari backend
+      setProjects(data.projects || []);
+      setTotalProjects(data.totalProjects || 0);
+      setTotalPages(data.totalPages || 1);
+      // Jangan update currentPage dari response agar tidak menimpa state
     } catch (err) {
       console.error("Error fetching projects:", err);
     } finally {
       setIsLoading(false);
     }
   };
-  
-  
 
   const viewProjectDetail = (id) => {
     navigate(`/projectDetail/${id}`);
@@ -175,7 +158,6 @@ const Dashboard = () => {
     }
   };
 
-  // Drag & Drop reorder
   const handleOrderChange = async (newOrder) => {
     try {
       const token = localStorage.getItem("token");
@@ -227,9 +209,7 @@ const Dashboard = () => {
         {/* Project Count Section */}
         <div className="mb-4 mt-2 flex justify-between items-center">
           <div className="px-3 py-1.5 bg-blue-500/20 text-blue-400 border border-blue-500 rounded-lg">
-            <span className="font-medium">
-              Total Projects: {projects.length}
-            </span>
+            <span className="font-medium">Total Projects: {totalProjects}</span>
           </div>
         </div>
 
@@ -263,13 +243,13 @@ const Dashboard = () => {
         {/* Render Projects */}
         {isLoading ? (
           <ProjectListSkeleton />
-        ) : paginatedProjects.length === 0 ? (
+        ) : displayedProjects.length === 0 ? (
           <div className="text-center py-8 text-gray-400">
             No projects found. Please try refreshing the page.
           </div>
         ) : viewMode === "list" ? (
           <ProjectList
-            projects={paginatedProjects}
+            projects={displayedProjects}
             getStatusProjectColorClass={getStatusProjectColorClass}
             getProgressColorClass={getProgressColorClass}
             viewProjectDetail={viewProjectDetail}
@@ -280,7 +260,7 @@ const Dashboard = () => {
           />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {paginatedProjects.map((project) => (
+            {displayedProjects.map((project) => (
               <ProjectCard
                 key={project._id}
                 project={project}
@@ -291,7 +271,7 @@ const Dashboard = () => {
         )}
 
         {/* Komponen Pagination */}
-        {!isLoading && processedProjects.length > 0 && (
+        {!isLoading && totalProjects > 0 && (
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
