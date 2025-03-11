@@ -1,60 +1,8 @@
 import React from "react";
 import { Calendar, Code, ExternalLink, GitBranch, Clock, Award, ArrowRight } from "lucide-react";
+import { getCardBackground, getProgressColorClass, getStatusProjectColorClass, formatDate } from "../../utils/helpers";
 
 const ProjectCard = ({ project, viewProjectDetail }) => {
-  // Format tanggal dengan lebih bersih
-  const formatDate = (dateString) => {
-    if (!dateString) return "Belum ditentukan";
-    return new Intl.DateTimeFormat("id-ID", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    }).format(new Date(dateString));
-  };
-
-  // Fungsi untuk mendapatkan warna yang tepat untuk progress bar
-  const getProgressColor = (progress) => {
-    if (progress < 30) return "from-red-500 to-pink-500";
-    if (progress < 70) return "from-amber-500 to-orange-500";
-    return "from-emerald-500 to-green-500";
-  };
-
-  // Function to determine status badge style
-  const getStatusColorClass = (status) => {
-    const statusStyles = {
-      "In Progress": "bg-blue-500/20 text-blue-400 border-blue-500",
-      "Done": "bg-green-500/20 text-green-400 border-green-500",
-      "Backlog": "bg-purple-500/20 text-purple-400 border-purple-500",
-      "Paused": "bg-red-500/20 text-red-400 border-red-500",
-      "Planning": "bg-indigo-500/20 text-indigo-400 border-indigo-600"
-    };
-
-    return statusStyles[status] || "bg-gray-500/20 text-gray-400 border-gray-500";
-  };
-
-  // Tentukan warna card berdasarkan tipe project
-  const getCardBackground = (type) => {
-    switch (type?.toLowerCase()) {
-      case "website":
-        return "from-indigo-900/40 to-indigo-950/40";
-      case "web application":
-        return "from-cyan-900/40 to-cyan-950/40";
-      case "mobile application":
-        return "from-emerald-900/40 to-emerald-950/40";
-      case "desktop application":
-        return "from-emerald-900/40 to-emerald-950/40";
-      case "artificial intelligence":
-        return "from-violet-900/40 to-violet-950/40";
-      case "data science":
-        return "from-violet-900/40 to-violet-950/40";
-      case "bot chat":
-        return "from-violet-900/40 to-violet-950/40";
-      case "game":
-        return "from-pink-900/40 to-pink-950/40";
-      default:
-        return "from-slate-800 to-slate-900";
-    }
-  };
 
   return (
     <div className={`rounded-xl overflow-hidden shadow-lg transition duration-300 transform hover:-translate-y-1 hover:shadow-2xl bg-gradient-to-br ${getCardBackground(project.type)}`}>
@@ -75,7 +23,7 @@ const ProjectCard = ({ project, viewProjectDetail }) => {
         
         {/* Status badge yang menonjol di thumbnail */}
         <div className="absolute top-3 right-3">
-          <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColorClass ? getStatusColorClass(project.status) : "bg-blue-500/20 text-blue-400 border-blue-600"}`}>
+          <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusProjectColorClass(project.status)}`}>
             {project.status}
           </span>
         </div>
@@ -114,7 +62,7 @@ const ProjectCard = ({ project, viewProjectDetail }) => {
           </div>
           <div className="w-full h-2 bg-gray-700 rounded-full overflow-hidden">
             <div
-              className={`h-full rounded-full bg-gradient-to-r ${getProgressColor(project.progress)}`}
+              className={`h-full rounded-full bg-gradient-to-r ${getProgressColorClass(project.progress)}`}
               style={{ width: `${project.progress}%` }}
             ></div>
           </div>

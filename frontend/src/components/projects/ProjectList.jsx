@@ -10,7 +10,7 @@ const DraggableRow = ({
   index, 
   moveRow, 
   onDragEnd, // callback tambahan untuk drag end
-  getStatusColorClass, 
+  getStatusProjectColorClass, 
   getProgressColorClass,
   viewProjectDetail,
   handleEdit,
@@ -96,7 +96,7 @@ const DraggableRow = ({
       </td>
       <td className="py-2 px-3 sm:py-4 sm:px-6 max-w-xs truncate md:table-cell">
         <span
-          className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColorClass(project.status)} border whitespace-nowrap`}
+          className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusProjectColorClass(project.status)} border whitespace-nowrap`}
         >
           {project.status}
         </span>
@@ -150,7 +150,7 @@ const DraggableRow = ({
 
 const ProjectList = ({ 
   projects: initialProjects, 
-  getStatusColorClass, 
+  getStatusProjectColorClass, 
   getProgressColorClass, 
   viewProjectDetail, 
   handleEdit, 
@@ -233,7 +233,7 @@ const ProjectList = ({
                   index={index}
                   moveRow={moveRow}
                   onDragEnd={handleDragEnd}
-                  getStatusColorClass={getStatusColorClass}
+                  getStatusProjectColorClass={getStatusProjectColorClass}
                   getProgressColorClass={getProgressColorClass}
                   viewProjectDetail={viewProjectDetail}
                   handleEdit={handleEdit}

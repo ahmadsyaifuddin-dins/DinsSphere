@@ -1,4 +1,6 @@
 // utils/helpers.js
+
+// Function to determine status Kuliah badge class (detail page)
 export const getStatusBadgeClass = (status) => {
     const statusConfig = {
       "Belum Dikerjakan": "bg-red-500",
@@ -10,7 +12,17 @@ export const getStatusBadgeClass = (status) => {
     };
     return statusConfig[status] || "bg-gray-500";
   };
+
+   // Function to determine progress Tugas Kuliah color class
+   export const getProgressColorClass = (progress) => {
+    if (progress >= 80) return "bg-emerald-500"; // Hijau untuk progress baik (>=80%)
+    if (progress >= 60) return "bg-green-500";   // Hijau muda untuk progress cukup baik (60-79%)
+    if (progress >= 40) return "bg-amber-500";   // Kuning untuk progress menengah (40-59%)
+    if (progress >= 20) return "bg-orange-500";  // Oranye untuk progress rendah (20-39%)
+    return "bg-rose-500";                        // Merah untuk progress sangat rendah (<20%)
+  };
   
+  // Function to determine status Tugas Kuliah color (Background color, Text Color, Border Color) class
   export const getStatusColorClass = (status) => {
     switch (status) {
       case "Belum Dikerjakan":
@@ -24,14 +36,87 @@ export const getStatusBadgeClass = (status) => {
       default:
         return "bg-gray-500/20 text-gray-400 border-gray-600";
     }
-  };  
-
-  export const getProgressColorClass = (progress) => {
-    if (progress >= 80) return "bg-emerald-500";
-    if (progress >= 50) return "bg-amber-500";
-    return "bg-rose-500";
-  };
+  }; 
   
+  // Function to determine status Project color (Background color, Text Color, Border Color) class
+  export const getStatusProjectColorClass = (status) => {
+    switch (status) {
+      case "Done":
+        return "bg-emerald-500/20 text-emerald-400 border-emerald-600";
+      case "In Progress":
+        return "bg-blue-500/20 text-blue-400 border-blue-500";
+      case "Paused":
+        return "bg-red-500/20 text-red-400 border-red-500";
+      case "Backlog":
+        return "bg-purple-500/20 text-purple-400 border-purple-500";
+      case "Developing":
+        return "bg-teal-500/20 text-teal-400 border-teal-600";
+      case "Cancelled":
+        return "bg-red-500/20 text-red-400 border-red-600";
+      case "Planning":
+        return "bg-indigo-500/20 text-indigo-400 border-indigo-600";
+      default:
+        return "bg-gray-500/20 text-gray-400 border-gray-600";
+    }
+  };
+
+  // Format tanggal dengan lebih bersih
+  export const formatDate = (dateString) => {
+    if (!dateString) return "Belum ditentukan";
+    return new Intl.DateTimeFormat("id-ID", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    }).format(new Date(dateString));
+  };
+
+  // Tentukan warna card berdasarkan tipe project
+  export const getCardBackground = (type) => {
+    switch (type?.toLowerCase()) {
+      case "website":
+        return "from-indigo-900/40 to-indigo-950/40";
+      case "web application":
+        return "from-cyan-900/40 to-cyan-950/40";
+      case "mobile application":
+        return "from-emerald-900/40 to-emerald-950/40";
+      case "desktop application":
+        return "from-emerald-900/40 to-emerald-950/40";
+      case "artificial intelligence":
+        return "from-violet-900/40 to-violet-950/40";
+      case "data science":
+        return "from-violet-900/40 to-violet-950/40";
+      case "bot chat":
+        return "from-violet-900/40 to-violet-950/40";
+      case "game":
+        return "from-pink-900/40 to-pink-950/40";
+      default:
+        return "from-slate-800 to-slate-900";
+    }
+  };
+
+  // List tipe dan status (opsional, bisa diatur sesuai kebutuhan)
+  export const projectTypes = [
+    "",
+    "Website",
+    "Web Application",
+    "Mobile Application",
+    "Desktop Application",
+    "Artificial Intelligence",
+    "Data Science",
+    "Bot Chat",
+    "Game",
+  ];
+
+  export const projectStatuses = [
+    "",
+    "Done",
+    "Paused",
+    "Planning",
+    "In Progress",
+    "Backlog",
+  ];
+  
+  // Function to determine remaining days
   export const getRemainingDays = (deadline) => {
     if (!deadline) return null;
     const today = new Date();
