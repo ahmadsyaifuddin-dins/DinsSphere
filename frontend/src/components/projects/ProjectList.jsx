@@ -65,15 +65,10 @@ const DraggableRow = ({
       style={{ opacity }}
       className={`border-b border-gray-700 ${
         index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"
-      } hover:bg-gray-700 transition-colors duration-150 cursor-move`}
+      } hover:bg-slate-950 transition-colors duration-150`}
     >
       <td className="py-2 px-3 sm:py-4 sm:px-6">
         <div className="flex items-center space-x-2 sm:space-x-3">
-          {isAdmin && (
-            <div className="text-gray-400 flex-shrink-0 mr-1">
-              <GripVertical className="w-4 h-4 sm:w-5 sm:h-5" />
-            </div>
-          )}
           <div className={`flex-shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full ${project.icon ? "" : "bg-gradient-to-br from-blue-500 to-indigo-600"} flex items-center justify-center text-white font-bold`}>
             {project.icon ? (
               <img src={project.icon} alt={project.title} className="w-full h-full rounded-full object-cover" />

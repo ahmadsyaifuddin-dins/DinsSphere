@@ -86,7 +86,7 @@ const DraggableRow = ({
       style={{ opacity }}
       className={`border-b border-gray-700 ${
         index % 2 === 0 ? "bg-gray-800" : "bg-gray-900"
-      } hover:bg-gray-700 transition-colors duration-150 cursor-move`}
+      } hover:bg-slate-950 transition-colors duration-150 cursor-move`}
     >
       <td className="py-2 px-3 sm:py-4 sm:px-6">
         <div className="flex items-center space-x-2 sm:space-x-3">
