@@ -11,9 +11,8 @@ import TugasKuliahModal from "../components/tasks/TugasKuliahModal";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Swal from "sweetalert2";
-import DetailTugasKuliah from "./DetailTugasKuliah";
-import ProjectListSkeleton from "../loader/ProjectListSkeleton";
 import { getProgressColorClass, getStatusColorClass, mataKuliahOptions } from "../utils/helpers";
+import TugasListSkeleton from "../loader/TugasListSkeleton";
 
 const DashboardTugasKuliah = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -198,7 +197,7 @@ const DashboardTugasKuliah = () => {
 
         {/* Render Tasks */}
         {isLoading ? (
-          <ProjectListSkeleton />
+          <TugasListSkeleton />
         ) : processedTasks.length === 0 ? (
           <div className="text-center py-8 text-gray-400">
             Coming Soon on 8 or 14 Apr 2025!
