@@ -20,35 +20,49 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
   );
   const [progress, setProgress] = useState(task ? task.progress || 0 : 0);
   const [statusTugas, setStatusTugas] = useState(task ? task.statusTugas || "Belum Dikerjakan" : "Belum Dikerjakan");
+  const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e) => {
-  e.preventDefault();
-  
-  const tanggalDiberikan =
-    tanggalDiberikanDate && tanggalDiberikanTime
-      ? `${tanggalDiberikanDate}T${tanggalDiberikanTime}:00`
-      : null;  // Jika kosong, set null
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Set loading state to true when the save button is clicked
+    setIsLoading(true);
+    
+    const tanggalDiberikan =
+      tanggalDiberikanDate && tanggalDiberikanTime
+        ? `${tanggalDiberikanDate}T${tanggalDiberikanTime}:00`
+        : null;  // Jika kosong, set null
 
-  const tanggalDeadline =
-    tanggalDeadlineDate && tanggalDeadlineTime
-      ? `${tanggalDeadlineDate}T${tanggalDeadlineTime}:00`
-      : null; // Jika kosong, set null
+    const tanggalDeadline =
+      tanggalDeadlineDate && tanggalDeadlineTime
+        ? `${tanggalDeadlineDate}T${tanggalDeadlineTime}:00`
+        : null; // Jika kosong, set null
 
-  const formData = {
-    gambaranTugas: gambaranTugas ? gambaranTugas : null, // ubah string kosong ke null
-    mataKuliah,
-    namaTugas,
-    deskripsiTugas,
-    tingkatKesulitan: tingkatKesulitan ? tingkatKesulitan : "Not Available",
-    tanggalDiberikan,
-    tanggalDeadline,
-    progress: progress ? Number(progress) : 0,
-    statusTugas,
+    const formData = {
+      gambaranTugas: gambaranTugas ? gambaranTugas : null, // ubah string kosong ke null
+      mataKuliah,
+      namaTugas,
+      deskripsiTugas,
+      tingkatKesulitan: tingkatKesulitan ? tingkatKesulitan : "Not Available",
+      tanggalDiberikan,
+      tanggalDeadline,
+      progress: progress ? Number(progress) : 0,
+      statusTugas,
+    };
+    
+    try {
+      // Wait for onSave to complete (assuming it returns a Promise)
+      await onSave(formData);
+      // If onSave doesn't return a Promise, you can remove the await keyword
+    } catch (error) {
+      console.error("Error saving task:", error);
+    } finally {
+      // Set loading state back to false after save operation completes
+      setIsLoading(false);
+    }
   };
-  onSave(formData);
-};
 
   const inputClasses =
     "w-full p-3 rounded-lg bg-[#121212] text-[#F4F4F8] border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:outline-none transition-colors";
@@ -255,14 +269,26 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
             type="button"
             onClick={onClose}
             className="px-6 py-2.5 rounded-lg bg-gray-700 hover:bg-gray-600 transition-colors duration-200 cursor-pointer"
+            disabled={isLoading}
           >
             Batal
           </button>
           <button
             onClick={handleSubmit}
-            className="px-6 py-2.5 rounded-lg bg-[#3A86FF] hover:bg-blue-500 transition-colors duration-200 cursor-pointer"
+            disabled={isLoading}
+            className="px-6 py-2.5 rounded-lg bg-[#3A86FF] hover:bg-blue-500 transition-colors duration-200 cursor-pointer flex items-center justify-center"
           >
-            Simpan
+            {isLoading ? (
+              <>
+                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Menyimpan...
+              </>
+            ) : (
+              "Simpan"
+            )}
           </button>
         </div>
       </div>
