@@ -3,9 +3,6 @@ const express = require("express");
 const router = express.Router();
 const Project = require("../models/Project");
 const verifyAdmin = require("../middleware/verifyAdmin");
-const projectController = require('../controllers/projectController');
-
-router.post('/reorder', verifyAdmin, projectController.reorderProjects);
 
 // GET semua project dengan filtering, sorting & pagination
 router.get("/", async (req, res) => {
