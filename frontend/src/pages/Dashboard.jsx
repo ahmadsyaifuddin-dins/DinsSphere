@@ -86,14 +86,26 @@ const Dashboard = () => {
   const fetchProjects = async () => {
     try {
       setIsLoading(true);
-      const res = await axios.get("https://dins-sphere-backend.vercel.app/api/projects");
-      setProjects(res.data);
+      const res = await axios.get("https://dins-sphere-backend.vercel.app/api/projects", {
+        params: {
+          type: selectedType,     // pastikan lo kirim param
+          status: selectedStatus,
+          search: filterText,
+          page: currentPage,
+          limit: itemsPerPage,
+          sortOrder: sortOrder,
+        },
+      });
+      console.log("API Response:", res.data);
+      setProjects(res.data || []);
     } catch (err) {
       console.error("Error fetching projects:", err);
     } finally {
       setIsLoading(false);
     }
   };
+  
+  
 
   const viewProjectDetail = (id) => {
     navigate(`/projectDetail/${id}`);
