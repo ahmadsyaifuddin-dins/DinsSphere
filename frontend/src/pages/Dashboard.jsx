@@ -14,7 +14,7 @@ import api from "../services/api";
 import Swal from "sweetalert2";
 
 const Dashboard = () => {
-  const [isLoading, setIsLoading] = useState(true); // Add loading state
+  const [isLoading, setIsLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [filterText, setFilterText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,15 +22,36 @@ const Dashboard = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [viewMode, setViewMode] = useState("list");
   const [projectToEdit, setProjectToEdit] = useState(null);
-  const [sortOrder, setSortOrder] = useState("newest"); // "newest" atau "oldest"
-  const [orderMode, setOrderMode] = useState("manual"); // pakai mode manual sebagai default
+  const [sortOrder, setSortOrder] = useState("newest"); 
+  const [orderMode, setOrderMode] = useState("manual");
   const navigate = useNavigate();
 
-  // Sorting: gunakan manual order (field order) dan toggle berdasarkan sortOrder
+  // === Baru: state untuk filter Tipe dan Status
+  const [selectedType, setSelectedType] = useState("");    // "" artinya semua
+  const [selectedStatus, setSelectedStatus] = useState(""); // "" artinya semua
+
+  // === Baru: pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15; // Tampilkan 15 data per halaman
+
+  // Sorting & Filtering
   const processedProjects = projects
-    .filter((project) =>
-      project.title.toLowerCase().includes(filterText.toLowerCase())
-    )
+    .filter((project) => {
+      // filter by text
+      const matchText = project.title
+        .toLowerCase()
+        .includes(filterText.toLowerCase());
+
+      // filter by type (jika selectedType diisi)
+      const matchType =
+        !selectedType || project.type === selectedType;
+
+      // filter by status (jika selectedStatus diisi)
+      const matchStatus =
+        !selectedStatus || project.status === selectedStatus;
+
+      return matchText && matchType && matchStatus;
+    })
     .sort((a, b) => {
       if (orderMode === "manual") {
         return sortOrder === "newest" ? a.order - b.order : b.order - a.order;
@@ -42,6 +63,17 @@ const Dashboard = () => {
       }
     });
 
+  // === Baru: hitung total halaman & potong data sesuai halaman
+  const totalPages = Math.ceil(processedProjects.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedProjects = processedProjects.slice(startIndex, endIndex);
+
+  // Reset page ke 1 kalau filter text, type, atau status berubah
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterText, selectedType, selectedStatus]);
+
   useEffect(() => {
     fetchProjects();
     const token = localStorage.getItem("token");
@@ -50,13 +82,13 @@ const Dashboard = () => {
 
   const fetchProjects = async () => {
     try {
-      setIsLoading(true); // Set loading to true before fetching
+      setIsLoading(true);
       const res = await axios.get("https://dins-sphere-backend.vercel.app/api/projects");
       setProjects(res.data);
     } catch (err) {
       console.error("Error fetching projects:", err);
     } finally {
-      setIsLoading(false); // Set loading to false after fetching
+      setIsLoading(false);
     }
   };
 
@@ -67,13 +99,9 @@ const Dashboard = () => {
   const addProject = async (newProject) => {
     try {
       const token = localStorage.getItem("token");
-      const res = await api.post(
-        "/projects",
-        newProject,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      const res = await api.post("/projects", newProject, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setProjects([res.data, ...projects]);
     } catch (err) {
       console.error("Error adding project:", err);
@@ -132,7 +160,7 @@ const Dashboard = () => {
     }
   };
 
-  // Fungsi untuk handle drag & drop reorder
+  // Drag & Drop reorder
   const handleOrderChange = async (newOrder) => {
     try {
       const token = localStorage.getItem("token");
@@ -149,7 +177,6 @@ const Dashboard = () => {
     }
   };
 
-  // Helper functions buat UI
   const getStatusColorClass = (status) => {
     switch (status) {
       case "Done":
@@ -193,6 +220,33 @@ const Dashboard = () => {
     }
   };
 
+  // === Baru: fungsi ganti halaman
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  // List status & type untuk dropdown (opsional, bisa kamu atur sesukamu)
+  const projectTypes = [
+    "",
+    "Website",
+    "Web Application",
+    "Mobile Application",
+    "Desktop Application",
+    "Artificial Intelligence",
+    "Data Science",
+    "Bot Chat",
+    "Game",
+  ];
+
+  const projectStatuses = [
+    "",
+    "Done",
+    "Paused",
+    "Planning",
+    "In Progress",
+    "Backlog",
+  ];
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100">
       <div className="max-w-8xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8">
@@ -219,6 +273,39 @@ const Dashboard = () => {
           <FilterSearch filterText={filterText} setFilterText={setFilterText} />
         </div>
 
+        {/* === Baru: Filter Tipe & Status */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          <select
+            value={selectedType}
+            onChange={(e) => {
+              setSelectedType(e.target.value);
+            }}
+            className="bg-gray-800 border border-gray-700 rounded px-2 py-1"
+          >
+            <option value="">All Types</option>
+            {projectTypes.map((typeOpt, idx) => (
+              <option key={idx} value={typeOpt}>
+                {typeOpt || "Semua"}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={selectedStatus}
+            onChange={(e) => {
+              setSelectedStatus(e.target.value);
+            }}
+            className="bg-gray-800 border border-gray-700 rounded px-2 py-1"
+          >
+            <option value="">All Status</option>
+            {projectStatuses.map((statusOpt, idx) => (
+              <option key={idx} value={statusOpt}>
+                {statusOpt || "Semua"}
+              </option>
+            ))}
+          </select>
+        </div>
+
         {/* Controls Section */}
         <div className="flex justify-between items-center mb-4">
           {/* Sort Order */}
@@ -226,7 +313,6 @@ const Dashboard = () => {
             sortOrder={sortOrder}
             setSortOrder={(val) => {
               setSortOrder(val);
-              // Tetap gunakan mode manual; toggle sort hanya membalik urutan
               setOrderMode("manual");
             }}
           />
@@ -236,13 +322,13 @@ const Dashboard = () => {
         {/* Render Projects with Loading State */}
         {isLoading ? (
           <ProjectListSkeleton />
-        ) : processedProjects.length === 0 ? (
+        ) : paginatedProjects.length === 0 ? (
           <div className="text-center py-8 text-gray-400">
             No projects found. Please try refreshing the page.
           </div>
         ) : viewMode === "list" ? (
           <ProjectList
-            projects={processedProjects}
+            projects={paginatedProjects}
             getStatusColorClass={getStatusColorClass}
             getProgressColorClass={getProgressColorClass}
             viewProjectDetail={viewProjectDetail}
@@ -253,13 +339,36 @@ const Dashboard = () => {
           />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {processedProjects.map((project) => (
+            {paginatedProjects.map((project) => (
               <ProjectCard
                 key={project._id}
                 project={project}
                 viewProjectDetail={viewProjectDetail}
               />
             ))}
+          </div>
+        )}
+
+        {/* === Baru: Pagination Control */}
+        {!isLoading && processedProjects.length > 0 && (
+          <div className="flex justify-center items-center gap-2 mt-6">
+            <button
+              disabled={currentPage === 1}
+              onClick={() => handlePageChange(currentPage - 1)}
+              className="px-3 py-1.5 rounded bg-gray-700 hover:bg-gray-600 disabled:opacity-50"
+            >
+              Prev
+            </button>
+            <span className="text-sm">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => handlePageChange(currentPage + 1)}
+              className="px-3 py-1.5 rounded bg-gray-700 hover:bg-gray-600 disabled:opacity-50"
+            >
+              Next
+            </button>
           </div>
         )}
       </div>
