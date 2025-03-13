@@ -7,37 +7,37 @@ const verifyAdmin = require("../middleware/verifyAdmin");
 // GET semua project dengan filtering, sorting & pagination
 router.get("/", async (req, res) => {
   try {
-    // Ambil query params: type, status, search, page, limit, dan sortOrder
     const { type, status, search, page, limit, sortOrder } = req.query;
 
-    // Buat query object untuk MongoDB
+    // Buat query object
     const query = {};
     if (type) query.type = type;
     if (status) query.status = status;
     if (search) {
-      // Filter berdasarkan judul secara case-insensitive
       query.title = { $regex: search, $options: "i" };
     }
 
-    // Pagination: halaman dan limit item per halaman
     const pageNumber = parseInt(page) || 1;
-    const itemsPerPage = parseInt(limit) || 15;
+    const itemsPerPage = parseInt(limit) || 10;
 
-    // Sorting: jika sortOrder 'oldest' maka ascending, default 'newest'
+    // Atur opsi sorting berdasarkan startDate
+    // Jika sortOrder 'oldest', artinya project lama (startDate paling awal) naik ke atas
+    // Jika sortOrder 'newest', project terbaru (startDate paling akhir) naik ke atas
     const sortOption = {};
     if (sortOrder && sortOrder.toLowerCase() === "oldest") {
-      sortOption.createdAt = 1;
+      sortOption.startDate = 1; // ascending: yang paling tua (lama) di atas
+    } else if (sortOrder && sortOrder.toLowerCase() === "newest") {
+      sortOption.startDate = -1; // descending: yang terbaru di atas
     } else {
-      sortOption.createdAt = -1;
+      // fallback kalau nggak ada sortOrder, bisa pakai order manual atau default sorting
+      sortOption.order = 1;
     }
 
-    // Ambil data dengan query, sorting, skip & limit
     const projects = await Project.find(query)
       .sort(sortOption)
       .skip((pageNumber - 1) * itemsPerPage)
       .limit(itemsPerPage);
 
-    // Hitung total project sesuai filter
     const totalProjects = await Project.countDocuments(query);
 
     res.json({
@@ -50,6 +50,8 @@ router.get("/", async (req, res) => {
     res.status(500).json({ message: "Error retrieving projects" });
   }
 });
+
+
 
 // GET project berdasarkan ID
 router.get("/:id", async (req, res) => {

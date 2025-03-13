@@ -43,7 +43,7 @@ const Dashboard = () => {
 
   // State untuk pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 15; // Tampilkan 15 data per halaman
+  const itemsPerPage = 10; // Tampilkan 15 data per halaman
   const navigate = useNavigate();
 
   // Karena API sudah menghandle filtering, kita cukup gunakan data dari backend
