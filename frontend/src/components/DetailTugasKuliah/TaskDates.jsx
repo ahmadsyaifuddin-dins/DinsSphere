@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 
 const TaskDates = ({ task }) => {
-  // Format tanggal dengan toLocaleString tanpa konversi manual
+  // Format tanggal dengan toLocaleString untuk UTC
   const formatDate = (date) =>
     date
       ? new Date(date).toLocaleString("id-ID", {
+          timeZone: "UTC",
           day: "numeric",
           month: "long",
           year: "numeric",
@@ -26,10 +27,10 @@ const TaskDates = ({ task }) => {
   // State untuk menyimpan perhitungan selisih waktu
   const [timeDiff, setTimeDiff] = useState(() => {
     if (task.tanggalSelesai) {
-      // Jika tugas sudah selesai, hitung dari tanggal selesai ke deadline
+      // Kalau tugas sudah selesai, hitung selisih dari tanggal selesai ke deadline
       return computeTimeDifference(new Date(task.tanggalSelesai), new Date(task.tanggalDeadline));
     } else {
-      // Jika belum selesai, hitung dari waktu sekarang ke deadline
+      // Kalau belum selesai, hitung selisih dari waktu sekarang ke deadline
       return computeTimeDifference(new Date(), new Date(task.tanggalDeadline));
     }
   });
@@ -51,7 +52,6 @@ const TaskDates = ({ task }) => {
 
   if (task.tanggalSelesai) {
     // Kalau tugas sudah selesai, bandingkan tanggal selesai dengan deadline
-    // Toleransi 5 menit untuk dianggap tepat waktu
     const toleranceMs = 5 * 60 * 1000;
     if (Math.abs(diffMs) <= toleranceMs) {
       timeDisplay = "Tepat waktu";
@@ -84,14 +84,12 @@ const TaskDates = ({ task }) => {
   // Atur background berdasarkan hasil perhitungan
   let bgClass = "";
   if (task.tanggalSelesai) {
-    // Kalau sudah selesai: hijau jika lebih awal, merah jika terlambat, kuning jika tepat waktu
     bgClass = Math.abs(diffMs) <= 5 * 60 * 1000
       ? "bg-yellow-900/30 border-yellow-700"
       : diffMs > 0
       ? "bg-green-900/30 border-green-700"
       : "bg-red-900/30 border-red-700";
   } else {
-    // Kalau belum selesai: berdasarkan sisa hari
     bgClass =
       diffMs > 0
         ? days < 3
