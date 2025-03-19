@@ -1,5 +1,5 @@
 import React from "react";
-import { Plus, LogOut } from "lucide-react";
+import { LogOut, BookPlus} from "lucide-react";
 
 const HeaderTugasKuliah = ({ 
   isAdmin, 
@@ -27,8 +27,8 @@ const HeaderTugasKuliah = ({
             }}
             className="group flex items-center px-4 py-2 bg-gradient-to-r from-green-600 to-teal-600 text-white font-medium rounded-lg shadow-lg hover:shadow-green-500/30 transition-all duration-300 transform hover:-translate-y-1 text-sm cursor-pointer"
           >
-            <Plus className="w-4 h-4 mr-1.5 group-hover:rotate-90 transition-transform duration-300" />
-            <span>Tambah Tugas Kuliah</span>
+            <BookPlus className="w-4 h-4 mr-1.5 transition-transform duration-500 group-hover:animate-pulse group-hover:rotate-45 group-hover:scale-110" />
+            <span className="transition-opacity duration-500 group-hover:opacity-100">Tambah Tugas Kuliah</span>
           </button>
         )}
         {isAdmin && (

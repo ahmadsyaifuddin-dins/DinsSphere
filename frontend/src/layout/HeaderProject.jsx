@@ -1,5 +1,5 @@
 import React from "react";
-import { Plus, LogOut } from "lucide-react";
+import { Plus, LogOut, PlusIcon, FilePlus } from "lucide-react";
 
 const HeaderProject = ({ 
   isAdmin, 
@@ -29,7 +29,7 @@ const HeaderProject = ({
             }}
             className="group flex items-center px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-lg shadow-lg hover:shadow-indigo-500/30 transition-all duration-300 transform hover:-translate-y-1 text-sm cursor-pointer"
           >
-            <Plus className="w-4 h-4 mr-1.5 group-hover:rotate-90 transition-transform duration-300" />
+            <FilePlus className="w-4 h-4 mr-1.5 group-hover:rotate-90 transition-transform duration-300" />
             <span>Tambah Project</span>
           </button>
         )}
