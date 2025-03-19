@@ -5,6 +5,7 @@ const TaskDates = ({ task }) => {
   const formatDate = (date) =>
     date
       ? new Date(date).toLocaleDateString("id-ID", {
+          timeZone: "UTC",
           day: "numeric",
           month: "long",
           year: "numeric",
