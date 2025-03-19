@@ -18,7 +18,7 @@ const Navbar = () => {
       borderBottomRightRadius: "100%",
       transition: {
         type: "spring",
-        stiffness: 200,
+        stiffness: 300,
         damping: 60
       }
     },
@@ -28,10 +28,10 @@ const Navbar = () => {
       borderBottomRightRadius: "0%",
       transition: {
         type: "spring",
-        stiffness: 200,
-        damping: 60,
-        staggerChildren: 0.4,
-        delayChildren: 0.3
+        stiffness: 400,
+        damping: 50,
+        staggerChildren: 0.2,
+        delayChildren: 0.2
       }
     }
   };
