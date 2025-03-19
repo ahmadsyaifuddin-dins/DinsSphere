@@ -12,6 +12,7 @@ import {
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import axios from "axios";
+import api from "../../services/api";
 
 const DraggableRow = ({
   task,
@@ -63,7 +64,7 @@ const DraggableRow = ({
 
   const opacity = isDragging ? 0.5 : 1;
 
-  // Karena viewCount sudah kita fetch, anggap nilainya valid (number)
+  // Format view count
   const formatViewCount = (count) => {
     if (count === undefined || count === null) return "0";
     return count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
@@ -75,9 +76,17 @@ const DraggableRow = ({
     (mataKuliahOptions &&
       mataKuliahOptions.find((mk) => mk.value === task.mataKuliah)?.icon);
 
+  // Updated formatDate function to prioritize WITA format
   const formatDate = (dateStr) => {
     if (!dateStr) return "Not Available";
-    return new Date(dateStr).toLocaleString("id-ID", { timeZone: "UTC" });
+    return new Date(dateStr).toLocaleString("id-ID", {
+      timeZone: "Asia/Makassar",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   };
 
   return (
@@ -137,7 +146,7 @@ const DraggableRow = ({
         </span>
       </td>
       <td className="py-2 px-3 sm:py-4 sm:px-6 max-w-xs truncate md:table-cell">
-        {formatDate(task.tanggalDeadline)}
+        {formatDate(task.tanggalDeadline, task.tanggalDeadlineWITA)}
       </td>
       <td className="py-2 px-2 sm:py-4 sm:px-6">
         <div className="flex items-center">
@@ -275,11 +284,25 @@ const TugasKuliahList = ({
     if (taskIndex === -1) return;
 
     const previousTask = tasks[taskIndex];
+    
+    // Create current date in WITA timezone for consistent display
+    const now = new Date();
+    const tanggalSelesaiWITA = previousTask.tanggalSelesai ? null : 
+      now.toLocaleString('id-ID', { 
+        timeZone: 'Asia/Makassar',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).replace(/(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/, '$3-$1-$2T$4:$5:$6');
+    
     const optimisticTask = {
       ...previousTask,
-      tanggalSelesai: previousTask.tanggalSelesai
-        ? null
-        : new Date().toISOString(),
+      tanggalSelesai: previousTask.tanggalSelesai ? null : now.toISOString(),
+      tanggalSelesaiWITA: tanggalSelesaiWITA,
       statusTugas: previousTask.tanggalSelesai ? "Belum Dikerjakan" : "Selesai",
     };
 
@@ -290,11 +313,12 @@ const TugasKuliahList = ({
     try {
       const updatedData = {
         tanggalSelesai: optimisticTask.tanggalSelesai,
+        tanggalSelesaiWITA: optimisticTask.tanggalSelesaiWITA,
         statusTugas: optimisticTask.statusTugas,
       };
-      // Pastikan endpoint ini sesuai dengan API kamu
-      await axios.patch(
-        `https://dins-sphere-backend.vercel.app/api/tasks/${task._id}/complete`,
+      // API call
+      await api.patch(
+        `/tasks/${task._id}/complete`,
         updatedData
       );
     } catch (error) {

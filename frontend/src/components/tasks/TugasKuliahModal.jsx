@@ -1,23 +1,33 @@
 import React, { useState } from "react";
 
 const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) => {
+  // Parsing tanggal dari task jika ada
+  const parseDateFromTask = (dateString) => {
+    if (!dateString) return { date: "", time: "" };
+    
+    // Parsing dari format WITA yang tersimpan di database
+    const parts = dateString.split("T");
+    return {
+      date: parts[0],
+      time: parts[1]?.slice(0, 5) || ""
+    };
+  };
+
   const [gambaranTugas, setGambaranTugas] = useState(task ? task.gambaranTugas || "" : "");
   const [mataKuliah, setMataKuliah] = useState(task ? task.mataKuliah || "" : "");
   const [namaTugas, setNamaTugas] = useState(task ? task.namaTugas || "" : "");
   const [deskripsiTugas, setDeskripsiTugas] = useState(task ? task.deskripsiTugas || "" : "");
   const [tingkatKesulitan, setTingkatKesulitan] = useState(task ? task.tingkatKesulitan || "" : "");
-  const [tanggalDiberikanDate, setTanggalDiberikanDate] = useState(
-    task && task.tanggalDiberikan ? task.tanggalDiberikan.split("T")[0] : ""
-  );
-  const [tanggalDiberikanTime, setTanggalDiberikanTime] = useState(
-    task && task.tanggalDiberikan ? task.tanggalDiberikan.split("T")[1]?.slice(0, 5) : ""
-  );
-  const [tanggalDeadlineDate, setTanggalDeadlineDate] = useState(
-    task && task.tanggalDeadline ? task.tanggalDeadline.split("T")[0] : ""
-  );
-  const [tanggalDeadlineTime, setTanggalDeadlineTime] = useState(
-    task && task.tanggalDeadline ? task.tanggalDeadline.split("T")[1]?.slice(0, 5) : ""
-  );
+  
+  // Parsing tanggal dari task jika ada, menggunakan format WITA string
+  const diberikanDateTime = task ? parseDateFromTask(task.tanggalDiberikanWITA) : { date: "", time: "" };
+  const deadlineDateTime = task ? parseDateFromTask(task.tanggalDeadlineWITA) : { date: "", time: "" };
+  
+  const [tanggalDiberikanDate, setTanggalDiberikanDate] = useState(diberikanDateTime.date);
+  const [tanggalDiberikanTime, setTanggalDiberikanTime] = useState(diberikanDateTime.time);
+  const [tanggalDeadlineDate, setTanggalDeadlineDate] = useState(deadlineDateTime.date);
+  const [tanggalDeadlineTime, setTanggalDeadlineTime] = useState(deadlineDateTime.time);
+  
   const [progress, setProgress] = useState(task ? task.progress || 0 : 0);
   const [statusTugas, setStatusTugas] = useState(task ? task.statusTugas || "Belum Dikerjakan" : "Belum Dikerjakan");
   const [isLoading, setIsLoading] = useState(false);
@@ -30,36 +40,78 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
     // Set loading state to true when the save button is clicked
     setIsLoading(true);
     
-    const tanggalDiberikan =
+    // Buat string tanggal dalam format WITA yang akan disimpan
+    // Format: "YYYY-MM-DDThh:mm:ss"
+    const tanggalDiberikanWITA =
       tanggalDiberikanDate && tanggalDiberikanTime
         ? `${tanggalDiberikanDate}T${tanggalDiberikanTime}:00`
-        : null;  // Jika kosong, set null
+        : null;
 
-    const tanggalDeadline =
+    const tanggalDeadlineWITA =
       tanggalDeadlineDate && tanggalDeadlineTime
         ? `${tanggalDeadlineDate}T${tanggalDeadlineTime}:00`
-        : null; // Jika kosong, set null
+        : null;
+
+    // Buat juga Date object untuk disimpan sebagai Date di MongoDB
+    // Ini akan otomatis dikonversi ke UTC oleh MongoDB
+    const tanggalDiberikan = tanggalDiberikanWITA 
+      ? new Date(tanggalDiberikanWITA) 
+      : null;
+      
+    const tanggalDeadline = tanggalDeadlineWITA 
+      ? new Date(tanggalDeadlineWITA) 
+      : null;
+    
+    // Tentukan tanggal selesai jika statusnya "Selesai"
+    let tanggalSelesai = null;
+    let tanggalSelesaiWITA = null;
+    
+    if (statusTugas === "Selesai" && (!task || task.statusTugas !== "Selesai")) {
+      // Jika baru di-set ke "Selesai", set tanggal selesai ke waktu sekarang
+      const now = new Date();
+      tanggalSelesai = now;
+      
+      // Format tanggal selesai ke format WITA string
+      tanggalSelesaiWITA = now.toLocaleString('id-ID', { 
+        timeZone: 'Asia/Makassar',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).replace(/(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/, '$3-$1-$2T$4:$5:$6');
+    } else if (task && task.statusTugas === "Selesai" && task.tanggalSelesai) {
+      // Jika sudah "Selesai" sebelumnya, pertahankan tanggal selesai yang sudah ada
+      tanggalSelesai = task.tanggalSelesai;
+      tanggalSelesaiWITA = task.tanggalSelesaiWITA;
+    }
 
     const formData = {
-      gambaranTugas: gambaranTugas ? gambaranTugas : null, // ubah string kosong ke null
+      gambaranTugas: gambaranTugas || null,
       mataKuliah,
       namaTugas,
       deskripsiTugas,
-      tingkatKesulitan: tingkatKesulitan ? tingkatKesulitan : "Not Available",
+      tingkatKesulitan: tingkatKesulitan || "Not Available",
+      // Simpan keduanya: Date object dan string WITA
       tanggalDiberikan,
+      tanggalDiberikanWITA,
       tanggalDeadline,
+      tanggalDeadlineWITA,
+      tanggalSelesai,
+      tanggalSelesaiWITA,
       progress: progress ? Number(progress) : 0,
       statusTugas,
+      // Jika ada order dari task, pertahankan
+      order: task?.order || 0
     };
     
     try {
-      // Wait for onSave to complete (assuming it returns a Promise)
       await onSave(formData);
-      // If onSave doesn't return a Promise, you can remove the await keyword
     } catch (error) {
       console.error("Error saving task:", error);
     } finally {
-      // Set loading state back to false after save operation completes
       setIsLoading(false);
     }
   };

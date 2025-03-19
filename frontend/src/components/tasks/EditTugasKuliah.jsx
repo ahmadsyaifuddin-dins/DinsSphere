@@ -26,16 +26,24 @@ const EditTugasKuliah = () => {
         setLoading(true);
         const response = await getTask(id);
         const task = response.data;
+        
         // Pisahkan tanggal dan jam dari tanggalDeadline jika ada
         let tglDeadline = "";
         let jamDeadline = "";
         if (task.tanggalDeadline) {
-          const isoString = new Date(task.tanggalDeadline).toISOString();
-          const parts = isoString.split("T");
-          tglDeadline = parts[0];
-          // Ambil jam dan menit (HH:MM)
-          jamDeadline = parts[1].slice(0, 5);
+          // Create date object from ISO string
+          const deadlineDate = new Date(task.tanggalDeadline);
+          
+          // Format date as YYYY-MM-DD for the date input
+          tglDeadline = deadlineDate.getFullYear() + '-' + 
+                        String(deadlineDate.getMonth() + 1).padStart(2, '0') + '-' + 
+                        String(deadlineDate.getDate()).padStart(2, '0');
+          
+          // Format time as HH:MM for the time input
+          jamDeadline = String(deadlineDate.getHours()).padStart(2, '0') + ':' + 
+                        String(deadlineDate.getMinutes()).padStart(2, '0');
         }
+        
         setFormData({
           namaTugas: task.namaTugas || "",
           tingkatKesulitan: task.tingkatKesulitan || "",
@@ -71,13 +79,33 @@ const EditTugasKuliah = () => {
     // Gabungkan tanggalDeadline dan jamDeadline
     const { tanggalDeadline, jamDeadline, ...rest } = formData;
     let deadline = null;
+    let deadlineWITA = null;
+    
     if (tanggalDeadline && jamDeadline) {
-      // Simpan sebagai string ISO tanpa mengubah ke UTC
-      deadline = `${tanggalDeadline}T${jamDeadline}:00`;
-    } else if (tanggalDeadline) {
-      deadline = `${tanggalDeadline}T00:00:00`;
+      // Create a Date object with the local timezone
+      const localDate = new Date(`${tanggalDeadline}T${jamDeadline}:00`);
+      
+      // Store ISO string for backend processing
+      deadline = localDate.toISOString();
+      
+      // Also store formatted string in WITA timezone
+      deadlineWITA = localDate.toLocaleString('id-ID', {
+        timeZone: 'Asia/Makassar',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      }).replace(/(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/, '$3-$1-$2T$4:$5:$6');
     }
-    const payload = { ...rest, tanggalDeadline: deadline };
+    
+    const payload = { 
+      ...rest, 
+      tanggalDeadline: deadline,
+      tanggalDeadlineWITA: deadlineWITA
+    };
 
     try {
       const token = localStorage.getItem("token");

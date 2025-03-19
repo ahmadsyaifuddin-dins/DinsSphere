@@ -99,39 +99,13 @@ const TugasKuliahCard = ({ task, viewTaskDetail, handleEdit, handleDelete, isAdm
             </div>
             <span className="text-gray-300 text-xs font-medium">
               {task.tanggalDeadline
-                ? new Date(task.tanggalDeadline).toLocaleDateString("id-ID", {
+                ? new Date(task.tanggalDeadline).toLocaleString("id-ID", {
                     day: "numeric",
                     month: "long",
                     year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
                   })
-                : "Tidak tersedia"}
-            </span>
-          </div>
-          
-          {/* Remaining time */}
-          <div 
-            className={`flex items-center justify-between rounded-lg p-2 ${
-              remainingDays && remainingDays < 3
-                ? "bg-red-900/30 border border-red-800/30"
-                : remainingDays && remainingDays < 7
-                ? "bg-orange-900/30 border border-orange-800/30"
-                : "bg-emerald-900/30 border border-emerald-800/30"
-            }`}
-          >
-            <span className="text-gray-300 text-xs">Sisa Waktu:</span>
-            <span className={`text-xs font-bold ${
-              remainingDays && remainingDays < 3
-                ? "text-red-400"
-                : remainingDays && remainingDays < 7
-                ? "text-orange-400"
-                : "text-emerald-400"
-            }`}>
-              {remainingDays !== null
-                ? remainingDays > 0
-                  ? `${remainingDays} hari lagi`
-                  : remainingDays === 0
-                  ? "Hari ini!"
-                  : `Terlambat ${Math.abs(remainingDays)} hari`
                 : "Tidak tersedia"}
             </span>
           </div>
