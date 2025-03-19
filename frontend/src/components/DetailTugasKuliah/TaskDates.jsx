@@ -4,8 +4,7 @@ const TaskDates = ({ task }) => {
   // Format tanggal dengan toLocaleString untuk UTC
   const formatDate = (date) =>
     date
-      ? new Date(date).toLocaleString("id-ID", {
-          timeZone: "UTC",
+      ? new Date(date).toLocaleDateString("id-ID", {
           day: "numeric",
           month: "long",
           year: "numeric",
