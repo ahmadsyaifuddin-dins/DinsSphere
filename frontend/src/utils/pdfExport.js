@@ -202,7 +202,7 @@ export const exportTaskToPDF = (task) => {
     marginLeft - 4,
     currentY - 5,
     pageWidth - marginLeft * 2 + 8,
-    60,
+    100, // Increased height for better accommodating formatted text
     3,
     3,
     "F"
@@ -211,14 +211,56 @@ export const exportTaskToPDF = (task) => {
   doc.setFont("helvetica", "bold");
   doc.text("Deskripsi Tugas:", marginLeft, currentY);
   currentY += 8;
-  doc.setFont("helvetica", "normal");
-  const deskripsi = task.deskripsiTugas || "Tidak ada deskripsi";
-  const splittedText = doc.splitTextToSize(
-    deskripsi,
-    pageWidth - marginLeft * 2
-  );
-  doc.text(splittedText, marginLeft, currentY);
-  currentY += splittedText.length * 7 + 10;
+  
+  // Special handling for WhatsApp-style text
+  // This assumes the deskripsi text might contain WhatsApp-style formatting with asterisks
+  
+  if (task.deskripsiTugas) {
+    // Properly format WhatsApp-style text with bullet points
+    const rawDescription = task.deskripsiTugas;
+    
+    // Split by lines to handle each paragraph separately
+    const paragraphs = rawDescription.split(/\n+/);
+    
+    doc.setFont("helvetica", "normal");
+    const lineHeight = 7;
+    
+    paragraphs.forEach((paragraph, index) => {
+      // Check if paragraph is a bullet point (starts with * or •)
+      const isBulletPoint = paragraph.trim().match(/^[\*•]\s*/);
+      
+      if (isBulletPoint) {
+        // Format as a proper bullet point
+        const bulletText = paragraph.trim().replace(/^[\*•]\s*/, "");
+        
+        // Draw bullet
+        doc.setFont("helvetica", "bold");
+        doc.text("•", marginLeft, currentY);
+        
+        // Draw text with indent
+        doc.setFont("helvetica", "normal");
+        const wrappedText = doc.splitTextToSize(bulletText, pageWidth - marginLeft * 2 - 8);
+        doc.text(wrappedText, marginLeft + 8, currentY);
+        
+        // Move down based on how many lines were in this wrapped text
+        currentY += wrappedText.length * lineHeight;
+      } else {
+        // Regular paragraph
+        const wrappedText = doc.splitTextToSize(paragraph, pageWidth - marginLeft * 2);
+        doc.text(wrappedText, marginLeft, currentY);
+        currentY += wrappedText.length * lineHeight;
+      }
+      
+      // Add a small space between paragraphs
+      currentY += 2;
+    });
+  } else {
+    doc.setFont("helvetica", "normal");
+    doc.text("Tidak ada deskripsi", marginLeft, currentY);
+    currentY += 7;
+  }
+  
+  currentY += 10;
 
   // Footer dengan gradient
   const footerHeight = 25;
