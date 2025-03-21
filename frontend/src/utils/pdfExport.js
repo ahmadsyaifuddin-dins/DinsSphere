@@ -1,36 +1,52 @@
 // utils/pdfExport.js
 import { jsPDF } from "jspdf";
-import "jspdf-autotable";
+import "jspdf-autotable"; // Bisa dipakai untuk tampilan tabel kalau diperlukan
+import { mataKuliahOptions } from "../utils/helpers";
 
 export const exportTaskToPDF = (task) => {
+  // Dapatkan data tambahan berdasarkan mata kuliah (dari helper)
+  const additionalInfo =
+    mataKuliahOptions.find((option) => option.value === task.mataKuliah) || {};
+
+  // Gunakan fallback untuk data tambahan
+  const namaDosen = task.namaDosen || additionalInfo.namaDosen || "Dummy Dosen";
+  const SKS =
+    task.SKS || (additionalInfo.SKS ? String(additionalInfo.SKS) : "Dummy SKS");
+  const pointTugas =
+    task.pointTugas || additionalInfo.pointTugas || "Tidak diketahui";
+
   const doc = new jsPDF();
   const marginLeft = 14;
   const pageWidth = doc.internal.pageSize.getWidth();
 
-  // Header dengan gradient biru
-  // Simulate gradient with multiple rectangles
+  // Fungsi pembersih teks (termasuk karakter dari WA)
+  const cleanText = (text) => {
+    return text
+      .normalize("NFKC")
+      // Hapus karakter-karakter tak terlihat
+      .replace(/\u200B/g, "")
+      .replace(/\u2060/g, "")
+      .replace(/\uFEFF/g, "")
+      .replace(/\u00A0/g, " ")
+      // Hapus spasi berlebih sebelum newline
+      .replace(/\s+\n/g, "\n");
+  };
+
+  // --- Header dengan Gradient ---
   const startColor = { r: 66, g: 133, b: 244 }; // #4285F4
   const endColor = { r: 84, g: 160, b: 255 }; // #54a0ff
   const steps = 10;
   const rectHeight = 35 / steps;
 
   for (let i = 0; i < steps; i++) {
-    // Calculate color for this step
-    const r = Math.floor(
-      startColor.r + (endColor.r - startColor.r) * (i / steps)
-    );
-    const g = Math.floor(
-      startColor.g + (endColor.g - startColor.g) * (i / steps)
-    );
-    const b = Math.floor(
-      startColor.b + (endColor.b - startColor.b) * (i / steps)
-    );
-
+    const r = Math.floor(startColor.r + (endColor.r - startColor.r) * (i / steps));
+    const g = Math.floor(startColor.g + (endColor.g - startColor.g) * (i / steps));
+    const b = Math.floor(startColor.b + (endColor.b - startColor.b) * (i / steps));
     doc.setFillColor(r, g, b);
     doc.rect(0, i * rectHeight, pageWidth, rectHeight, "F");
   }
 
-  // Tambahkan nama aplikasi
+  // Nama aplikasi di header
   doc.setFont("helvetica", "bold");
   doc.setFontSize(22);
   doc.setTextColor(255, 255, 255);
@@ -40,18 +56,18 @@ export const exportTaskToPDF = (task) => {
   doc.setFontSize(18);
   doc.text("Detail Tugas", pageWidth / 2, 25, { align: "center" });
 
-  // Tambahkan border bawah header
+  // Garis bawah header
   doc.setDrawColor(255, 255, 255);
   doc.setLineWidth(0.5);
   doc.line(0, 35, pageWidth, 35);
 
-  // Reset font buat konten
+  // --- Konten Utama ---
   doc.setFont("helvetica", "normal");
   doc.setFontSize(12);
   doc.setTextColor(33, 33, 33);
   let currentY = 50;
 
-  // Box untuk informasi utama
+  // Box informasi utama
   doc.setFillColor(245, 245, 245);
   doc.roundedRect(
     marginLeft - 4,
@@ -63,58 +79,77 @@ export const exportTaskToPDF = (task) => {
     "F"
   );
 
+  // Mata Kuliah
   doc.setFont("helvetica", "bold");
-  doc.text(`Mata Kuliah:`, marginLeft, currentY);
+  doc.text("Mata Kuliah:", marginLeft, currentY);
   doc.setFont("helvetica", "normal");
-  doc.text(`${task.mataKuliah}`, marginLeft + 35, currentY);
+  doc.text(task.mataKuliah, marginLeft + 35, currentY);
   currentY += 10;
 
-  // Konten - Informasi utama
+  // Nama Tugas
   doc.setFont("helvetica", "bold");
-  doc.text(`Nama Tugas:`, marginLeft, currentY);
+  doc.text("Nama Tugas:", marginLeft, currentY);
   doc.setFont("helvetica", "normal");
-  doc.text(`${task.namaTugas}`, marginLeft + 35, currentY);
+  doc.text(task.namaTugas, marginLeft + 35, currentY);
+  currentY += 10;
+
+  // --- Informasi Tambahan ---
+  doc.setFont("helvetica", "bold");
+  doc.text("Nama Dosen:", marginLeft, currentY);
+  doc.setFont("helvetica", "normal");
+  doc.text(namaDosen, marginLeft + 35, currentY);
   currentY += 10;
 
   doc.setFont("helvetica", "bold");
-  doc.text(`Status:`, marginLeft, currentY);
+  doc.text("SKS:", marginLeft, currentY);
+  doc.setFont("helvetica", "normal");
+  doc.text(SKS, marginLeft + 35, currentY);
+  currentY += 10;
 
-  // Warna status sesuai jenisnya
+  doc.setFont("helvetica", "bold");
+  doc.text("Point Tugas:", marginLeft, currentY);
+  doc.setFont("helvetica", "normal");
+  doc.text(pointTugas, marginLeft + 35, currentY);
+  currentY += 10;
+
+  // Status Tugas dengan warna khusus
+  doc.setFont("helvetica", "bold");
+  doc.text("Status:", marginLeft, currentY);
   let statusColor;
   switch (task.statusTugas.toLowerCase()) {
     case "selesai":
-      statusColor = [46, 125, 50]; // Green
+      statusColor = [46, 125, 50]; // Hijau
       break;
     case "sedang dikerjain...":
-      statusColor = [33, 150, 243]; // Blue
+      statusColor = [33, 150, 243]; // Biru
       break;
     case "belum dimulai":
     case "belum dikerjakan":
-      statusColor = [198, 40, 40]; // Red
+      statusColor = [198, 40, 40]; // Merah
+      break;
+    case "tertunda":
+      statusColor = [255, 152, 0]; // Orange
       break;
     default:
-      statusColor = [33, 33, 33]; // Default black
+      statusColor = [33, 33, 33];
   }
-
   doc.setTextColor(statusColor[0], statusColor[1], statusColor[2]);
   doc.setFont("helvetica", "normal");
-  doc.text(`${task.statusTugas}`, marginLeft + 35, currentY);
+  doc.text(task.statusTugas, marginLeft + 35, currentY);
   doc.setTextColor(33, 33, 33);
   currentY += 10;
 
-  // Progress bar
+  // Progress Tugas
   doc.setFont("helvetica", "bold");
-  doc.text(`Progress:`, marginLeft, currentY);
+  doc.text("Progress:", marginLeft, currentY);
   doc.setFont("helvetica", "normal");
   doc.text(`${task.progress}%`, marginLeft + 35, currentY);
 
-  // Gambar progress bar
+  // Gambar Progress Bar
   const progressBarWidth = 100;
   const progressBarHeight = 5;
   const progressBarX = marginLeft + 60;
   const progressBarY = currentY - 3;
-
-  // Background progress bar
   doc.setFillColor(224, 224, 224);
   doc.roundedRect(
     progressBarX,
@@ -125,8 +160,6 @@ export const exportTaskToPDF = (task) => {
     2,
     "F"
   );
-
-  // Progress fill
   doc.setFillColor(33, 150, 243);
   const filledWidth = (task.progress / 100) * progressBarWidth;
   doc.roundedRect(
@@ -138,10 +171,9 @@ export const exportTaskToPDF = (task) => {
     2,
     "F"
   );
-
   currentY += 20;
 
-  // Informasi deadline dengan highlight
+  // Informasi Deadline (jika ada)
   if (task.tanggalDeadline) {
     const deadline = new Date(task.tanggalDeadline);
     const deadlineString = deadline.toLocaleString("id-ID", {
@@ -152,7 +184,6 @@ export const exportTaskToPDF = (task) => {
       minute: "2-digit",
     });
 
-    // Background box untuk deadline
     doc.setFillColor(253, 237, 237);
     doc.roundedRect(
       marginLeft - 4,
@@ -164,136 +195,85 @@ export const exportTaskToPDF = (task) => {
       "F"
     );
 
-    // Ikon waktu (simulasi)
-    // Improved clock icon
+    // Simulasi ikon jam
     doc.setDrawColor(198, 40, 40);
     doc.setFillColor(198, 40, 40);
-
-    // Draw circle
     doc.circle(marginLeft + 3, currentY + 2, 3, "S");
-
-    // Draw clock hands
     const centerX = marginLeft + 3;
     const centerY = currentY + 2;
-
-    // Hour hand (shorter)
     doc.setLineWidth(0.5);
     doc.line(centerX, centerY, centerX, centerY - 2);
-
-    // Minute hand (longer)
-    doc.setLineWidth(0.5);
     doc.line(centerX, centerY, centerX + 2, centerY);
-
-    // Add small dot in center
     doc.circle(centerX, centerY, 0.5, "F");
 
     doc.setFont("helvetica", "bold");
     doc.setTextColor(198, 40, 40);
-    doc.text(`Deadline:`, marginLeft + 10, currentY + 4);
+    doc.text("Deadline:", marginLeft + 10, currentY + 4);
     doc.setFont("helvetica", "normal");
-    doc.text(`${deadlineString}`, marginLeft + 40, currentY + 4);
+    doc.text(deadlineString, marginLeft + 40, currentY + 4);
     doc.setTextColor(33, 33, 33);
     currentY += 20;
   }
 
-  // Deskripsi tugas dengan box
+  // --- Deskripsi Tugas ---
+  let descriptionText = task.deskripsiTugas
+    ? cleanText(task.deskripsiTugas)
+    : "Tidak ada deskripsi";
+
+  doc.setFont("helvetica", "bold");
+  doc.text("Deskripsi Tugas:", marginLeft, currentY);
+  currentY += 8;
+
+  const lineHeight = 7;
+  let textLines = [];
+  // Split per paragraf berdasarkan newline
+  const paragraphs = descriptionText.split(/\n+/);
+  paragraphs.forEach((paragraph) => {
+    const trimmed = paragraph.trim();
+    if (trimmed.match(/^[\*•]\s*/)) {
+      const bulletText = trimmed.replace(/^[\*•]\s*/, "");
+      let wrappedText = doc.splitTextToSize(bulletText, pageWidth - marginLeft * 2 - 8);
+      wrappedText[0] = "• " + wrappedText[0];
+      textLines = textLines.concat(wrappedText);
+    } else {
+      const wrappedText = doc.splitTextToSize(trimmed, pageWidth - marginLeft * 2);
+      textLines = textLines.concat(wrappedText);
+    }
+    textLines.push(""); // spasi antar paragraf
+  });
+  if (textLines[textLines.length - 1] === "") {
+    textLines.pop();
+  }
+  const boxHeight = textLines.length * lineHeight + 10;
   doc.setFillColor(240, 247, 255);
   doc.roundedRect(
     marginLeft - 4,
     currentY - 5,
     pageWidth - marginLeft * 2 + 8,
-    100, // Increased height for better accommodating formatted text
+    boxHeight,
     3,
     3,
     "F"
   );
+  doc.setFont("helvetica", "normal");
+  doc.text(textLines, marginLeft, currentY, { lineHeightFactor: 1.2 });
+  currentY += boxHeight + 10;
 
-  doc.setFont("helvetica", "bold");
-  doc.text("Deskripsi Tugas:", marginLeft, currentY);
-  currentY += 8;
-  
-  // Special handling for WhatsApp-style text
-  // This assumes the deskripsi text might contain WhatsApp-style formatting with asterisks
-  
-  if (task.deskripsiTugas) {
-    // Properly format WhatsApp-style text with bullet points
-    const rawDescription = task.deskripsiTugas;
-    
-    // Split by lines to handle each paragraph separately
-    const paragraphs = rawDescription.split(/\n+/);
-    
-    doc.setFont("helvetica", "normal");
-    const lineHeight = 7;
-    
-    paragraphs.forEach((paragraph, index) => {
-      // Check if paragraph is a bullet point (starts with * or •)
-      const isBulletPoint = paragraph.trim().match(/^[\*•]\s*/);
-      
-      if (isBulletPoint) {
-        // Format as a proper bullet point
-        const bulletText = paragraph.trim().replace(/^[\*•]\s*/, "");
-        
-        // Draw bullet
-        doc.setFont("helvetica", "bold");
-        doc.text("•", marginLeft, currentY);
-        
-        // Draw text with indent
-        doc.setFont("helvetica", "normal");
-        const wrappedText = doc.splitTextToSize(bulletText, pageWidth - marginLeft * 2 - 8);
-        doc.text(wrappedText, marginLeft + 8, currentY);
-        
-        // Move down based on how many lines were in this wrapped text
-        currentY += wrappedText.length * lineHeight;
-      } else {
-        // Regular paragraph
-        const wrappedText = doc.splitTextToSize(paragraph, pageWidth - marginLeft * 2);
-        doc.text(wrappedText, marginLeft, currentY);
-        currentY += wrappedText.length * lineHeight;
-      }
-      
-      // Add a small space between paragraphs
-      currentY += 2;
-    });
-  } else {
-    doc.setFont("helvetica", "normal");
-    doc.text("Tidak ada deskripsi", marginLeft, currentY);
-    currentY += 7;
-  }
-  
-  currentY += 10;
-
-  // Footer dengan gradient
+  // --- Footer dengan Gradient Simulasi ---
   const footerHeight = 25;
   const footerY = doc.internal.pageSize.getHeight() - footerHeight;
-
-  // Gradient footer (simulasi dengan rect)
   doc.setFillColor(240, 240, 240);
   doc.rect(0, footerY, pageWidth, footerHeight, "F");
-
-  // Tambahkan line pemisah
   doc.setDrawColor(200);
   doc.setLineWidth(0.5);
   doc.line(0, footerY, pageWidth, footerY);
-
-  // Footer text
   const exportDate = new Date().toLocaleString("id-ID");
   doc.setFontSize(10);
   doc.setTextColor(100, 100, 100);
   doc.text(`Di-export pada: ${exportDate}`, marginLeft, footerY + 10);
-
-  // Copyright
   doc.setTextColor(100, 100, 100);
-  doc.text(
-    "© DinsSphere InterConnected",
-    pageWidth - marginLeft,
-    footerY + 10,
-    { align: "right" }
-  );
-
-  // Nomor halaman
-  doc.text(`Halaman 1 dari 1`, pageWidth / 2, footerY + 18, {
-    align: "center",
-  });
+  doc.text("© DinsSphere InterConnected", pageWidth - marginLeft, footerY + 10, { align: "right" });
+  doc.text(`Halaman 1 dari 1`, pageWidth / 2, footerY + 18, { align: "center" });
 
   const fileName = `${task.mataKuliah} - ${task.namaTugas}.pdf`;
   doc.save(fileName);

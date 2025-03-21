@@ -1,27 +1,26 @@
 import React, { useState } from "react";
+import DeskripsiTugasInput from "./DeskripsiTugasInput";
 
 const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) => {
-  // Improved date parsing function to match EditTugasKuliah approach
+  // Fungsi parsing tanggal
   const parseDateFromTask = (dateString) => {
     if (!dateString) return { date: "", time: "" };
     
     try {
-      // Create date object from ISO string
       const deadlineDate = new Date(dateString);
-      
-      // Format date as YYYY-MM-DD for the date input
-      const date = deadlineDate.getFullYear() + '-' + 
-                   String(deadlineDate.getMonth() + 1).padStart(2, '0') + '-' + 
-                   String(deadlineDate.getDate()).padStart(2, '0');
-      
-      // Format time as HH:MM for the time input
-      const time = String(deadlineDate.getHours()).padStart(2, '0') + ':' + 
-                   String(deadlineDate.getMinutes()).padStart(2, '0');
-                   
+      const date =
+        deadlineDate.getFullYear() +
+        "-" +
+        String(deadlineDate.getMonth() + 1).padStart(2, "0") +
+        "-" +
+        String(deadlineDate.getDate()).padStart(2, "0");
+      const time =
+        String(deadlineDate.getHours()).padStart(2, "0") +
+        ":" +
+        String(deadlineDate.getMinutes()).padStart(2, "0");
       return { date, time };
     } catch (error) {
       console.error("Error parsing date:", error);
-      // If format is already "YYYY-MM-DDThh:mm:ss"
       const parts = dateString.split("T");
       return {
         date: parts[0] || "",
@@ -35,16 +34,19 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
   const [namaTugas, setNamaTugas] = useState(task ? task.namaTugas || "" : "");
   const [deskripsiTugas, setDeskripsiTugas] = useState(task ? task.deskripsiTugas || "" : "");
   const [tingkatKesulitan, setTingkatKesulitan] = useState(task ? task.tingkatKesulitan || "" : "");
-  
-  // Use the improved parsing function with proper fallbacks
-  const diberikanDateTime = task ? parseDateFromTask(task.tanggalDiberikan || task.tanggalDiberikanWITA) : { date: "", time: "" };
-  const deadlineDateTime = task ? parseDateFromTask(task.tanggalDeadline || task.tanggalDeadlineWITA) : { date: "", time: "" };
-  
+
+  const diberikanDateTime = task
+    ? parseDateFromTask(task.tanggalDiberikan || task.tanggalDiberikanWITA)
+    : { date: "", time: "" };
+  const deadlineDateTime = task
+    ? parseDateFromTask(task.tanggalDeadline || task.tanggalDeadlineWITA)
+    : { date: "", time: "" };
+
   const [tanggalDiberikanDate, setTanggalDiberikanDate] = useState(diberikanDateTime.date);
   const [tanggalDiberikanTime, setTanggalDiberikanTime] = useState(diberikanDateTime.time);
   const [tanggalDeadlineDate, setTanggalDeadlineDate] = useState(deadlineDateTime.date);
   const [tanggalDeadlineTime, setTanggalDeadlineTime] = useState(deadlineDateTime.time);
-  
+
   const [progress, setProgress] = useState(task ? task.progress || 0 : 0);
   const [statusTugas, setStatusTugas] = useState(task ? task.statusTugas || "Belum Dikerjakan" : "Belum Dikerjakan");
   const [isLoading, setIsLoading] = useState(false);
@@ -53,54 +55,39 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    // Set loading state to true when the save button is clicked
     setIsLoading(true);
-    
-    // Buat string tanggal dalam format WITA yang akan disimpan
-    // Format: "YYYY-MM-DDThh:mm:ss"
+
     const tanggalDiberikanWITA =
       tanggalDiberikanDate && tanggalDiberikanTime
         ? `${tanggalDiberikanDate}T${tanggalDiberikanTime}:00`
         : null;
-
     const tanggalDeadlineWITA =
       tanggalDeadlineDate && tanggalDeadlineTime
         ? `${tanggalDeadlineDate}T${tanggalDeadlineTime}:00`
         : null;
 
-    // Buat juga Date object untuk disimpan sebagai Date di MongoDB
-    // Ini akan otomatis dikonversi ke UTC oleh MongoDB
-    const tanggalDiberikan = tanggalDiberikanWITA 
-      ? new Date(tanggalDiberikanWITA) 
-      : null;
-      
-    const tanggalDeadline = tanggalDeadlineWITA 
-      ? new Date(tanggalDeadlineWITA) 
-      : null;
-    
-    // Tentukan tanggal selesai jika statusnya "Selesai"
+    const tanggalDiberikan = tanggalDiberikanWITA ? new Date(tanggalDiberikanWITA) : null;
+    const tanggalDeadline = tanggalDeadlineWITA ? new Date(tanggalDeadlineWITA) : null;
+
     let tanggalSelesai = null;
     let tanggalSelesaiWITA = null;
-    
+
     if (statusTugas === "Selesai" && (!task || task.statusTugas !== "Selesai")) {
-      // Jika baru di-set ke "Selesai", set tanggal selesai ke waktu sekarang
       const now = new Date();
       tanggalSelesai = now;
-      
-      // Format tanggal selesai ke format WITA string
-      tanggalSelesaiWITA = now.toLocaleString('id-ID', { 
-        timeZone: 'Asia/Makassar',
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: false
-      }).replace(/(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/, '$3-$1-$2T$4:$5:$6');
+      tanggalSelesaiWITA = now
+        .toLocaleString("id-ID", {
+          timeZone: "Asia/Makassar",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: false
+        })
+        .replace(/(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/, "$3-$1-$2T$4:$5:$6");
     } else if (task && task.statusTugas === "Selesai" && task.tanggalSelesai) {
-      // Jika sudah "Selesai" sebelumnya, pertahankan tanggal selesai yang sudah ada
       tanggalSelesai = task.tanggalSelesai;
       tanggalSelesaiWITA = task.tanggalSelesaiWITA;
     }
@@ -111,7 +98,6 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
       namaTugas,
       deskripsiTugas,
       tingkatKesulitan: tingkatKesulitan || "Not Available",
-      // Simpan keduanya: Date object dan string WITA
       tanggalDiberikan,
       tanggalDiberikanWITA,
       tanggalDeadline,
@@ -120,10 +106,9 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
       tanggalSelesaiWITA,
       progress: progress ? Number(progress) : 0,
       statusTugas,
-      // Jika ada order dari task, pertahankan
       order: task?.order || 0
     };
-    
+
     try {
       await onSave(formData);
     } catch (error) {
@@ -146,7 +131,6 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
         
         <div className="overflow-y-auto flex-grow pr-4 custom-scrollbar">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Gambaran Tugas */}
             <div>
               <label className={labelClasses} htmlFor="gambaranTugas">
                 URL Gambaran Tugas (Opsional)
@@ -161,7 +145,6 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
               />
             </div>
 
-            {/* Nama Mata Kuliah */}
             <div>
               <label className={labelClasses} htmlFor="mataKuliah">
                 Nama Mata Kuliah *
@@ -174,7 +157,6 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
                 required
               >
                 <option value="">Pilih Mata Kuliah</option>
-                {/* Loop dari props mataKuliahOptions */}
                 {mataKuliahOptions &&
                   mataKuliahOptions.map((mk, idx) => (
                     <option key={idx} value={mk.value}>
@@ -184,7 +166,6 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
               </select>
             </div>
 
-            {/* Nama Tugas */}
             <div>
               <label className={labelClasses} htmlFor="namaTugas">
                 Nama Tugas *
@@ -200,22 +181,13 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
               />
             </div>
 
-            {/* Deskripsi Tugas */}
-            <div>
-              <label className={labelClasses} htmlFor="deskripsiTugas">
-                Deskripsi Tugas *
-              </label>
-              <textarea
-                id="deskripsiTugas"
-                value={deskripsiTugas}
-                onChange={(e) => setDeskripsiTugas(e.target.value)}
-                className={`${inputClasses} min-h-[100px] resize-y`}
-                placeholder="Jelaskan tugas yang diberikan"
-                required
-              />
-            </div>
+            <DeskripsiTugasInput
+              value={deskripsiTugas}
+              onChange={setDeskripsiTugas}
+              inputClasses={inputClasses}
+              labelClasses={labelClasses}
+            />
 
-            {/* Tingkat Kesulitan */}
             <div>
               <label className={labelClasses} htmlFor="tingkatKesulitan">
                 Tingkat Kesulitan *
@@ -235,7 +207,6 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
               </select>
             </div>
 
-            {/* Tanggal Tugas Diberikan */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className={labelClasses} htmlFor="tanggalDiberikanDate">
@@ -265,7 +236,6 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
               </div>
             </div>
 
-            {/* Tanggal Deadline */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className={labelClasses} htmlFor="tanggalDeadlineDate">
@@ -295,7 +265,6 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
               </div>
             </div>
 
-            {/* Progress Persentase */}
             <div>
               <label className={labelClasses} htmlFor="progress">
                 Progress Persentase
@@ -312,7 +281,6 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
               />
             </div>
 
-            {/* Status Tugas */}
             <div>
               <label className={labelClasses} htmlFor="statusTugas">
                 Status Tugas *
@@ -331,8 +299,7 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
             </div>
           </form>
         </div>
-
-        {/* Tombol Aksi */}
+        
         <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-gray-700">
           <button
             type="button"

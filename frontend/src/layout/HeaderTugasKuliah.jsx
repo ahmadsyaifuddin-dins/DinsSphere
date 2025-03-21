@@ -59,7 +59,7 @@ const HeaderTugasKuliah = ({
       </div>
 
       {/* Animation styles */}
-      <style jsx global>{`
+      <style>{`
         @keyframes shimmer {
           0% { background-position: -200% 0; }
           100% { background-position: 200% 0; }
