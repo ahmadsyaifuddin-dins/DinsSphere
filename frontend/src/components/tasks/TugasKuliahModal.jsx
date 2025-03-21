@@ -1,16 +1,33 @@
 import React, { useState } from "react";
 
 const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) => {
-  // Parsing tanggal dari task jika ada
+  // Improved date parsing function to match EditTugasKuliah approach
   const parseDateFromTask = (dateString) => {
     if (!dateString) return { date: "", time: "" };
     
-    // Parsing dari format WITA yang tersimpan di database
-    const parts = dateString.split("T");
-    return {
-      date: parts[0],
-      time: parts[1]?.slice(0, 5) || ""
-    };
+    try {
+      // Create date object from ISO string
+      const deadlineDate = new Date(dateString);
+      
+      // Format date as YYYY-MM-DD for the date input
+      const date = deadlineDate.getFullYear() + '-' + 
+                   String(deadlineDate.getMonth() + 1).padStart(2, '0') + '-' + 
+                   String(deadlineDate.getDate()).padStart(2, '0');
+      
+      // Format time as HH:MM for the time input
+      const time = String(deadlineDate.getHours()).padStart(2, '0') + ':' + 
+                   String(deadlineDate.getMinutes()).padStart(2, '0');
+                   
+      return { date, time };
+    } catch (error) {
+      console.error("Error parsing date:", error);
+      // If format is already "YYYY-MM-DDThh:mm:ss"
+      const parts = dateString.split("T");
+      return {
+        date: parts[0] || "",
+        time: parts[1]?.slice(0, 5) || ""
+      };
+    }
   };
 
   const [gambaranTugas, setGambaranTugas] = useState(task ? task.gambaranTugas || "" : "");
@@ -19,9 +36,9 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
   const [deskripsiTugas, setDeskripsiTugas] = useState(task ? task.deskripsiTugas || "" : "");
   const [tingkatKesulitan, setTingkatKesulitan] = useState(task ? task.tingkatKesulitan || "" : "");
   
-  // Parsing tanggal dari task jika ada, menggunakan format WITA string
-  const diberikanDateTime = task ? parseDateFromTask(task.tanggalDiberikanWITA) : { date: "", time: "" };
-  const deadlineDateTime = task ? parseDateFromTask(task.tanggalDeadlineWITA) : { date: "", time: "" };
+  // Use the improved parsing function with proper fallbacks
+  const diberikanDateTime = task ? parseDateFromTask(task.tanggalDiberikan || task.tanggalDiberikanWITA) : { date: "", time: "" };
+  const deadlineDateTime = task ? parseDateFromTask(task.tanggalDeadline || task.tanggalDeadlineWITA) : { date: "", time: "" };
   
   const [tanggalDiberikanDate, setTanggalDiberikanDate] = useState(diberikanDateTime.date);
   const [tanggalDiberikanTime, setTanggalDiberikanTime] = useState(diberikanDateTime.time);
