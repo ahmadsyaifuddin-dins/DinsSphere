@@ -181,8 +181,8 @@ const DetailTugasKuliah = () => {
               <h2 className="text-xl font-semibold text-white mb-3">
                 Deskripsi Tugas
               </h2>
-              <div className="bg-gray-700/30 border border-gray-600 rounded-xl p-5 text-gray-300">
-                {task.deskripsiTugas || "Tidak ada deskripsi"}
+              <div className="bg-gray-700/30 border border-gray-600 rounded-xl p-5 text-gray-300 whitespace-pre-wrap">
+              {task.deskripsiTugas || "Tidak ada deskripsi"}
               </div>
             </div>
             <CompletionStatus task={task} />

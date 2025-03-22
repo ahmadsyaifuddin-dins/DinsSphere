@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import DeskripsiTugasInput from "./DeskripsiTugasInput";
+import ButtonRapikan from "./ButtonRapikan";
 
 const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) => {
   // Fungsi parsing tanggal
@@ -181,7 +181,7 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
               />
             </div>
 
-            <DeskripsiTugasInput
+            <ButtonRapikan
               value={deskripsiTugas}
               onChange={setDeskripsiTugas}
               inputClasses={inputClasses}
