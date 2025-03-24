@@ -109,7 +109,7 @@ const Navbar = () => {
                 <img src="/icon.svg" alt="logo" className="w-25 h-25" />
               </div>
               <motion.div
-                className="flex flex-col p-10 w-full space-y-8"
+                className="flex flex-col p-8 w-full space-y-8"
               >
                 <motion.div variants={linkVariants}>
                   <Link 
