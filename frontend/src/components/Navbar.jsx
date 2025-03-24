@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+// Import FontAwesome components
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { 
+  faHome, 
+  faGamepad, 
+  faGraduationCap, 
+  faRocket 
+} from "@fortawesome/free-solid-svg-icons";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -101,22 +109,24 @@ const Navbar = () => {
                 <img src="/icon.svg" alt="logo" className="w-25 h-25" />
               </div>
               <motion.div
-                className="flex flex-col items-center w-full space-y-8"
+                className="flex flex-col p-10 w-full space-y-8"
               >
                 <motion.div variants={linkVariants}>
                   <Link 
                     to="/" 
-                    className="text-white hover:text-gray-300 text-2xl font-medium transition-colors duration-300"
+                    className="text-white hover:text-gray-300 text-2xl font-medium transition-colors duration-300 flex items-center gap-3"
                     onClick={() => setIsMenuOpen(false)}
                   >
+                    <FontAwesomeIcon icon={faHome} className="w-5 h-5" />
                     Dashboard
                   </Link>
                 </motion.div>
                 
                 <motion.div variants={linkVariants}>
                   <span 
-                    className="text-gray-500 text-2xl font-medium cursor-not-allowed"
+                    className="text-gray-500 text-2xl font-medium cursor-not-allowed flex items-center gap-3"
                   >
+                    <FontAwesomeIcon icon={faGamepad} className="w-5 h-5" />
                     Jokian
                   </span>
                 </motion.div>
@@ -124,9 +134,10 @@ const Navbar = () => {
                 <motion.div variants={linkVariants}>
                   <Link 
                     to="/dashboardTugasKuliah"
-                    className="text-white hover:text-gray-300 text-2xl font-medium transition-colors duration-300"
+                    className="text-white hover:text-gray-300 text-2xl font-medium transition-colors duration-300 flex items-center gap-3"
                     onClick={() => setIsMenuOpen(false)}
                   >
+                    <FontAwesomeIcon icon={faGraduationCap} className="w-5 h-5" />
                     Tugas Kuliah
                   </Link>
                 </motion.div>
@@ -134,9 +145,10 @@ const Navbar = () => {
                 <motion.div variants={linkVariants}>
                   <Link 
                     to="#" 
-                    className="text-white hover:text-gray-300 text-2xl font-medium transition-colors duration-300"
+                    className="text-white hover:text-gray-300 text-2xl font-medium transition-colors duration-300 flex items-center gap-3"
                     onClick={() => setIsMenuOpen(false)}
                   >
+                    <FontAwesomeIcon icon={faRocket} className="w-5 h-5" />
                     Coming Soon!
                   </Link>
                 </motion.div>
