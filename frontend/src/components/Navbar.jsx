@@ -4,8 +4,8 @@ import { motion, AnimatePresence } from "framer-motion";
 // Import FontAwesome components
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { 
-  faHome, 
-  faGamepad, 
+  faCode, 
+  faBriefcase, 
   faGraduationCap, 
   faRocket 
 } from "@fortawesome/free-solid-svg-icons";
@@ -117,8 +117,8 @@ const Navbar = () => {
                     className="text-white hover:text-gray-300 text-2xl font-medium transition-colors duration-300 flex items-center gap-3"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <FontAwesomeIcon icon={faHome} className="w-5 h-5" />
-                    Dashboard
+                    <FontAwesomeIcon icon={faCode} className="w-5 h-5" />
+                    Projects
                   </Link>
                 </motion.div>
                 
@@ -126,7 +126,7 @@ const Navbar = () => {
                   <span 
                     className="text-gray-500 text-2xl font-medium cursor-not-allowed flex items-center gap-3"
                   >
-                    <FontAwesomeIcon icon={faGamepad} className="w-5 h-5" />
+                    <FontAwesomeIcon icon={faBriefcase} className="w-5 h-5" />
                     Jokian
                   </span>
                 </motion.div>
