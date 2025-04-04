@@ -209,8 +209,9 @@ const DetailTugasKuliah = () => {
               handleDeleteTask={handleDeleteTask}
             />
             <NotesSection />
-            <RelatedTasks />
-          </div>
+            <br></br>
+            <RelatedTasks mataKuliah={task.mataKuliah} currentTaskId={id} />
+            </div>
           <div className="bg-gray-800/80 border-t border-gray-700 px-6 py-4 flex justify-between items-center">
             <div className="text-gray-400 text-sm">
               ID Tugas: <span className="text-gray-300">{id}</span>

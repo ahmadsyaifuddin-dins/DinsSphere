@@ -13,5 +13,5 @@ export const deleteTask = (id, token) => {
 };
 
 export const toggleTaskCompletion = (id, updatedData) => {
-  return axios.patch(`${API_BASE_URL}/api/${id}/complete`, updatedData);
+  return axios.patch(`${API_BASE_URL}/api/tasks/${id}/complete`, updatedData);
 };

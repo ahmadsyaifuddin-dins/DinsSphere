@@ -6,6 +6,7 @@ const {
   createTask,
   getAllTasks,
   getTaskById,
+  getRelatedTasks,
   updateTask,
   deleteTask,
   updateTaskOrder,
@@ -14,7 +15,11 @@ const {
 
 router.get("/", getAllTasks);
 router.post("/", verifyAdmin, createTask);
+
+// Taruh /related sebelum /:id
+router.get("/related", getRelatedTasks);
 router.get("/:id", getTaskById);
+
 router.put("/:id", verifyAdmin, updateTask);
 router.patch("/:id/complete", toggleTaskCompletion);
 router.delete("/:id", verifyAdmin, deleteTask);

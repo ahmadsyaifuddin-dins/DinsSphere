@@ -126,3 +126,16 @@ exports.toggleTaskCompletion = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.getRelatedTasks = async (req, res) => {
+  const { mataKuliah, exclude } = req.query;
+  try {
+    const relatedTasks = await Task.find({
+      mataKuliah,
+      _id: { $ne: exclude }, // exclude current task
+    }).limit(5);
+    res.json(relatedTasks);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
