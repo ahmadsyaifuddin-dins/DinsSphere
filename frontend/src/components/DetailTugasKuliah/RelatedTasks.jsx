@@ -58,14 +58,17 @@ const RelatedTasks = ({ mataKuliah, currentTaskId }) => {
                   <p className="text-gray-400 text-sm">{task.mataKuliah}</p>
                 </div>
                 
-                {task.deadline && (
+                {task.tanggalDeadlineWITA && (
                   <div className="flex items-center mt-2 text-xs text-gray-400">
+                    <p className="mr-2">DL :</p>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    {new Date(task.deadline).toLocaleDateString('id-ID', {
+                    {new Date(task.tanggalDeadlineWITA).toLocaleDateString('id-ID', {
+                      hour: "2-digit",
+                      minute: "2-digit",
                       day: 'numeric',
-                      month: 'short',
+                      month: 'long',
                       year: 'numeric'
                     })}
                   </div>
@@ -77,7 +80,11 @@ const RelatedTasks = ({ mataKuliah, currentTaskId }) => {
                   className={`text-xs font-medium px-3 py-1 rounded-full whitespace-nowrap 
                     ${task.statusTugas === "Selesai"
                       ? "bg-green-500/20 text-green-400 border border-green-500/30"
-                      : "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                      : task.statusTugas === "Sedang dikerjain..."
+                        ? "bg-blue-500/20 text-blue-400 border border-blue-500/30"
+                        : task.statusTugas === "Tertunda"
+                          ? "bg-purple-500/20 text-purple-400 border border-purple-500/30"
+                          : "bg-red-500/20 text-red-400 border border-red-500/30"
                     }`}
                 >
                   {task.statusTugas}
@@ -85,18 +92,19 @@ const RelatedTasks = ({ mataKuliah, currentTaskId }) => {
               </div>
             </div>
             
-            {task.progres && (
+            {task.progress && (
               <div className="mt-3 w-full">
                 <div className="flex justify-between text-xs text-gray-400 mb-1">
                   <span>Progress</span>
-                  <span>{task.progres}%</span>
+                  <span>{task.progress}%</span>
                 </div>
                 <div className="w-full bg-gray-700 rounded-full h-1.5">
                   <div 
                     className={`h-1.5 rounded-full ${
-                      task.statusTugas === "Selesai" ? "bg-green-500" : "bg-blue-500"
+                      task.statusTugas === "Selesai" ? "bg-green-500"
+                      : "bg-red-500"
                     }`}
-                    style={{ width: `${task.progres}%` }}
+                    style={{ width: `${task.progress}%` }}
                   ></div>
                 </div>
               </div>
