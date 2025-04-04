@@ -23,6 +23,7 @@ import {
 // Import komponen baru
 import ProjectFilters from "../components/ProjectFilters";
 import Pagination from "../components/Pagination";
+import { API_BASE_URL } from "../config";
 
 const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);

@@ -17,6 +17,7 @@ import NotesSection from "../components/DetailTugasKuliah/NotesSection";
 import RelatedTasks from "../components/DetailTugasKuliah/RelatedTasks";
 import ButtonFooter from "../components/DetailTugasKuliah/ButtonFooter";
 import DetailTugasKuliahSkeleton from "../loader/DetailTugasKuliahSkeleton";
+import { API_BASE_URL } from "../config";
 
 const DetailTugasKuliah = () => {
   const { id } = useParams();

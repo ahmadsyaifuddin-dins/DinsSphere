@@ -14,6 +14,7 @@ import {
   Sparkles,
   Eye,
 } from "lucide-react";
+import { API_BASE_URL } from "../config";
 
 const ProjectDetail = () => {
   const { id } = useParams();

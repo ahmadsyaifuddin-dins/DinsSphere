@@ -13,6 +13,7 @@ import api from "../services/api";
 import Swal from "sweetalert2";
 import { getProgressColorClass, getStatusColorClass, mataKuliahOptions } from "../utils/helpers";
 import TugasListSkeleton from "../loader/TugasListSkeleton";
+import { API_BASE_URL } from "../config";
 
 const DashboardTugasKuliah = () => {
   const [isLoading, setIsLoading] = useState(true);
