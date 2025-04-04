@@ -30,7 +30,7 @@ const FilterPanel = ({
       mataKuliah: '',
       progress: '',
       dueDate: '',
-      priority: ''
+      tingkatKesulitan: ''  // Ubah dari prioritas ke tingkatKesulitan
     };
     setLocalFilters(resetFilters);
     setFilters(resetFilters);
@@ -47,7 +47,7 @@ const FilterPanel = ({
           <span className="font-medium text-gray-200">Filter Tugas</span>
         </div>
         <div className="flex items-center space-x-2">
-          {(filters.status || filters.mataKuliah || filters.progress || filters.dueDate || filters.priority) && (
+          {(filters.status || filters.mataKuliah || filters.progress || filters.dueDate || filters.tingkatKesulitan) && (
             <span className="text-xs px-2 py-1 bg-blue-500 text-white rounded-full">
               Filters Applied
             </span>
@@ -87,8 +87,8 @@ const FilterPanel = ({
                 className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Semua Status</option>
-                <option value="Belum Dikerjakan">Belum dikerjakan</option>
-                <option value="Sedang dikerjain...">Sedang dikerjain...</option>
+                <option value="Belum Dikerjakan">Belum Dikerjakan</option>
+                <option value="Sedang dikerjain...">Sedang Dikerjain...</option>
                 <option value="Selesai">Selesai</option>
                 <option value="Tertunda">Tertunda</option>
               </select>
@@ -113,7 +113,7 @@ const FilterPanel = ({
               </select>
             </div>
 
-            {/* Progress Filter */}
+            {/* Progress Filter - Fixed untuk nilai numerik */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1">
                 Progress
@@ -154,20 +154,23 @@ const FilterPanel = ({
               </select>
             </div>
 
-            {/* Priority Filter */}
+            {/* Tingkat Kesulitan Filter (ganti prioritas) */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1">
-                Prioritas
+                Tingkat Kesulitan
               </label>
               <select
-                value={localFilters.priority}
-                onChange={(e) => handleFilterChange('priority', e.target.value)}
+                value={localFilters.tingkatKesulitan}
+                onChange={(e) => handleFilterChange('tingkatKesulitan', e.target.value)}
                 className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="">Semua Prioritas</option>
-                <option value="Tinggi">Tinggi</option>
+                <option value="">Semua Tingkat</option>
+                <option value="Not Available">Not Available</option>
+                <option value="Damai">Damai</option>
+                <option value="Mudah">Mudah</option>
                 <option value="Sedang">Sedang</option>
-                <option value="Rendah">Rendah</option>
+                <option value="Sulit">Sulit</option>
+                <option value="Ngeri ☠️">Ngeri ☠️</option>
               </select>
             </div>
           </div>

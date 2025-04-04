@@ -31,7 +31,7 @@ const DashboardTugasKuliah = () => {
     mataKuliah: '',
     progress: '',
     dueDate: '',
-    priority: ''
+    tingkatKesulitan: ''  // Ubah dari prioritas ke tingkatKesulitan
   });
   const navigate = useNavigate();
 
@@ -53,11 +53,12 @@ const DashboardTugasKuliah = () => {
     }
   };
 
-  // Fungsi helper untuk filter berdasarkan progress
+  // Fungsi helper untuk filter berdasarkan progress - FIXED untuk nilai numerik
   const filterByProgress = (task, progressFilter) => {
     if (!progressFilter) return true;
     
-    const progress = parseInt(task.progressPercentage || 0);
+    // Task progress ada di property 'progress' bukan 'progressPercentage'
+    const progress = parseInt(task.progress || 0);
     
     if (progressFilter === '0') return progress === 0;
     if (progressFilter === '100') return progress === 100;
@@ -91,6 +92,9 @@ const DashboardTugasKuliah = () => {
     const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
     const thisMonthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
     
+    // Pastikan dueDate ada sebelum mencoba mengkonversinya
+    if (!task.tanggalDeadline) return false;
+    
     const dueDate = new Date(task.tanggalDeadline);
     dueDate.setHours(0, 0, 0, 0);
     
@@ -117,15 +121,15 @@ const DashboardTugasKuliah = () => {
       const textMatch = 
         task.namaTugas.toLowerCase().includes(filterText.toLowerCase()) ||
         task.mataKuliah.toLowerCase().includes(filterText.toLowerCase()) ||
-        task.deskripsiTugas.toLowerCase().includes(filterText.toLowerCase());
+        (task.deskripsiTugas && task.deskripsiTugas.toLowerCase().includes(filterText.toLowerCase()));
       
       const statusMatch = !filters.status || task.statusTugas === filters.status;
       const mataKuliahMatch = !filters.mataKuliah || task.mataKuliah === filters.mataKuliah;
-      const priorityMatch = !filters.priority || task.prioritas === filters.priority;
+      const tingkatKesulitanMatch = !filters.tingkatKesulitan || task.tingkatKesulitan === filters.tingkatKesulitan;
       const progressMatch = filterByProgress(task, filters.progress);
       const dueDateMatch = filterByDueDate(task, filters.dueDate);
       
-      return textMatch && statusMatch && mataKuliahMatch && progressMatch && dueDateMatch && priorityMatch;
+      return textMatch && statusMatch && mataKuliahMatch && progressMatch && dueDateMatch && tingkatKesulitanMatch;
     })
     .sort((a, b) => {
       if (orderMode === "manual") {
