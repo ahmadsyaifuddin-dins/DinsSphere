@@ -208,9 +208,12 @@ const DetailTugasKuliah = () => {
               handleToggleCompletion={handleToggleCompletion}
               handleDeleteTask={handleDeleteTask}
             />
+            <div className="mb-6">
             <NotesSection />
-            <br></br>
+            </div>
+            
             <RelatedTasks mataKuliah={task.mataKuliah} currentTaskId={id} />
+            
             </div>
           <div className="bg-gray-800/80 border-t border-gray-700 px-6 py-4 flex justify-between items-center">
             <div className="text-gray-400 text-sm">
