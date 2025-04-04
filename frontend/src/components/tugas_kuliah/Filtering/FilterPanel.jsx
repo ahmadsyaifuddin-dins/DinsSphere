@@ -147,9 +147,13 @@ const FilterPanel = ({
                 <option value="">Semua Deadline</option>
                 <option value="today">Hari Ini</option>
                 <option value="tomorrow">Besok</option>
+                <option value="lusa">Lusa</option>
                 <option value="thisWeek">Minggu Ini</option>
                 <option value="nextWeek">Minggu Depan</option>
                 <option value="thisMonth">Bulan Ini</option>
+                <option value="nextMonth">Bulan Depan</option>
+                <option value="twoMonths">2 Bulan</option>
+                <option value="threeMonths">3 Bulan</option>
                 <option value="overdue">Terlambat</option>
               </select>
             </div>
