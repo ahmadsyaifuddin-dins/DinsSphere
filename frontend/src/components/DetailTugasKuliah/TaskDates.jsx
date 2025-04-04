@@ -31,6 +31,9 @@ const computeTimeDifference = (from, to) => {
 };
 
 const TaskDates = ({ task }) => {
+  // Toleransi waktu untuk "tepat waktu" (5 menit)
+  const toleranceMs = 5 * 60 * 1000; 
+
   // Inisialisasi perhitungan waktu
   const [timeDiff, setTimeDiff] = useState(() => {
     if (task.tanggalSelesai) {
@@ -64,8 +67,6 @@ const TaskDates = ({ task }) => {
   console.log("Selisih Waktu:", { diffMs, days, hours, minutes });
 
   if (task.tanggalSelesai) {
-    const toleranceMs = 5 * 60 * 1000; // toleransi 5 menit
-    
     if (Math.abs(diffMs) <= toleranceMs) {
       timeDisplay = "Tepat waktu";
     } else if (diffMs > 0) {
@@ -75,9 +76,15 @@ const TaskDates = ({ task }) => {
       }${minutes > 0 ? minutes + " menit" : ""}`.trim();
     } else {
       // Jika tanggal selesai > deadline → terlambat
+      // PERBAIKAN: Untuk kasus terlambat, diffMs negatif, jadi kita sudah menggunakan Math.abs pada totalMinutes
       timeDisplay = `Terlambat ${days > 0 ? days + " hari " : ""}${
         hours > 0 ? hours + " jam " : ""
       }${minutes > 0 ? minutes + " menit" : ""}`.trim();
+      
+      // Tambahkan penanganan jika tidak ada hari, jam, atau menit (kasus sangat kecil)
+      if (days === 0 && hours === 0 && minutes === 0) {
+        timeDisplay = "Terlambat <1 menit";
+      }
     }
   } else {
     // Belum selesai
@@ -87,12 +94,22 @@ const TaskDates = ({ task }) => {
       } else {
         timeDisplay = `${days > 0 ? days + " hari " : ""}${
           hours > 0 ? hours + " jam " : ""
-        }${minutes > 0 ? minutes + " menit" : ""} lagi`;
+        }${minutes > 0 ? minutes + " menit" : ""} lagi`.trim();
+        
+        // Tambahkan penanganan jika string kosong (semua nilai 0)
+        if (timeDisplay === "lagi") {
+          timeDisplay = "< 1 menit lagi";
+        }
       }
     } else {
       timeDisplay = `Terlambat ${days > 0 ? days + " hari " : ""}${
         hours > 0 ? hours + " jam " : ""
       }${minutes > 0 ? minutes + " menit" : ""}`.trim();
+      
+      // Tambahkan penanganan jika tidak ada hari, jam, atau menit
+      if (days === 0 && hours === 0 && minutes === 0) {
+        timeDisplay = "Terlambat <1 menit";
+      }
     }
   }
 
@@ -100,7 +117,7 @@ const TaskDates = ({ task }) => {
   let bgClass = "";
   if (task.tanggalSelesai) {
     bgClass =
-      Math.abs(diffMs) <= 5 * 60 * 1000
+      Math.abs(diffMs) <= toleranceMs
         ? "bg-yellow-900/30 border-yellow-700"
         : diffMs > 0
         ? "bg-green-900/30 border-green-700"
