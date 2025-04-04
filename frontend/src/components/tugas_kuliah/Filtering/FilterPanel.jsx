@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaFilter, FaTimes } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const FilterPanel = ({ 
   filterText, 
@@ -30,7 +31,7 @@ const FilterPanel = ({
       mataKuliah: '',
       progress: '',
       dueDate: '',
-      tingkatKesulitan: ''  // Ubah dari prioritas ke tingkatKesulitan
+      tingkatKesulitan: ''
     };
     setLocalFilters(resetFilters);
     setFilters(resetFilters);
@@ -58,144 +59,154 @@ const FilterPanel = ({
         </div>
       </div>
 
-      {/* Expanded Filter Panel */}
-      {isExpanded && (
-        <div className="p-4 border-t border-gray-700">
-          {/* Text Search */}
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-300 mb-1">
-              Pencarian
-            </label>
-            <input
-              type="text"
-              value={filterText}
-              onChange={(e) => setFilterText(e.target.value)}
-              placeholder="Cari tugas kuliah..."
-              className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
+      {/* Expanded Filter Panel with Animation */}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className="overflow-hidden"
+          >
+            <div className="p-4 border-t border-gray-700">
+              {/* Text Search */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-300 mb-1">
+                  Pencarian
+                </label>
+                <input
+                  type="text"
+                  value={filterText}
+                  onChange={(e) => setFilterText(e.target.value)}
+                  placeholder="Cari tugas kuliah..."
+                  className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
+                />
+              </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {/* Status Filter */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
-                Status
-              </label>
-              <select
-                value={localFilters.status}
-                onChange={(e) => handleFilterChange('status', e.target.value)}
-                className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Semua Status</option>
-                <option value="Belum Dikerjakan">Belum Dikerjakan</option>
-                <option value="Sedang dikerjain...">Sedang Dikerjain...</option>
-                <option value="Selesai">Selesai</option>
-                <option value="Tertunda">Tertunda</option>
-              </select>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {/* Status Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Status
+                  </label>
+                  <select
+                    value={localFilters.status}
+                    onChange={(e) => handleFilterChange('status', e.target.value)}
+                    className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Semua Status</option>
+                    <option value="Belum Dikerjakan">Belum Dikerjakan</option>
+                    <option value="Sedang dikerjain...">Sedang Dikerjain...</option>
+                    <option value="Selesai">Selesai</option>
+                    <option value="Tertunda">Tertunda</option>
+                  </select>
+                </div>
+
+                {/* Mata Kuliah Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Mata Kuliah
+                  </label>
+                  <select
+                    value={localFilters.mataKuliah}
+                    onChange={(e) => handleFilterChange('mataKuliah', e.target.value)}
+                    className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Semua Mata Kuliah</option>
+                    {mataKuliahOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Progress Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Progress
+                  </label>
+                  <select
+                    value={localFilters.progress}
+                    onChange={(e) => handleFilterChange('progress', e.target.value)}
+                    className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Semua Progress</option>
+                    <option value="0">0% (Belum Dimulai)</option>
+                    <option value="1-10">1-10%</option>
+                    <option value="11-25">11-25%</option>
+                    <option value="26-50">26-50%</option>
+                    <option value="51-75">51-75%</option>
+                    <option value="76-99">76-99%</option>
+                    <option value="100">100% (Selesai)</option>
+                  </select>
+                </div>
+
+                {/* Due Date Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Deadline
+                  </label>
+                  <select
+                    value={localFilters.dueDate}
+                    onChange={(e) => handleFilterChange('dueDate', e.target.value)}
+                    className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Semua Deadline</option>
+                    <option value="today">Hari Ini</option>
+                    <option value="tomorrow">Besok</option>
+                    <option value="lusa">Lusa</option>
+                    <option value="thisWeek">Minggu Ini</option>
+                    <option value="nextWeek">Minggu Depan</option>
+                    <option value="thisMonth">Bulan Ini</option>
+                    <option value="nextMonth">Bulan Depan</option>
+                    <option value="twoMonths">2 Bulan</option>
+                    <option value="threeMonths">3 Bulan</option>
+                    <option value="overdue">Terlambat</option>
+                  </select>
+                </div>
+
+                {/* Tingkat Kesulitan Filter */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-1">
+                    Tingkat Kesulitan
+                  </label>
+                  <select
+                    value={localFilters.tingkatKesulitan}
+                    onChange={(e) => handleFilterChange('tingkatKesulitan', e.target.value)}
+                    className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
+                  >
+                    <option value="">Semua Tingkat</option>
+                    <option value="Not Available">Not Available</option>
+                    <option value="Damai">Damai</option>
+                    <option value="Mudah">Mudah</option>
+                    <option value="Sedang">Sedang</option>
+                    <option value="Sulit">Sulit</option>
+                    <option value="Ngeri ☠️">Ngeri ☠️</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Filter Actions */}
+              <div className="mt-4 flex justify-end space-x-2">
+                <button
+                  onClick={handleResetFilters}
+                  className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-md flex items-center"
+                >
+                  <FaTimes className="mr-1" /> Reset
+                </button>
+                <button
+                  onClick={handleApplyFilters}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md"
+                >
+                  Terapkan Filter
+                </button>
+              </div>
             </div>
-
-            {/* Mata Kuliah Filter */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
-                Mata Kuliah
-              </label>
-              <select
-                value={localFilters.mataKuliah}
-                onChange={(e) => handleFilterChange('mataKuliah', e.target.value)}
-                className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Semua Mata Kuliah</option>
-                {mataKuliahOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Progress Filter - Fixed untuk nilai numerik */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
-                Progress
-              </label>
-              <select
-                value={localFilters.progress}
-                onChange={(e) => handleFilterChange('progress', e.target.value)}
-                className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Semua Progress</option>
-                <option value="0">0% (Belum Dimulai)</option>
-                <option value="1-10">1-10%</option>
-                <option value="11-25">11-25%</option>
-                <option value="26-50">26-50%</option>
-                <option value="51-75">51-75%</option>
-                <option value="76-99">76-99%</option>
-                <option value="100">100% (Selesai)</option>
-              </select>
-            </div>
-
-            {/* Due Date Filter */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
-                Deadline
-              </label>
-              <select
-                value={localFilters.dueDate}
-                onChange={(e) => handleFilterChange('dueDate', e.target.value)}
-                className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Semua Deadline</option>
-                <option value="today">Hari Ini</option>
-                <option value="tomorrow">Besok</option>
-                <option value="lusa">Lusa</option>
-                <option value="thisWeek">Minggu Ini</option>
-                <option value="nextWeek">Minggu Depan</option>
-                <option value="thisMonth">Bulan Ini</option>
-                <option value="nextMonth">Bulan Depan</option>
-                <option value="twoMonths">2 Bulan</option>
-                <option value="threeMonths">3 Bulan</option>
-                <option value="overdue">Terlambat</option>
-              </select>
-            </div>
-
-            {/* Tingkat Kesulitan Filter (ganti prioritas) */}
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-1">
-                Tingkat Kesulitan
-              </label>
-              <select
-                value={localFilters.tingkatKesulitan}
-                onChange={(e) => handleFilterChange('tingkatKesulitan', e.target.value)}
-                className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Semua Tingkat</option>
-                <option value="Not Available">Not Available</option>
-                <option value="Damai">Damai</option>
-                <option value="Mudah">Mudah</option>
-                <option value="Sedang">Sedang</option>
-                <option value="Sulit">Sulit</option>
-                <option value="Ngeri ☠️">Ngeri ☠️</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Filter Actions */}
-          <div className="mt-4 flex justify-end space-x-2">
-            <button
-              onClick={handleResetFilters}
-              className="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-md flex items-center"
-            >
-              <FaTimes className="mr-1" /> Reset
-            </button>
-            <button
-              onClick={handleApplyFilters}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-md"
-            >
-              Terapkan Filter
-            </button>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
