@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import HeaderTugasKuliah from "../layout/HeaderTugasKuliah";
-import FilterSearch from "../components/FilterSearch";
+import FilterPanel from "../components/tugas_kuliah/Filtering/FilterPanel";
 import SortOrder from "../components/SortOrder";
 import ViewMode from "../components/ViewMode";
-import TugasKuliahList from "../components/tasks/TugasKuliahList";
-import TugasKuliahCard from "../components/tasks/TugasKuliahCard";
-import TugasKuliahModal from "../components/tasks/TugasKuliahModal";
+import TugasKuliahList from "../components/tugas_kuliah/TugasKuliahList";
+import TugasKuliahCard from "../components/tugas_kuliah/TugasKuliahCard";
+import TugasKuliahModal from "../components/tugas_kuliah/TugasKuliahModal";
 
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
@@ -26,6 +26,13 @@ const DashboardTugasKuliah = () => {
   const [tugasToEdit, setTugasToEdit] = useState(null);
   const [sortOrder, setSortOrder] = useState("newest"); // "newest" atau "oldest"
   const [orderMode, setOrderMode] = useState("manual");
+  const [filters, setFilters] = useState({
+    status: '',
+    mataKuliah: '',
+    progress: '',
+    dueDate: '',
+    priority: ''
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -46,19 +53,86 @@ const DashboardTugasKuliah = () => {
     }
   };
 
+  // Fungsi helper untuk filter berdasarkan progress
+  const filterByProgress = (task, progressFilter) => {
+    if (!progressFilter) return true;
+    
+    const progress = parseInt(task.progressPercentage || 0);
+    
+    if (progressFilter === '0') return progress === 0;
+    if (progressFilter === '100') return progress === 100;
+    
+    const [min, max] = progressFilter.split('-').map(Number);
+    return progress >= min && progress <= max;
+  };
+
+  // Fungsi helper untuk filter berdasarkan due date
+  const filterByDueDate = (task, dueDateFilter) => {
+    if (!dueDateFilter) return true;
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    const nextWeekStart = new Date(today);
+    nextWeekStart.setDate(today.getDate() - today.getDay() + 7);
+    
+    const nextWeekEnd = new Date(nextWeekStart);
+    nextWeekEnd.setDate(nextWeekStart.getDate() + 6);
+    
+    const thisWeekStart = new Date(today);
+    thisWeekStart.setDate(today.getDate() - today.getDay());
+    
+    const thisWeekEnd = new Date(thisWeekStart);
+    thisWeekEnd.setDate(thisWeekStart.getDate() + 6);
+    
+    const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    const thisMonthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+    
+    const dueDate = new Date(task.tanggalDeadline);
+    dueDate.setHours(0, 0, 0, 0);
+    
+    switch (dueDateFilter) {
+      case 'today':
+        return dueDate.getTime() === today.getTime();
+      case 'tomorrow':
+        return dueDate.getTime() === tomorrow.getTime();
+      case 'thisWeek':
+        return dueDate >= thisWeekStart && dueDate <= thisWeekEnd;
+      case 'nextWeek':
+        return dueDate >= nextWeekStart && dueDate <= nextWeekEnd;
+      case 'thisMonth':
+        return dueDate >= thisMonthStart && dueDate <= thisMonthEnd;
+      case 'overdue':
+        return dueDate < today;
+      default:
+        return true;
+    }
+  };
+
   const processedTasks = tugasKuliah
-    .filter(
-      (task) =>
+    .filter(task => {
+      const textMatch = 
         task.namaTugas.toLowerCase().includes(filterText.toLowerCase()) ||
         task.mataKuliah.toLowerCase().includes(filterText.toLowerCase()) ||
-        task.deskripsiTugas.toLowerCase().includes(filterText.toLowerCase())
-    )
+        task.deskripsiTugas.toLowerCase().includes(filterText.toLowerCase());
+      
+      const statusMatch = !filters.status || task.statusTugas === filters.status;
+      const mataKuliahMatch = !filters.mataKuliah || task.mataKuliah === filters.mataKuliah;
+      const priorityMatch = !filters.priority || task.prioritas === filters.priority;
+      const progressMatch = filterByProgress(task, filters.progress);
+      const dueDateMatch = filterByDueDate(task, filters.dueDate);
+      
+      return textMatch && statusMatch && mataKuliahMatch && progressMatch && dueDateMatch && priorityMatch;
+    })
     .sort((a, b) => {
       if (orderMode === "manual") {
-        // Manual mode: gunakan field order (pastikan field order di-update saat drag)
+        // Manual mode: gunakan field order
         return sortOrder === "newest" ? a.order - b.order : b.order - a.order;
       } else {
-        // Auto mode: urutkan berdasarkan tanggal terbaru
+        // Auto mode: urutkan berdasarkan tanggal
         const dateA = new Date(a.createdAt || a.tanggalDiberikan || 0);
         const dateB = new Date(b.createdAt || b.tanggalDiberikan || 0);
         return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
@@ -68,7 +142,6 @@ const DashboardTugasKuliah = () => {
   const viewTaskDetail = (id) => {
     navigate(`/DetailTugasKuliah/${id}`);
     console.log("View detail for task id:", id);
-    // Detail task bisa diimplementasikan sesuai kebutuhan
   };
 
   const addTugasKuliah = async (newTask) => {
@@ -161,6 +234,12 @@ const DashboardTugasKuliah = () => {
     }
   };
 
+  // Fungsi untuk menerapkan filter
+  const applyFilters = (newFilters) => {
+    // Logic tambahan jika diperlukan saat filter diterapkan
+    console.log("Filters applied:", newFilters);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100">
       <div className="max-w-8xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8">
@@ -179,12 +258,24 @@ const DashboardTugasKuliah = () => {
               Total Tugas: {tugasKuliah.length}
             </span>
           </div>
+          <div className="px-3 py-1.5 bg-green-500/20 text-green-400 border border-green-500 rounded-lg">
+            <span className="font-medium">
+              Hasil Filter: {processedTasks.length}
+            </span>
+          </div>
         </div>
 
-        {/* Filter & Controls */}
-        <div className="mb-4">
-          <FilterSearch filterText={filterText} setFilterText={setFilterText} />
-        </div>
+        {/* Filter Panel Component */}
+        <FilterPanel
+          filterText={filterText}
+          setFilterText={setFilterText}
+          mataKuliahOptions={mataKuliahOptions}
+          filters={filters}
+          setFilters={setFilters}
+          applyFilters={applyFilters}
+        />
+
+        {/* Sort & View Controls */}
         <div className="flex justify-between items-center mb-4">
           <SortOrder
             sortOrder={sortOrder}
@@ -201,10 +292,11 @@ const DashboardTugasKuliah = () => {
           <TugasListSkeleton />
         ) : processedTasks.length === 0 ? (
           <div className="text-center py-8 text-gray-400">
-            Coming Soon on 8 or 14 Apr 2025!
+            {filterText || Object.values(filters).some(value => value !== '') 
+              ? "Tidak ada tugas yang sesuai dengan filter. Coba ubah filter Anda."
+              : "Coming Soon on 8 or 14 Apr 2025!"}
           </div>
-        ) : // <div className="text-center py-8 text-gray-400">No tasks found. Try refreshing.</div>
-        viewMode === "list" ? (
+        ) : viewMode === "list" ? (
           <TugasKuliahList
             tasks={processedTasks}
             getStatusColorClass={getStatusColorClass}

@@ -5,7 +5,7 @@ import DashboardTugasKuliah from './pages/DashboardTugasKuliah';
 import Login from './pages/Login';
 import ProjectDetail from './pages/projectDetail';
 import DetailTugasKuliah from './pages/DetailTugasKuliah';
-import EditTugasKuliah from './components/tasks/EditTugasKuliah';
+import EditTugasKuliah from './components/tugas_kuliah/EditTugasKuliah';
 import Navbar from "./components/Navbar";
 
 function App() {

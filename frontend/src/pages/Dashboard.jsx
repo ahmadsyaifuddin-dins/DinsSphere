@@ -21,7 +21,7 @@ import {
 } from "../utils/helpers";
 
 // Import komponen baru
-import ProjectFilters from "../components/ProjectFilters";
+import ProjectFilters from "../components/projects/Filtering/ProjectFilters";
 import Pagination from "../components/Pagination";
 import { API_BASE_URL } from "../config";
 
