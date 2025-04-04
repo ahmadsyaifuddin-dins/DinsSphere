@@ -47,7 +47,7 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
   const [tanggalDeadlineDate, setTanggalDeadlineDate] = useState(deadlineDateTime.date);
   const [tanggalDeadlineTime, setTanggalDeadlineTime] = useState(deadlineDateTime.time);
 
-  const [progress, setProgress] = useState(task ? task.progress || 0 : 0);
+  const [progress, setProgress] = useState(task ? task.progress || 1 : 1);
   const [statusTugas, setStatusTugas] = useState(task ? task.statusTugas || "Belum Dikerjakan" : "Belum Dikerjakan");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -104,7 +104,7 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
       tanggalDeadlineWITA,
       tanggalSelesai,
       tanggalSelesaiWITA,
-      progress: progress ? Number(progress) : 0,
+      progress: progress ? Number(progress) : 1,
       statusTugas,
       order: task?.order || 0
     };
@@ -275,8 +275,8 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
                 value={progress}
                 onChange={(e) => setProgress(e.target.value)}
                 className={inputClasses}
-                placeholder="0 - 100"
-                min="0"
+                placeholder="1 - 100"
+                min="1"
                 max="100"
               />
             </div>
