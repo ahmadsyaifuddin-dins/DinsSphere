@@ -29,7 +29,7 @@ const ProjectDetail = () => {
     const fetchProjectAndViews = async () => {
       try {
         // Fetch project details
-        const projectRes = await axios.get(`https://dins-sphere-backend.vercel.app/api/projects/${id}`);
+        const projectRes = await axios.get(`${API_BASE_URL}/api/projects/${id}`);
         
         if (isMounted) {
           setProject(projectRes.data);
@@ -37,7 +37,7 @@ const ProjectDetail = () => {
           
           // Hanya fetch view count tanpa update
           // Ini hanya untuk menampilkan, supaya tidak memicu pemanggilan ganda
-          const viewRes = await axios.get(`https://dins-sphere-backend.vercel.app/api/viewProjects/${id}`);
+          const viewRes = await axios.get(`${API_BASE_URL}/api/viewProjects/${id}`);
           setViewCount(viewRes.data.count || 0);
         }
       } catch (err) {
@@ -61,13 +61,13 @@ const ProjectDetail = () => {
       if (!hasViewed) {
         try {
           // Update view count sekali saja
-          await axios.post(`https://dins-sphere-backend.vercel.app/api/viewProjects/${id}`);
+          await axios.post(`${API_BASE_URL}/api/viewProjects/${id}`);
           // Tandai sebagai sudah dilihat
           localStorage.setItem(viewedKey, 'true');
           
           // Refresh view count setelah update
           if (isMounted) {
-            const viewRes = await axios.get(`https://dins-sphere-backend.vercel.app/api/viewProjects/${id}`);
+            const viewRes = await axios.get(`${API_BASE_URL}/api/viewProjects/${id}`);
             setViewCount(viewRes.data.count || 0);
           }
         } catch (err) {

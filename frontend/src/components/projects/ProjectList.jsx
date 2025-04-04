@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { SortAsc, Eye, Edit, Trash2 } from "lucide-react";
+import { API_BASE_URL } from "../../config";
 
 const ProjectList = ({
   projects: initialProjects,
@@ -26,7 +27,7 @@ const ProjectList = ({
         initialProjects.map(async (project) => {
           try {
             const response = await axios.get(
-              `https://dins-sphere-backend.vercel.app/api/viewProjects/${project._id}`
+              `${API_BASE_URL}/api/viewProjects/${project._id}`
             );
             return { ...project, viewCount: response.data.count || 0 };
           } catch (error) {

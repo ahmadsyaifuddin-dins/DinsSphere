@@ -36,7 +36,7 @@ const DashboardTugasKuliah = () => {
   const fetchTugasKuliah = async () => {
     try {
       setIsLoading(true);
-      const res = await axios.get("https://dins-sphere-backend.vercel.app/api/tasks");
+      const res = await axios.get(`${API_BASE_URL}/api/tasks`);
       setTugasKuliah(res.data);
     } catch (err) {
       console.error("Error fetching tasks:", err);

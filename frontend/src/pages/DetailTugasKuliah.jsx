@@ -33,13 +33,13 @@ const DetailTugasKuliah = () => {
     const fetchTaskAndViews = async () => {
       try {
         const taskRes = await axios.get(
-          `https://dins-sphere-backend.vercel.app/api/tasks/${id}`
+          `${API_BASE_URL}/api/tasks/${id}`
         );
         if (isMounted) {
           setTask(taskRes.data);
           setLoading(false);
           const viewRes = await axios.get(
-            `https://dins-sphere-backend.vercel.app/api/viewTasks/${id}`
+            `${API_BASE_URL}/api/viewTasks/${id}`
           );
           setViewCount(viewRes.data.count || 0);
         }
@@ -58,11 +58,11 @@ const DetailTugasKuliah = () => {
       if (!localStorage.getItem(viewedKey)) {
         try {
           await axios.post(
-            `https://dins-sphere-backend.vercel.app/api/viewTasks/${id}`
+            `${API_BASE_URL}/api/viewTasks/${id}`
           );
           localStorage.setItem(viewedKey, "true");
           const viewRes = await axios.get(
-            `https://dins-sphere-backend.vercel.app/api/viewTasks/${id}`
+            `${API_BASE_URL}/api/viewTasks/${id}`
           );
           setViewCount(viewRes.data.count || 0);
         } catch (err) {

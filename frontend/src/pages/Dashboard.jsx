@@ -64,7 +64,7 @@ const Dashboard = () => {
     try {
       setIsLoading(true);
       const res = await axios.get(
-        "https://dins-sphere-backend.vercel.app/api/projects",
+        `${API_BASE_URL}/api/projects`,
         {
           params: {
             type: selectedType,

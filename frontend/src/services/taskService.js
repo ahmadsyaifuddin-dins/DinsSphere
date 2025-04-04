@@ -1,18 +1,17 @@
 // services/taskService.js
 import axios from "axios";
-
-const API_URL = "https://dins-sphere-backend.vercel.app/api/tasks";
+import { API_BASE_URL } from "../config";
 
 export const getTask = (id) => {
-  return axios.get(`${API_URL}/${id}`);
+  return axios.get(`${API_BASE_URL}/api/${id}`);
 };
 
 export const deleteTask = (id, token) => {
-  return axios.delete(`${API_URL}/${id}`, {
+  return axios.delete(`${API_BASE_URL}/api/${id}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };
 
 export const toggleTaskCompletion = (id, updatedData) => {
-  return axios.patch(`${API_URL}/${id}/complete`, updatedData);
+  return axios.patch(`${API_BASE_URL}/api/${id}/complete`, updatedData);
 };

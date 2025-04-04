@@ -238,7 +238,7 @@ const TugasKuliahList = ({
         initialTasks.map(async (task) => {
           try {
             const response = await axios.get(
-              `https://dins-sphere-backend.vercel.app/api/viewTasks/${task._id}`
+              `${API_BASE_URL}/api/viewTasks/${task._id}`
             );
             return { ...task, viewCount: response.data.count || 0 };
           } catch (error) {
