@@ -130,6 +130,7 @@ export const getStatusBadgeClass = (status) => {
       value: "FTI2006 Etika Profesi",
       label: "Etika Profesi",
       icon: "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj8_3o93ELYEGvrnRZoe0pZa-Fwzs71vnSOeth5vyVkyMghqgmiq5pW4s49PwJxEtvJNUHC2MLPaElx2Daka9l_78puO9zNRZBYKt7syatoHanPqXpcL47lglnK2U1KkXFvEsBebzkHqobV/s700/ilustrasi+Kode+Etik+%2528sumber-+pelajaran.co.id%2529.jpg",
+      namaDosen: "Yusri Ikhwani, S.Kom., M.Kom."
       SKS: 2,
     },
     {
