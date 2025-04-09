@@ -1,7 +1,10 @@
+// src/components/MusicPlayer/MusicPlayer.jsx
 import React, { useState, useRef, useEffect } from "react";
-import { Music, Pause, Play, Volume2, VolumeX } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence } from "framer-motion";
 import { useLocation } from "react-router-dom";
+import tracks from "../../data/tracks";
+import MinimizedPlayer from "../MusicPlayer/MinimizedPlayer";
+import ExpandedPlayer from "../MusicPlayer/ExpandedPlayer";
 
 const MusicPlayer = () => {
   const audioRef = useRef(null);
@@ -10,9 +13,47 @@ const MusicPlayer = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [autoplayAttempted, setAutoplayAttempted] = useState(false);
   const [showAutoplayHint, setShowAutoplayHint] = useState(false);
-
+  const [showTrackList, setShowTrackList] = useState(false);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  
   const location = useLocation();
-
+  
+  const currentTrack = tracks[currentTrackIndex];
+  
+  // Function untuk mengganti lagu
+  const changeTrack = (index) => {
+    const wasPlaying = isPlaying;
+    
+    // Pause current track
+    if (audioRef.current) {
+      audioRef.current.pause();
+      setIsPlaying(false);
+    }
+    
+    // Update current track index
+    setCurrentTrackIndex(index);
+    
+    // Update audio src
+    if (audioRef.current) {
+      audioRef.current.src = tracks[index].src;
+      
+      // If it was playing, auto-play the new track
+      if (wasPlaying) {
+        audioRef.current.muted = isMuted;
+        audioRef.current.play()
+          .then(() => setIsPlaying(true))
+          .catch((err) => {
+            console.error("Play failed after track change:", err);
+            setIsPlaying(false);
+            setShowAutoplayHint(true);
+          });
+      }
+    }
+    
+    // Hide track list after selection
+    setShowTrackList(false);
+  };
+  
   const togglePlay = () => {
     if (!audioRef.current) return;
     
@@ -65,6 +106,25 @@ const MusicPlayer = () => {
     if (!isExpanded && autoplayAttempted && !isPlaying) {
       setShowAutoplayHint(true);
     }
+    
+    // Hide track list when minimizing
+    if (isExpanded) {
+      setShowTrackList(false);
+    }
+  };
+  
+  const toggleTrackList = () => {
+    setShowTrackList(!showTrackList);
+  };
+  
+  const nextTrack = () => {
+    const nextIndex = (currentTrackIndex + 1) % tracks.length;
+    changeTrack(nextIndex);
+  };
+  
+  const prevTrack = () => {
+    const prevIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+    changeTrack(prevIndex);
   };
 
   // Initialize audio and attempt autoplay
@@ -114,7 +174,8 @@ const MusicPlayer = () => {
     
     // Audio ended event listener
     const handleAudioEnded = () => {
-      setIsPlaying(false);
+      // Automatically play next track
+      nextTrack();
     };
 
     if (audioRef.current) {
@@ -126,10 +187,8 @@ const MusicPlayer = () => {
       if (audioRef.current) {
         audioRef.current.removeEventListener('ended', handleAudioEnded);
       }
-      // Do NOT pause audio here when component unmounts
-      // This would stop playback when the component re-renders
     };
-  }, [isExpanded]);
+  }, [isExpanded, currentTrackIndex]);
 
   // Listen for route changes to autoplay on /dashboardTugasKuliah
   useEffect(() => {
@@ -236,163 +295,41 @@ const MusicPlayer = () => {
     }
   };
 
-  // Animation variants for the hint bounce
-  const hintVariants = {
-    hidden: { y: -10, opacity: 0 },
-    visible: { 
-      y: 0, 
-      opacity: 1,
-      transition: { 
-        type: "spring",
-        damping: 10,
-        stiffness: 150
-      }
-    },
-    exit: { 
-      y: -10, 
-      opacity: 0,
-      transition: { duration: 0.2 }
-    }
-  };
-
   return (
     <div className="fixed bottom-2 left-2 z-50">
       <AnimatePresence mode="wait">
         {isExpanded ? (
-          // Expanded view
-          <motion.div
-            key="expanded"
-            initial="hidden"
-            animate="visible"
-            exit="exit"
+          <ExpandedPlayer
             variants={jellyVariants}
-            className="flex flex-col"
-          >
-            <AnimatePresence>
-              {showAutoplayHint && (
-                <motion.div
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  variants={hintVariants}
-                  className="mb-2 p-2 bg-transparent text-white text-xs rounded shadow-lg"
-                >
-                  Click play to enable audio! ↓
-                </motion.div>
-              )}
-            </AnimatePresence>
-            
-            <motion.div 
-              className="flex items-center bg-gradient-to-r from-blue-600 to-green-600 rounded-lg shadow-lg px-3 py-2 border border-blue-400"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <div className="mr-2 relative">
-                <Music className="w-4 h-4 text-white animate-pulse" />
-                {isPlaying && !isMuted && (
-                  <motion.span 
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="absolute -top-1 -right-1 h-2 w-2 bg-green-400 rounded-full"
-                  ></motion.span>
-                )}
-              </div>
-              
-              <div className="flex-1 mr-3">
-                <p className="text-white font-medium text-xs truncate max-w-24">
-                  DJ Music 🥳
-                </p>
-                <div className="mt-1 h-1 bg-blue-300/30 rounded-full overflow-hidden">
-                  <div className={`h-full bg-blue-200 ${isPlaying && !isMuted ? "animate-music-progress" : ""}`}></div>
-                </div>
-              </div>
-              
-              <div className="flex space-x-1">
-                <motion.button
-                  onClick={togglePlay}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className={`p-1.5 ${isPlaying ? 'bg-green-500/40 hover:bg-green-500/60' : 'bg-blue-500/40 hover:bg-blue-500/60'} rounded-full text-white transition-all`}
-                  aria-label={isPlaying ? "Pause music" : "Play music"}
-                >
-                  {isPlaying ? (
-                    <Pause className="w-3 h-3" />
-                  ) : (
-                    <Play className="w-3 h-3" />
-                  )}
-                </motion.button>
-                
-                <motion.button
-                  onClick={toggleMute}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className={`p-1.5 ${isMuted ? 'bg-red-500/40 hover:bg-red-500/60' : 'bg-green-500/40 hover:bg-green-500/60'} rounded-full text-white transition-all`}
-                  aria-label={isMuted ? "Unmute" : "Mute"}
-                >
-                  {isMuted ? (
-                    <VolumeX className="w-3 h-3" />
-                  ) : (
-                    <Volume2 className="w-3 h-3" />
-                  )}
-                </motion.button>
-                
-                <motion.button
-                  onClick={toggleExpand}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  className="p-1.5 bg-white/20 hover:bg-white/40 rounded-full text-white transition-all"
-                  aria-label="Minimize player"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </motion.button>
-              </div>
-            </motion.div>
-          </motion.div>
+            showAutoplayHint={showAutoplayHint}
+            isPlaying={isPlaying}
+            isMuted={isMuted}
+            currentTrack={currentTrack}
+            togglePlay={togglePlay}
+            toggleMute={toggleMute}
+            toggleTrackList={toggleTrackList}
+            showTrackList={showTrackList}
+            toggleExpand={toggleExpand}
+            tracks={tracks}
+            currentTrackIndex={currentTrackIndex}
+            changeTrack={changeTrack}
+            prevTrack={prevTrack}
+            nextTrack={nextTrack}
+          />
         ) : (
-          // Minimized view - just a floating button with jelly effect
-          <motion.button
-            key="minimized"
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            variants={jellyVariants}
+          <MinimizedPlayer
             onClick={toggleExpand}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ 
-              scale: 0.9,
-              rotate: [0, -5, 5, -5, 0],
-              transition: { duration: 0.5 }
-            }}
-            className={`flex items-center space-x-1 ${isPlaying && !isMuted ? 'bg-gradient-to-r from-green-600 to-blue-600' : 'bg-gradient-to-r from-blue-600 to-green-600'} rounded-full p-2 shadow-lg border border-blue-400 hover:shadow-blue-500/50 transition-all duration-300`}
-            aria-label="Expand music player"
-          >
-            <Music className="w-4 h-4 text-white" />
-            {isPlaying && (
-              <motion.span 
-                initial={{ scale: 0 }}
-                animate={{ 
-                  scale: [1, 1.2, 1],
-                  transition: { 
-                    repeat: Infinity,
-                    duration: 1.5
-                  }
-                }}
-                className="h-2 w-2 bg-white rounded-full"
-              ></motion.span>
-            )}
-            {isMuted && isPlaying && (
-              <VolumeX className="w-3 h-3 text-white/70" />
-            )}
-          </motion.button>
+            isPlaying={isPlaying}
+            isMuted={isMuted}
+            variants={jellyVariants}
+          />
         )}
       </AnimatePresence>
       
       <audio 
         ref={audioRef} 
-        src="/Music/DJ_MAU_DIBILANG_SOK_OKE_SLOW.mp3" 
-        loop 
+        src={currentTrack.src} 
+        loop={false} 
         preload="auto"
       />
     </div>
