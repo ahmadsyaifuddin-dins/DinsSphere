@@ -1,11 +1,17 @@
 import React, { useState } from "react";
 import ButtonRapikan from "./ButtonRapikan";
 
-const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) => {
+const TugasKuliahModal = ({
+  isOpen,
+  onClose,
+  task,
+  onSave,
+  mataKuliahOptions,
+}) => {
   // Fungsi parsing tanggal
   const parseDateFromTask = (dateString) => {
     if (!dateString) return { date: "", time: "" };
-    
+
     try {
       const deadlineDate = new Date(dateString);
       const date =
@@ -24,31 +30,60 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
       const parts = dateString.split("T");
       return {
         date: parts[0] || "",
-        time: parts[1]?.slice(0, 5) || ""
+        time: parts[1]?.slice(0, 5) || "",
       };
     }
   };
 
-  const [gambaranTugas, setGambaranTugas] = useState(task ? task.gambaranTugas || "" : "");
-  const [mataKuliah, setMataKuliah] = useState(task ? task.mataKuliah || "" : "");
+  const [gambaranTugas, setGambaranTugas] = useState(
+    task ? task.gambaranTugas || "" : ""
+  );
+  const [mataKuliah, setMataKuliah] = useState(
+    task ? task.mataKuliah || "" : ""
+  );
   const [namaTugas, setNamaTugas] = useState(task ? task.namaTugas || "" : "");
-  const [deskripsiTugas, setDeskripsiTugas] = useState(task ? task.deskripsiTugas || "" : "");
-  const [tingkatKesulitan, setTingkatKesulitan] = useState(task ? task.tingkatKesulitan || "" : "");
+  const [deskripsiTugas, setDeskripsiTugas] = useState(
+    task ? task.deskripsiTugas || "" : ""
+  );
+  const [tingkatKesulitan, setTingkatKesulitan] = useState(
+    task ? task.tingkatKesulitan || "" : ""
+  );
+
+  // Dapetin waktu sekarang
+  const currentDateObj = new Date();
+  const formattedCurrentDate = `${currentDateObj.getFullYear()}-${String(
+    currentDateObj.getMonth() + 1
+  ).padStart(2, "0")}-${String(currentDateObj.getDate()).padStart(2, "0")}`;
+  const formattedCurrentTime = `${String(currentDateObj.getHours()).padStart(
+    2,
+    "0"
+  )}:${String(currentDateObj.getMinutes()).padStart(2, "0")}`;
 
   const diberikanDateTime = task
-    ? parseDateFromTask(task.tanggalDiberikan || task.tanggalDiberikanWITA)
-    : { date: "", time: "" };
+  ? parseDateFromTask(task.tanggalDiberikan || task.tanggalDiberikanWITA)
+  : { date: formattedCurrentDate, time: formattedCurrentTime };
+  
   const deadlineDateTime = task
     ? parseDateFromTask(task.tanggalDeadline || task.tanggalDeadlineWITA)
     : { date: "", time: "" };
 
-  const [tanggalDiberikanDate, setTanggalDiberikanDate] = useState(diberikanDateTime.date);
-  const [tanggalDiberikanTime, setTanggalDiberikanTime] = useState(diberikanDateTime.time);
-  const [tanggalDeadlineDate, setTanggalDeadlineDate] = useState(deadlineDateTime.date);
-  const [tanggalDeadlineTime, setTanggalDeadlineTime] = useState(deadlineDateTime.time);
+  const [tanggalDiberikanDate, setTanggalDiberikanDate] = useState(
+    diberikanDateTime.date
+  );
+  const [tanggalDiberikanTime, setTanggalDiberikanTime] = useState(
+    diberikanDateTime.time
+  );
+  const [tanggalDeadlineDate, setTanggalDeadlineDate] = useState(
+    deadlineDateTime.date
+  );
+  const [tanggalDeadlineTime, setTanggalDeadlineTime] = useState(
+    deadlineDateTime.time
+  );
 
   const [progress, setProgress] = useState(task ? task.progress || 1 : 1);
-  const [statusTugas, setStatusTugas] = useState(task ? task.statusTugas || "Belum Dikerjakan" : "Belum Dikerjakan");
+  const [statusTugas, setStatusTugas] = useState(
+    task ? task.statusTugas || "Belum Dikerjakan" : "Belum Dikerjakan"
+  );
   const [isLoading, setIsLoading] = useState(false);
 
   if (!isOpen) return null;
@@ -66,13 +101,20 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
         ? `${tanggalDeadlineDate}T${tanggalDeadlineTime}:00`
         : null;
 
-    const tanggalDiberikan = tanggalDiberikanWITA ? new Date(tanggalDiberikanWITA) : null;
-    const tanggalDeadline = tanggalDeadlineWITA ? new Date(tanggalDeadlineWITA) : null;
+    const tanggalDiberikan = tanggalDiberikanWITA
+      ? new Date(tanggalDiberikanWITA)
+      : null;
+    const tanggalDeadline = tanggalDeadlineWITA
+      ? new Date(tanggalDeadlineWITA)
+      : null;
 
     let tanggalSelesai = null;
     let tanggalSelesaiWITA = null;
 
-    if (statusTugas === "Selesai" && (!task || task.statusTugas !== "Selesai")) {
+    if (
+      statusTugas === "Selesai" &&
+      (!task || task.statusTugas !== "Selesai")
+    ) {
       const now = new Date();
       tanggalSelesai = now;
       tanggalSelesaiWITA = now
@@ -84,7 +126,7 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
           hour: "2-digit",
           minute: "2-digit",
           second: "2-digit",
-          hour12: false
+          hour12: false,
         })
         .replace(/(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/, "$3-$1-$2T$4:$5:$6");
     } else if (task && task.statusTugas === "Selesai" && task.tanggalSelesai) {
@@ -106,7 +148,7 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
       tanggalSelesaiWITA,
       progress: progress ? Number(progress) : 1,
       statusTugas,
-      order: task?.order || 0
+      order: task?.order || 0,
     };
 
     try {
@@ -128,7 +170,7 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
         <h2 className="text-2xl font-bold mb-6 flex items-center">
           {task ? "Edit Tugas Kuliah" : "Tambah Tugas Kuliah"}
         </h2>
-        
+
         <div className="overflow-y-auto flex-grow pr-4 custom-scrollbar">
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -299,7 +341,7 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
             </div>
           </form>
         </div>
-        
+
         <div className="mt-6 flex justify-end gap-3 pt-4 border-t border-gray-700">
           <button
             type="button"
@@ -316,9 +358,25 @@ const TugasKuliahModal = ({ isOpen, onClose, task, onSave, mataKuliahOptions }) 
           >
             {isLoading ? (
               <>
-                <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                <svg
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
                 </svg>
                 Proses...
               </>
