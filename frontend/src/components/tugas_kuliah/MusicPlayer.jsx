@@ -183,7 +183,7 @@ const MusicPlayer = () => {
               Click play to enable audio! ↓
             </div>
           )}
-          <div className="flex items-center bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg shadow-lg px-3 py-2 border border-blue-400 transition-all duration-300">
+          <div className="flex items-center bg-gradient-to-r from-blue-600 to-green-600 rounded-lg shadow-lg px-3 py-2 border border-blue-400 transition-all duration-300">
             <div className="mr-2 relative">
               <Music className="w-4 h-4 text-white animate-pulse" />
               {isPlaying && !isMuted && (
@@ -241,7 +241,7 @@ const MusicPlayer = () => {
         // Minimized view - just a floating button
         <button
           onClick={toggleExpand}
-          className={`flex items-center space-x-1 ${isPlaying && !isMuted ? 'bg-gradient-to-r from-green-600 to-blue-600' : 'bg-gradient-to-r from-blue-600 to-purple-600'} rounded-full p-2 shadow-lg border border-blue-400 hover:shadow-blue-500/50 transition-all duration-300`}
+          className={`flex items-center space-x-1 ${isPlaying && !isMuted ? 'bg-gradient-to-r from-green-600 to-blue-600' : 'bg-gradient-to-r from-blue-600 to-green-600'} rounded-full p-2 shadow-lg border border-blue-400 hover:shadow-blue-500/50 transition-all duration-300`}
           aria-label="Expand music player"
         >
           <Music className="w-4 h-4 text-white" />
