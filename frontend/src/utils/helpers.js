@@ -125,6 +125,93 @@ export const getStatusBadgeClass = (status) => {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
   
+
+  // Fungsi helper untuk filter berdasarkan progress (menerima nilai numerik)
+export const filterByProgress = (task, progressFilter) => {
+  if (!progressFilter) return true;
+
+  // Nilai progress disimpan di property 'progress'
+  const progress = parseInt(task.progress || 0);
+
+  if (progressFilter === '0') return progress === 0;
+  if (progressFilter === '100') return progress === 100;
+
+  const [min, max] = progressFilter.split('-').map(Number);
+  return progress >= min && progress <= max;
+};
+
+// Fungsi helper untuk filter berdasarkan due date
+export const filterByDueDate = (task, dueDateFilter) => {
+  if (!dueDateFilter) return true;
+
+  // Mengatur waktu hari ini tanpa jam
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  // Hari berikutnya
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  // Lusa (2 hari dari sekarang)
+  const lusa = new Date(today);
+  lusa.setDate(lusa.getDate() + 2);
+
+  // Kalender untuk minggu ini dan minggu depan
+  const dayIndex = today.getDay();
+  const thisWeekStart = new Date(today);
+  thisWeekStart.setDate(today.getDate() - dayIndex);
+
+  const thisWeekEnd = new Date(thisWeekStart);
+  thisWeekEnd.setDate(thisWeekStart.getDate() + 6);
+
+  const nextWeekStart = new Date(thisWeekStart);
+  nextWeekStart.setDate(thisWeekStart.getDate() + 7);
+
+  const nextWeekEnd = new Date(nextWeekStart);
+  nextWeekEnd.setDate(nextWeekStart.getDate() + 6);
+
+  // Kalender untuk bulan ini dan bulan depan
+  const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+  const thisMonthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+  const nextMonthStart = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+  const nextMonthEnd = new Date(today.getFullYear(), today.getMonth() + 2, 0);
+
+  // Tambahan opsi: dua bulan, tiga bulan, dll.
+  const twoMonthsStart = new Date(today.getFullYear(), today.getMonth() + 2, 1);
+  const twoMonthsEnd = new Date(today.getFullYear(), today.getMonth() + 3, 0);
+  const threeMonthsStart = new Date(today.getFullYear(), today.getMonth() + 3, 1);
+  const threeMonthsEnd = new Date(today.getFullYear(), today.getMonth() + 4, 0);
+
+  if (!task.tanggalDeadline) return false;
+  const dueDate = new Date(task.tanggalDeadline);
+  dueDate.setHours(0, 0, 0, 0);
+
+  switch (dueDateFilter) {
+    case 'today':
+      return dueDate.getTime() === today.getTime();
+    case 'tomorrow':
+      return dueDate.getTime() === tomorrow.getTime();
+    case 'lusa':
+      return dueDate.getTime() === lusa.getTime();
+    case 'thisWeek':
+      return dueDate >= thisWeekStart && dueDate <= thisWeekEnd;
+    case 'nextWeek':
+      return dueDate >= nextWeekStart && dueDate <= nextWeekEnd;
+    case 'thisMonth':
+      return dueDate >= thisMonthStart && dueDate <= thisMonthEnd;
+    case 'nextMonth':
+      return dueDate >= nextMonthStart && dueDate <= nextMonthEnd;
+    case 'twoMonths':
+      return dueDate >= twoMonthsStart && dueDate <= twoMonthsEnd;
+    case 'threeMonths':
+      return dueDate >= threeMonthsStart && dueDate <= threeMonthsEnd;
+    case 'overdue':
+      return dueDate < today;
+    default:
+      return true;
+  }
+};
+
   export const mataKuliahOptions = [
     {
       value: "FTI2006 Etika Profesi",

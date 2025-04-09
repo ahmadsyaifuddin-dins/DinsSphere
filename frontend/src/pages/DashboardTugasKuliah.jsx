@@ -11,9 +11,10 @@ import TugasKuliahModal from "../components/tugas_kuliah/TugasKuliahModal";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Swal from "sweetalert2";
-import { getProgressColorClass, getStatusColorClass, mataKuliahOptions } from "../utils/helpers";
+import { getProgressColorClass, getStatusColorClass, mataKuliahOptions, filterByProgress, filterByDueDate } from "../utils/helpers";
 import TugasListSkeleton from "../loader/TugasListSkeleton";
 import { API_BASE_URL } from "../config";
+import MusicPlayer from "../components/tugas_kuliah/MusicPlayer";
 
 const DashboardTugasKuliah = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -50,88 +51,6 @@ const DashboardTugasKuliah = () => {
       console.error("Error fetching tasks:", err);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  // Fungsi helper untuk filter berdasarkan progress - FIXED untuk nilai numerik
-  const filterByProgress = (task, progressFilter) => {
-    if (!progressFilter) return true;
-    
-    // Task progress ada di property 'progress' bukan 'progressPercentage'
-    const progress = parseInt(task.progress || 0);
-    
-    if (progressFilter === '0') return progress === 0;
-    if (progressFilter === '100') return progress === 100;
-    
-    const [min, max] = progressFilter.split('-').map(Number);
-    return progress >= min && progress <= max;
-  };
-
-  // Fungsi helper untuk filter berdasarkan due date
-  const filterByDueDate = (task, dueDateFilter) => {
-    if (!dueDateFilter) return true;
-    
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-
-    const lusa = new Date(today.setDate(today.getDate() + 2));
-    
-    const nextWeekStart = new Date(today);
-    nextWeekStart.setDate(today.getDate() - today.getDay() + 7);
-    
-    const nextWeekEnd = new Date(nextWeekStart);
-    nextWeekEnd.setDate(nextWeekStart.getDate() + 6);
-    
-    const thisWeekStart = new Date(today);
-    thisWeekStart.setDate(today.getDate() - today.getDay());
-    
-    const thisWeekEnd = new Date(thisWeekStart);
-    thisWeekEnd.setDate(thisWeekStart.getDate() + 6);
-    
-    const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-    const thisMonthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-
-    const nextMonthStart = new Date(today.getFullYear(), today.getMonth() + 1, 1);
-    const nextMonthEnd = new Date(today.getFullYear(), today.getMonth() + 2, 0);
-
-    const twoMonthsStart = new Date(today.getFullYear(), today.getMonth() + 2, 1);
-    const twoMonthsEnd = new Date(today.getFullYear(), today.getMonth() + 3, 0);
-
-    const threeMonthsStart = new Date(today.getFullYear(), today.getMonth() + 3, 1);
-    const threeMonthsEnd = new Date(today.getFullYear(), today.getMonth() + 4, 0);
-    
-    // Pastikan dueDate ada sebelum mencoba mengkonversinya
-    if (!task.tanggalDeadline) return false;
-    
-    const dueDate = new Date(task.tanggalDeadline);
-    dueDate.setHours(0, 0, 0, 0);
-    
-    switch (dueDateFilter) {
-      case 'today':
-        return dueDate.getTime() === today.getTime();
-      case 'tomorrow':
-        return dueDate.getTime() === tomorrow.getTime();
-      case 'lusa':
-        return dueDate.getTime() === lusa.getTime();
-      case 'thisWeek':
-        return dueDate >= thisWeekStart && dueDate <= thisWeekEnd;
-      case 'nextWeek':
-        return dueDate >= nextWeekStart && dueDate <= nextWeekEnd;
-      case 'thisMonth':
-        return dueDate >= thisMonthStart && dueDate <= thisMonthEnd;
-      case 'nextMonth':
-        return dueDate >= nextMonthStart && dueDate <= nextMonthEnd;
-      case 'twoMonths':
-        return dueDate >= twoMonthsStart && dueDate <= twoMonthsEnd;
-      case 'threeMonths':
-        return dueDate >= threeMonthsStart && dueDate <= threeMonthsEnd;
-      case 'overdue':
-        return dueDate < today;
-      default:
-        return true;
     }
   };
 
@@ -347,6 +266,8 @@ const DashboardTugasKuliah = () => {
         )}
       </div>
 
+      <MusicPlayer />
+      
       {/* Tugas Modal */}
       {isModalOpen && isAdmin && (
         <TugasKuliahModal
