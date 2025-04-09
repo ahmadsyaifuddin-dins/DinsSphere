@@ -34,19 +34,21 @@ const TugasKuliahCard = ({ task, viewTaskDetail, handleEdit, handleDelete, isAdm
       {/* Glow effect on hover */}
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-r from-blue-500/0 via-blue-500/10 to-purple-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
       
-      {/* Status indicator stripe */}
+      {/* Status indicator stripe (using the status color) */}
       <div className={`absolute top-0 left-0 w-full h-1 ${getStatusBadgeClass(task.statusTugas)}`}></div>
       
+      {/* Status badge positioned absolutely in top-right corner */}
+      <div className={`absolute top-1.5 right-3 ${getStatusBadgeClass(task.statusTugas)} text-white text-xs font-medium px-2.5 py-1 rounded-full z-10`}>
+        {task.statusTugas}
+      </div>
+      
       <div className="p-6">
-        {/* Header with course & task name */}
+        {/* Header with course & task name (now with more space for title) */}
         <div className="mb-4">
-          <div className="flex justify-between items-start">
+          <div className="pr-2">
             <h3 className="text-xl font-bold text-white mb-1 group-hover:text-blue-400 transition-colors duration-300">{task.namaTugas}</h3>
-            <span className={`${getStatusBadgeClass(task.statusTugas)} text-white text-xs font-medium px-3 py-1 rounded-full`}>
-              {task.statusTugas}
-            </span>
+            <p className="text-gray-400 text-sm">{task.mataKuliah}</p>
           </div>
-          <p className="text-gray-400 text-sm">{task.mataKuliah}</p>
         </div>
         
         {/* Progress bar */}
