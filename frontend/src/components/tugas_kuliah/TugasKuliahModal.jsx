@@ -223,12 +223,12 @@ const TugasKuliahModal = ({
               />
             </div>
 
-            <ButtonRapikan
+            {/* <ButtonRapikan
               value={deskripsiTugas}
               onChange={setDeskripsiTugas}
               inputClasses={inputClasses}
               labelClasses={labelClasses}
-            />
+            /> */}
 
             <div>
               <label className={labelClasses} htmlFor="tingkatKesulitan">
