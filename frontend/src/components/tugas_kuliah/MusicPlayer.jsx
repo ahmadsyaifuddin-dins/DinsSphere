@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Music, Pause, Play, Volume2, VolumeX } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLocation } from "react-router-dom";
 
 const MusicPlayer = () => {
   const audioRef = useRef(null);
@@ -10,6 +11,8 @@ const MusicPlayer = () => {
   const [autoplayAttempted, setAutoplayAttempted] = useState(false);
   const [showAutoplayHint, setShowAutoplayHint] = useState(false);
 
+  const location = useLocation();
+
   const togglePlay = () => {
     if (!audioRef.current) return;
     
@@ -17,18 +20,15 @@ const MusicPlayer = () => {
       audioRef.current.pause();
       setIsPlaying(false);
     } else {
-      // Always unmute when manually clicking play
+      // Saat user klik, unmute dulu
       audioRef.current.muted = false;
       setIsMuted(false);
       setShowAutoplayHint(false);
       
       audioRef.current.play()
-        .then(() => {
-          setIsPlaying(true);
-        })
+        .then(() => setIsPlaying(true))
         .catch((err) => {
           console.error("Play failed:", err);
-          // If play fails, show visual feedback
           setIsPlaying(false);
           setShowAutoplayHint(true);
         });
@@ -58,7 +58,9 @@ const MusicPlayer = () => {
   };
 
   const toggleExpand = () => {
+    // Just toggle the expanded state without affecting playback
     setIsExpanded(!isExpanded);
+    
     // When expanding, show autoplay hint if needed
     if (!isExpanded && autoplayAttempted && !isPlaying) {
       setShowAutoplayHint(true);
@@ -99,7 +101,7 @@ const MusicPlayer = () => {
 
     // Try autoplay when component mounts
     attemptAutoplay();
-
+  
     // Check audio context suspension state
     const checkAudioState = () => {
       if (audioRef.current && audioRef.current.paused && isPlaying) {
@@ -110,13 +112,6 @@ const MusicPlayer = () => {
     // Poll audio state to detect browser interventions
     const intervalId = setInterval(checkAudioState, 1000);
     
-    // Set up event listeners for user interaction
-    const handleInteraction = () => {
-      if (audioRef.current && !isPlaying) {
-        togglePlay();
-      }
-    };
-
     // Audio ended event listener
     const handleAudioEnded = () => {
       setIsPlaying(false);
@@ -130,10 +125,55 @@ const MusicPlayer = () => {
       clearInterval(intervalId);
       if (audioRef.current) {
         audioRef.current.removeEventListener('ended', handleAudioEnded);
-        audioRef.current.pause();
       }
+      // Do NOT pause audio here when component unmounts
+      // This would stop playback when the component re-renders
     };
-  }, []);
+  }, [isExpanded]);
+
+  // Listen for route changes to autoplay on /dashboardTugasKuliah
+  useEffect(() => {
+    if (!audioRef.current) return;
+    
+    // If we navigate to the dashboard tugas kuliah page, try to play the music
+    if (location.pathname === "/dashboardTugasKuliah") {
+      // First try to play with sound
+      audioRef.current.muted = false;
+      setIsMuted(false);
+      
+      audioRef.current.play()
+        .then(() => {
+          setIsPlaying(true);
+          setShowAutoplayHint(false);
+        })
+        .catch(err => {
+          console.error("Auto play on route change blocked:", err);
+          
+          // If failed, try muted autoplay
+          audioRef.current.muted = true;
+          setIsMuted(true);
+          
+          audioRef.current.play()
+            .then(() => {
+              setIsPlaying(true);
+              setShowAutoplayHint(true); // Show hint to unmute
+              // Auto-expand player to show the hint
+              setIsExpanded(true);
+              
+              // Hide the hint after a few seconds
+              setTimeout(() => {
+                if (!isExpanded) setShowAutoplayHint(false);
+              }, 5000);
+            })
+            .catch(muteErr => {
+              console.error("Even muted autoplay failed on route change:", muteErr);
+              setShowAutoplayHint(true);
+              // Auto-expand player to show the hint
+              setIsExpanded(true);
+            });
+        });
+    }
+  }, [location.pathname]);
 
   // Audio state change handler
   useEffect(() => {

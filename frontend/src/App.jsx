@@ -7,6 +7,7 @@ import ProjectDetail from './pages/projectDetail';
 import DetailTugasKuliah from './pages/DetailTugasKuliah';
 import EditTugasKuliah from './components/tugas_kuliah/EditTugasKuliah';
 import Navbar from "./components/Navbar";
+import MusicPlayer from './components/tugas_kuliah/MusicPlayer';
 
 function App() {
   const token = localStorage.getItem("token");
@@ -14,6 +15,7 @@ function App() {
   return (
     <>
       <Navbar /> 
+      <MusicPlayer />
       <Routes>
         <Route path="/" element={<Dashboard />} />
         <Route path="/dashboard" element={<Dashboard />} />

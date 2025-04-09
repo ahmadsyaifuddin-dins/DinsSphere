@@ -18,6 +18,7 @@ import RelatedTasks from "../components/DetailTugasKuliah/RelatedTasks";
 import ButtonFooter from "../components/DetailTugasKuliah/ButtonFooter";
 import DetailTugasKuliahSkeleton from "../loader/DetailTugasKuliahSkeleton";
 import { API_BASE_URL } from "../config";
+import MusicPlayer from "../components/tugas_kuliah/MusicPlayer";
 
 const DetailTugasKuliah = () => {
   const { id } = useParams();
@@ -210,7 +211,7 @@ const DetailTugasKuliah = () => {
             </div>
 
             <RelatedTasks mataKuliah={task.mataKuliah} currentTaskId={id} />
-          </div>
+          </div>          
           <div className="bg-gray-800/80 border-t border-gray-700 px-6 py-4 flex justify-between items-center">
             <div className="text-gray-400 text-sm">
               ID Tugas: <span className="text-gray-300">{id}</span>

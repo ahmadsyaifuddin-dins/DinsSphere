@@ -266,7 +266,7 @@ const DashboardTugasKuliah = () => {
         )}
       </div>
 
-      <MusicPlayer />
+      {/* <MusicPlayer /> */}
       
       {/* Tugas Modal */}
       {isModalOpen && isAdmin && (
