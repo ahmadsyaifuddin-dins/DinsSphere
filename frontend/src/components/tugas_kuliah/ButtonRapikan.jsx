@@ -41,13 +41,13 @@ const ButtonRapikan = ({ value, onChange, inputClasses, labelClasses }) => {
         placeholder="Jelaskan tugas yang diberikan"
         required
       />
-      <button
+      {/* <button
         type="button"
         onClick={handleRapikan}
         className="mt-2 px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 transition-colors"
       >
         Rapikan Teks
-      </button>
+      </button> */}
     </div>
   );
 };

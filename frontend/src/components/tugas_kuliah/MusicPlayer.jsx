@@ -275,7 +275,7 @@ const MusicPlayer = () => {
                   animate="visible"
                   exit="exit"
                   variants={hintVariants}
-                  className="mb-2 p-2 bg-yellow-600/90 text-white text-xs rounded shadow-lg"
+                  className="mb-2 p-2 bg-transparent text-white text-xs rounded shadow-lg"
                 >
                   Click play to enable audio! ↓
                 </motion.div>
