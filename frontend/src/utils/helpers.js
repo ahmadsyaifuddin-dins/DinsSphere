@@ -150,6 +150,8 @@ export const getStatusBadgeClass = (status) => {
       value: "TIF3602 Riset Operasi",
       label: "Riset Operasi",
       icon: "https://github.com/ahmad-syaifuddin/image-flow/blob/main/riset-operasi.png?raw=true",
+      namaDosen: "Galih Mahalisa, S.Kom., M.Kom",
+      pointTugas: "40%",
       SKS: 3,
     },
     {
