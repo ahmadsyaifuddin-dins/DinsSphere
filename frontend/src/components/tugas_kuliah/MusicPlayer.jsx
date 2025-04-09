@@ -256,7 +256,7 @@ const MusicPlayer = () => {
   };
 
   return (
-    <div className="fixed bottom-2 right-2 z-50">
+    <div className="fixed bottom-2 left-2 z-50">
       <AnimatePresence mode="wait">
         {isExpanded ? (
           // Expanded view
