@@ -180,8 +180,19 @@ const DetailTugasKuliah = () => {
               <h2 className="text-xl font-semibold text-white mb-3">
                 Deskripsi Tugas
               </h2>
-              <div className="bg-gray-700/30 border border-gray-600 rounded-xl p-5 text-gray-300 whitespace-pre-wrap">
-                {task.deskripsiTugas || "Tidak ada deskripsi"}
+              <div className="bg-gray-700/30 border border-gray-600 rounded-xl p-5 text-gray-300 whitespace-pre-wrap break-words">
+                {task.deskripsiTugas ? (
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: task.deskripsiTugas.replace(
+                        /(https?:\/\/[^\s]+)/g,
+                        '<a href="$1" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 underline break-all">$1</a>'
+                      ),
+                    }}
+                  />
+                ) : (
+                  "Tidak ada deskripsi"
+                )}
               </div>
             </div>
             <CompletionStatus task={task} />
@@ -211,7 +222,7 @@ const DetailTugasKuliah = () => {
             </div>
 
             <RelatedTasks mataKuliah={task.mataKuliah} currentTaskId={id} />
-          </div>          
+          </div>
           <div className="bg-gray-800/80 border-t border-gray-700 px-6 py-4 flex justify-between items-center">
             <div className="text-gray-400 text-sm">
               ID Tugas: <span className="text-gray-300">{id}</span>
