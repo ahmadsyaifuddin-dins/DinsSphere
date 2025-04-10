@@ -15,6 +15,14 @@ import axios from "axios";
 import api from "../../services/api";
 import { API_BASE_URL } from "../../config";
 
+// Skeleton component for view count
+const ViewCountSkeleton = () => (
+  <div className="flex items-center justify-end space-x-1 sm:space-x-2">
+    <div className="w-5 h-4 bg-gray-700 rounded animate-pulse"></div>
+    <div className="w-5 h-5 bg-gray-700 rounded-full animate-pulse"></div>
+  </div>
+);
+
 const DraggableRow = ({
   task,
   index,
@@ -27,7 +35,8 @@ const DraggableRow = ({
   handleDelete,
   handleToggleCompletion,
   isAdmin,
-  mataKuliahOptions, // Diterima untuk lookup icon
+  mataKuliahOptions,
+  isLoadingViewCounts,
 }) => {
   const rowRef = React.useRef(null);
 
@@ -165,52 +174,56 @@ const DraggableRow = ({
         </div>
       </td>
       <td className="py-2 px-2 sm:py-4 sm:px-6">
-        <div className="flex items-center justify-end space-x-1 sm:space-x-2">
-          <p className="font-medium">{formatViewCount(task.viewCount)}</p>
-          <button
-            className="text-gray-400 hover:text-blue-500 focus:outline-none p-1 cursor-pointer"
-            onClick={() => viewTaskDetail(task._id)}
-          >
-            <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
-          </button>
-          {isAdmin && (
-            <>
-              {/* Tombol toggle completion */}
-              <button
-                className={`text-gray-400 focus:outline-none p-1 cursor-pointer ${
-                  task.tanggalSelesai
-                    ? "hover:text-red-500"
-                    : "hover:text-green-500"
-                }`}
-                onClick={() => handleToggleCompletion(task)}
-                title={
-                  task.tanggalSelesai
-                    ? "Tandai Belum Selesai"
-                    : "Tandai Selesai"
-                }
-              >
-                {task.tanggalSelesai ? (
-                  <X className="w-4 h-4 sm:w-5 sm:h-5" />
-                ) : (
-                  <Check className="w-4 h-4 sm:w-5 sm:h-5" />
-                )}
-              </button>
+        {isLoadingViewCounts ? (
+          <ViewCountSkeleton />
+        ) : (
+          <div className="flex items-center justify-end space-x-1 sm:space-x-2">
+            <p className="font-medium">{formatViewCount(task.viewCount)}</p>
+            <button
+              className="text-gray-400 hover:text-blue-500 focus:outline-none p-1 cursor-pointer"
+              onClick={() => viewTaskDetail(task._id)}
+            >
+              <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
+            </button>
+            {isAdmin && (
+              <>
+                {/* Tombol toggle completion */}
+                <button
+                  className={`text-gray-400 focus:outline-none p-1 cursor-pointer ${
+                    task.tanggalSelesai
+                      ? "hover:text-red-500"
+                      : "hover:text-green-500"
+                  }`}
+                  onClick={() => handleToggleCompletion(task)}
+                  title={
+                    task.tanggalSelesai
+                      ? "Tandai Belum Selesai"
+                      : "Tandai Selesai"
+                  }
+                >
+                  {task.tanggalSelesai ? (
+                    <X className="w-4 h-4 sm:w-5 sm:h-5" />
+                  ) : (
+                    <Check className="w-4 h-4 sm:w-5 sm:h-5" />
+                  )}
+                </button>
 
-              <button
-                onClick={() => handleEdit(task)}
-                className="text-gray-400 hover:text-yellow-500 focus:outline-none p-1 cursor-pointer"
-              >
-                <Edit className="w-4 h-4 sm:w-5 sm:h-5" />
-              </button>
-              <button
-                onClick={() => handleDelete(task._id)}
-                className="text-gray-400 hover:text-rose-500 focus:outline-none p-1 cursor-pointer"
-              >
-                <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
-              </button>
-            </>
-          )}
-        </div>
+                <button
+                  onClick={() => handleEdit(task)}
+                  className="text-gray-400 hover:text-yellow-500 focus:outline-none p-1 cursor-pointer"
+                >
+                  <Edit className="w-4 h-4 sm:w-5 sm:h-5" />
+                </button>
+                <button
+                  onClick={() => handleDelete(task._id)}
+                  className="text-gray-400 hover:text-rose-500 focus:outline-none p-1 cursor-pointer"
+                >
+                  <Trash2 className="w-4 h-4 sm:w-5 sm:h-5" />
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </td>
     </tr>
   );
@@ -225,9 +238,10 @@ const TugasKuliahList = ({
   handleDelete,
   isAdmin,
   onOrderChange,
-  mataKuliahOptions, // terima juga dari parent
+  mataKuliahOptions,
 }) => {
   const [tasks, setTasks] = useState(initialTasks);
+  const [isLoadingViewCounts, setIsLoadingViewCounts] = useState(true);
 
   useEffect(() => {
     setTasks(initialTasks);
@@ -235,28 +249,37 @@ const TugasKuliahList = ({
 
   useEffect(() => {
     const fetchViewCounts = async () => {
-      const updatedTasks = await Promise.all(
-        initialTasks.map(async (task) => {
-          try {
-            const response = await axios.get(
-              `${API_BASE_URL}/api/viewTasks/${task._id}`
-            );
-            return { ...task, viewCount: response.data.count || 0 };
-          } catch (error) {
-            console.error(
-              "Error fetching view count for task",
-              task._id,
-              error
-            );
-            return { ...task, viewCount: 0 };
-          }
-        })
-      );
-      setTasks(updatedTasks);
+      setIsLoadingViewCounts(true);
+      try {
+        const updatedTasks = await Promise.all(
+          initialTasks.map(async (task) => {
+            try {
+              const response = await axios.get(
+                `${API_BASE_URL}/api/viewTasks/${task._id}`
+              );
+              return { ...task, viewCount: response.data.count || 0 };
+            } catch (error) {
+              console.error(
+                "Error fetching view count for task",
+                task._id,
+                error
+              );
+              return { ...task, viewCount: 0 };
+            }
+          })
+        );
+        setTasks(updatedTasks);
+      } catch (error) {
+        console.error("Error in fetchViewCounts:", error);
+      } finally {
+        setIsLoadingViewCounts(false);
+      }
     };
 
     if (initialTasks.length > 0) {
       fetchViewCounts();
+    } else {
+      setIsLoadingViewCounts(false);
     }
   }, [initialTasks]);
 
@@ -374,9 +397,10 @@ const TugasKuliahList = ({
                   viewTaskDetail={viewTaskDetail}
                   handleEdit={handleEdit}
                   handleDelete={handleDelete}
-                  handleToggleCompletion={toggleCompletion} // pass fungsi toggle completion
+                  handleToggleCompletion={toggleCompletion}
                   isAdmin={isAdmin}
                   mataKuliahOptions={mataKuliahOptions}
+                  isLoadingViewCounts={isLoadingViewCounts}
                 />
               ))
             ) : (
