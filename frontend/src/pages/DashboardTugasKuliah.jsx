@@ -190,7 +190,7 @@ const DashboardTugasKuliah = () => {
     <div className="relative">
       {/* Jika user belum login, tampilkan overlay peringatan */}
       {!isAdmin && (
-        <div className="fixed inset-0 flex items-center justify-center z-20 bg-opacity-50 backdrop-blur-xs backdrop-brightness-50">
+        <div className="fixed inset-0 flex items-center justify-center z-20 bg-opacity-50 backdrop-blur-xs backdrop-brightness-75">
           <div className="bg-white p-6 rounded shadow-lg text-center">
             <h2 className="text-2xl font-bold mb-4">Akses Terbatas</h2>
             <p className="mb-4">
