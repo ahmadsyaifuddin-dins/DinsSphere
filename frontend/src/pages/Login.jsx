@@ -34,7 +34,7 @@ const Login = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#121212]">
       <div className="bg-[#1E1E2E] p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold text-white mb-6 text-center">Login</h2>
+        <h2 className="text-2xl font-bold text-white mb-6 text-center">Login DinsSphere</h2>
         {error && (
           <div className="bg-red-500 text-white p-2 rounded mb-4">
             {error}
