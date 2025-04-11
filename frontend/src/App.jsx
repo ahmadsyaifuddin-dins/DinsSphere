@@ -20,17 +20,32 @@ import ActivityReport from "./pages/ActivityReport";
 import DashboardActivity from "./pages/DashboardActivity";
 import DashboardUserActivityDetail from "./pages/DashboardUserActivityDetail";
 
+// Fungsi buat ambil user dari token
+const getUserFromToken = () => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    try {
+      return decode(token);
+    } catch (error) {
+      console.error("Gagal decode token:", error);
+      return null;
+    }
+  }
+  return null;
+};
+
 function App() {
   const navigate = useNavigate();
   
-  // Inisialisasi user dan token dari localStorage
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+  // Ambil user langsung dari token pakai jwt-decode
+  const [user, setUser] = useState(getUserFromToken());
   const token = localStorage.getItem("token");
 
   // Fungsi logout sederhana
   const logout = () => {
-    localStorage.removeItem("profile");
     localStorage.removeItem("token");
+    // Kalau masih ada profile, bisa hapus juga
+    localStorage.removeItem("profile");
     setUser(null);
   };
 
@@ -65,6 +80,7 @@ function App() {
                 confirmButtonText: "OK",
               });
             }, timeout);
+
             return () => clearTimeout(timer);
           }
         } catch (error) {
