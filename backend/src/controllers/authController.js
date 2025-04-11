@@ -21,11 +21,40 @@ exports.login = async (req, res) => {
     const token = jwt.sign(
       { email: user.email, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" } //test supaya cepat untuk auto logout
+      { expiresIn: "1d" } 
     );
     return res.json({ token });
   } catch (err) {
     console.error("Login error:", err);
     return res.status(500).json({ error: "Server error" });
+  }
+};
+
+exports.register = async (req, res) => {
+  const { name, username, email, password, nuclearCode, role } = req.body;
+  
+  try {
+    // Pastikan email atau username belum terdaftar
+    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    if(existingUser) {
+      return res.status(400).json({ error: "Email atau Username sudah terdaftar" });
+    }
+    
+    // Buat user baru, role default "friend" kecuali ada keperluan khusus
+    const newUser = new User({
+      name,
+      username,
+      email,
+      password,
+      nuclearCode, 
+      role: role || "friend", 
+    });
+    
+    await newUser.save();
+    
+    res.status(201).json({ message: "User registered successfully!" });
+  } catch (err) {
+    console.error("Registration error:", err);
+    res.status(500).json({ error: "Server error saat registrasi" });
   }
 };

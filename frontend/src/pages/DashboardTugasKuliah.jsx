@@ -1,3 +1,4 @@
+// DashboardTugasKuliah.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import HeaderTugasKuliah from "../layout/HeaderTugasKuliah";
@@ -7,14 +8,13 @@ import ViewMode from "../components/tugas_kuliah/Filtering/ViewMode";
 import TugasKuliahList from "../components/tugas_kuliah/TugasKuliahList";
 import TugasKuliahCard from "../components/tugas_kuliah/TugasKuliahCard";
 import TugasKuliahModal from "../components/tugas_kuliah/TugasKuliahModal";
-
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Swal from "sweetalert2";
 import { getProgressColorClass, getStatusColorClass, mataKuliahOptions, filterByProgress, filterByDueDate } from "../utils/helpers";
 import TugasListSkeleton from "../loader/TugasListSkeleton";
 import { API_BASE_URL } from "../config";
-import MusicPlayer from "../components/tugas_kuliah/MusicPlayer";
+// import MusicPlayer from "../components/tugas_kuliah/MusicPlayer";
 
 const DashboardTugasKuliah = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -32,7 +32,7 @@ const DashboardTugasKuliah = () => {
     mataKuliah: '',
     progress: '',
     dueDate: '',
-    tingkatKesulitan: ''  // Ubah dari prioritas ke tingkatKesulitan
+    tingkatKesulitan: ''
   });
   const navigate = useNavigate();
 
@@ -44,8 +44,13 @@ const DashboardTugasKuliah = () => {
 
   const fetchTugasKuliah = async () => {
     try {
+      const token = localStorage.getItem("token");
       setIsLoading(true);
-      const res = await axios.get(`${API_BASE_URL}/api/tasks`);
+      const res = await axios.get(`${API_BASE_URL}/api/tasks`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
       setTugasKuliah(res.data);
     } catch (err) {
       console.error("Error fetching tasks:", err);
@@ -54,6 +59,7 @@ const DashboardTugasKuliah = () => {
     }
   };
 
+  // Proses filtering dan sorting
   const processedTasks = tugasKuliah
     .filter(task => {
       const textMatch = 
@@ -71,10 +77,10 @@ const DashboardTugasKuliah = () => {
     })
     .sort((a, b) => {
       if (orderMode === "manual") {
-        // Manual mode: gunakan field order
+        // Manual: gunakan field order
         return sortOrder === "newest" ? a.order - b.order : b.order - a.order;
       } else {
-        // Auto mode: urutkan berdasarkan tanggal
+        // Auto: sorting berdasarkan tanggal
         const dateA = new Date(a.createdAt || a.tanggalDiberikan || 0);
         const dateB = new Date(b.createdAt || b.tanggalDiberikan || 0);
         return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
@@ -176,111 +182,128 @@ const DashboardTugasKuliah = () => {
     }
   };
 
-  // Fungsi untuk menerapkan filter
   const applyFilters = (newFilters) => {
-    // Logic tambahan jika diperlukan saat filter diterapkan
     console.log("Filters applied:", newFilters);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100">
-      <div className="max-w-8xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8">
-        <HeaderTugasKuliah
-          isAdmin={isAdmin}
-          setTugasToEdit={setTugasToEdit}
-          setIsModalOpen={setIsModalOpen}
-          handleLogout={handleLogout}
-          isLoggingOut={isLoggingOut}
-        />
-
-        {/* Tugas Count */}
-        <div className="mb-4 mt-2 flex justify-between items-center">
-          <div className="px-3 py-1.5 bg-blue-500/20 text-blue-400 border border-blue-500 rounded-lg">
-            <span className="font-medium">
-              Total Tugas: {tugasKuliah.length}
-            </span>
-          </div>
-          <div className="px-3 py-1.5 bg-green-500/20 text-green-400 border border-green-500 rounded-lg">
-            <span className="font-medium">
-              Hasil Filter: {processedTasks.length}
-            </span>
+    <div className="relative">
+      {/* Jika user belum login, tampilkan overlay peringatan */}
+      {!isAdmin && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 backdrop-blur-sm">
+          <div className="bg-white p-6 rounded shadow-lg text-center">
+            <h2 className="text-2xl font-bold mb-4">Akses Terbatas</h2>
+            <p className="mb-4">
+              Halaman ini hanya dapat diakses oleh orang tertentu.
+              Silakan login terlebih dahulu untuk melanjutkan.
+            </p>
+            <button
+              className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition"
+              onClick={() => navigate("/login")}
+            >
+              Login
+            </button>
           </div>
         </div>
+      )}
 
-        {/* Filter Panel Component */}
-        <FilterPanel
-          filterText={filterText}
-          setFilterText={setFilterText}
-          mataKuliahOptions={mataKuliahOptions}
-          filters={filters}
-          setFilters={setFilters}
-          applyFilters={applyFilters}
-        />
-
-        {/* Sort & View Controls */}
-        <div className="flex justify-between items-center mb-4">
-          <SortOrder
-            sortOrder={sortOrder}
-            setSortOrder={(val) => {
-              setSortOrder(val);
-              setOrderMode("manual");
-            }}
-          />
-          <ViewMode viewMode={viewMode} setViewMode={setViewMode} />
-        </div>
-
-        {/* Render Tasks */}
-        {isLoading ? (
-          <TugasListSkeleton />
-        ) : processedTasks.length === 0 ? (
-          <div className="text-center py-8 text-gray-400">
-            {filterText || Object.values(filters).some(value => value !== '') 
-              ? "Tidak ada tugas yang sesuai dengan filter. Coba ubah filter Anda."
-              : "Coming Soon on 8 or 14 Apr 2025!"}
-          </div>
-        ) : viewMode === "list" ? (
-          <TugasKuliahList
-            tasks={processedTasks}
-            getStatusColorClass={getStatusColorClass}
-            getProgressColorClass={getProgressColorClass}
-            viewTaskDetail={viewTaskDetail}
-            handleEdit={handleEdit}
-            handleDelete={handleDelete}
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100">
+        <div className="max-w-8xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8">
+          <HeaderTugasKuliah
             isAdmin={isAdmin}
-            onOrderChange={handleOrderChange}
+            setTugasToEdit={setTugasToEdit}
+            setIsModalOpen={setIsModalOpen}
+            handleLogout={handleLogout}
+            isLoggingOut={isLoggingOut}
+          />
+
+          {/* Tugas Count */}
+          <div className="mb-4 mt-2 flex justify-between items-center">
+            <div className="px-3 py-1.5 bg-blue-500/20 text-blue-400 border border-blue-500 rounded-lg">
+              <span className="font-medium">
+                Total Tugas: {tugasKuliah.length}
+              </span>
+            </div>
+            <div className="px-3 py-1.5 bg-green-500/20 text-green-400 border border-green-500 rounded-lg">
+              <span className="font-medium">
+                Hasil Filter: {processedTasks.length}
+              </span>
+            </div>
+          </div>
+
+          {/* Filter Panel */}
+          <FilterPanel
+            filterText={filterText}
+            setFilterText={setFilterText}
+            mataKuliahOptions={mataKuliahOptions}
+            filters={filters}
+            setFilters={setFilters}
+            applyFilters={applyFilters}
+          />
+
+          {/* Sort & View Controls */}
+          <div className="flex justify-between items-center mb-4">
+            <SortOrder
+              sortOrder={sortOrder}
+              setSortOrder={(val) => {
+                setSortOrder(val);
+                setOrderMode("manual");
+              }}
+            />
+            <ViewMode viewMode={viewMode} setViewMode={setViewMode} />
+          </div>
+
+          {/* Render Tasks */}
+          {isLoading ? (
+            <TugasListSkeleton />
+          ) : processedTasks.length === 0 ? (
+            <div className="text-center py-8 text-gray-400">
+              {filterText || Object.values(filters).some(value => value !== '') 
+                ? "Tidak ada tugas yang sesuai dengan filter. Coba ubah filter Anda."
+                : "Coming Soon on 8 or 14 Apr 2025!"}
+            </div>
+          ) : viewMode === "list" ? (
+            <TugasKuliahList
+              tasks={processedTasks}
+              getStatusColorClass={getStatusColorClass}
+              getProgressColorClass={getProgressColorClass}
+              viewTaskDetail={viewTaskDetail}
+              handleEdit={handleEdit}
+              handleDelete={handleDelete}
+              isAdmin={isAdmin}
+              onOrderChange={handleOrderChange}
+              mataKuliahOptions={mataKuliahOptions}
+            />
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              {processedTasks.map((task) => (
+                <TugasKuliahCard
+                  key={task._id}
+                  task={task}
+                  viewTaskDetail={viewTaskDetail}
+                  handleEdit={handleEdit}
+                  handleDelete={handleDelete}
+                  isAdmin={isAdmin}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Tugas Modal */}
+        {isModalOpen && isAdmin && (
+          <TugasKuliahModal
+            isOpen={isModalOpen}
+            onClose={() => {
+              setIsModalOpen(false);
+              setTugasToEdit(null);
+            }}
+            task={tugasToEdit}
+            onSave={handleSave}
             mataKuliahOptions={mataKuliahOptions}
           />
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {processedTasks.map((task) => (
-              <TugasKuliahCard
-                key={task._id}
-                task={task}
-                viewTaskDetail={viewTaskDetail}
-                handleEdit={handleEdit}
-                handleDelete={handleDelete}
-                isAdmin={isAdmin}
-              />
-            ))}
-          </div>
         )}
       </div>
-
-      {/* <MusicPlayer /> */}
-      
-      {/* Tugas Modal */}
-      {isModalOpen && isAdmin && (
-        <TugasKuliahModal
-          isOpen={isModalOpen}
-          onClose={() => {
-            setIsModalOpen(false);
-            setTugasToEdit(null);
-          }}
-          task={tugasToEdit}
-          onSave={handleSave}
-          mataKuliahOptions={mataKuliahOptions}
-        />
-      )}
     </div>
   );
 };

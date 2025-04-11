@@ -9,6 +9,7 @@ import EditTugasKuliah from './components/tugas_kuliah/EditTugasKuliah';
 import Navbar from "./components/Navbar";
 import MusicPlayer from './components/tugas_kuliah/MusicPlayer';
 import Swal from 'sweetalert2';
+import RegisterFriend from './pages/RegisterFriend';
 
 function App() {
   const token = localStorage.getItem("token");
@@ -57,6 +58,10 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/dashboardTugasKuliah" element={<DashboardTugasKuliah />} />
         <Route path="/login" element={!token ? <Login /> : <Navigate to="/dashboard" />} />
+        <Route
+          path="/registerFriend"
+          element={token && JSON.parse(atob(token.split(".")[1])).role === "superadmin" ? <RegisterFriend /> : <Navigate to="/dashboardTugasKuliah" />}
+        />        
         <Route path="/editTugasKuliah/:id" element={<EditTugasKuliah />} />
         <Route path="/projectDetail/:id" element={<ProjectDetail />} />
         <Route path="/DetailTugasKuliah/:id" element={<DetailTugasKuliah />} />
