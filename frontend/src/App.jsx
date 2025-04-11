@@ -1,7 +1,6 @@
 // App.jsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
-import { useAuth } from "./contexts/authContext";
 import decode from "jwt-decode";
 import Swal from "sweetalert2";
 
@@ -22,15 +21,25 @@ import DashboardActivity from "./pages/DashboardActivity";
 import DashboardUserActivityDetail from "./pages/DashboardUserActivityDetail";
 
 function App() {
-  const { user, logout, token } = useAuth();
   const navigate = useNavigate();
+  
+  // Inisialisasi user dan token dari localStorage
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+  const token = localStorage.getItem("token");
+
+  // Fungsi logout sederhana
+  const logout = () => {
+    localStorage.removeItem("profile");
+    localStorage.removeItem("token");
+    setUser(null);
+  };
 
   useEffect(() => {
     const checkTokenExpiration = async () => {
       if (token) {
         try {
           const decoded = decode(token);
-          const expiry = decoded.exp * 1000;
+          const expiry = decoded.exp * 1000; // konversi ke milidetik
           const now = new Date().getTime();
 
           if (expiry < now) {
@@ -44,7 +53,7 @@ function App() {
             logout(); // Call logout function
             navigate("/login");
           } else {
-            // Set timer for auto-logout
+            // Set timer untuk auto-logout
             const timeout = expiry - now;
             const timer = setTimeout(() => {
               logout();
@@ -56,7 +65,6 @@ function App() {
                 confirmButtonText: "OK",
               });
             }, timeout);
-
             return () => clearTimeout(timer);
           }
         } catch (error) {
@@ -67,7 +75,7 @@ function App() {
     };
 
     checkTokenExpiration();
-  }, [navigate, logout, token]);
+  }, [navigate, token]);
 
   return (
     <>
@@ -89,10 +97,7 @@ function App() {
           path="/profile" 
           element={user ? <Profile /> : <Navigate to="/login" />} 
         />
-        <Route
-          path="/login"
-          element={!user ? <Login /> : <Navigate to="/dashboard" />}
-        />
+        <Route path="/login" element={<Login />} />
         <Route 
           path="/activityReport" 
           element={user ? <ActivityReport /> : <Navigate to="/login" />} 
@@ -105,17 +110,14 @@ function App() {
           path="/detailUser/:id" 
           element={user?.role === "superadmin" ? <DetailUser /> : <Navigate to="/" />} 
         />
-        <Route
+        <Route 
           path="/registerFriend"
-          element={
-            user?.role === "superadmin" ? (
-              <RegisterFriend />
-            ) : (
-              <Navigate to="/" />
-            )
-          }
+          element={user?.role === "superadmin" ? <RegisterFriend /> : <Navigate to="/" />}
         />
-        <Route path="/editTugasKuliah/:id" element={user ? <EditTugasKuliah /> : <Navigate to="/login" />} />
+        <Route 
+          path="/editTugasKuliah/:id" 
+          element={user ? <EditTugasKuliah /> : <Navigate to="/login" />} 
+        />
         <Route path="/projectDetail/:id" element={<ProjectDetail />} />
         <Route path="/DetailTugasKuliah/:id" element={<DetailTugasKuliah />} />
       </Routes>

@@ -1,3 +1,4 @@
+// Navbar.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -12,26 +13,54 @@ import {
   faAngleDown,
   faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
-import { useAuth } from "../contexts/authContext";
+import decode from "jwt-decode";
 
 const Navbar = () => {
+  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDataMenuOpen, setIsDataMenuOpen] = useState(false);
-  const location = useLocation();
+  // Loading state default false (atur kalau perlu ambil dari API)
+  const [loading, setLoading] = useState(false);
 
-  const { user, loading } = useAuth();
-  
-  // Buat state untuk menyimpan role dan status login untuk memaksa re-render
+  // Ambil token dari localStorage terus decode untuk dapetin user
+  const getUserFromToken = () => {
+    const token = localStorage.getItem("token");
+    try {
+      return token ? decode(token) : null;
+    } catch (error) {
+      console.error("Gagal decode token:", error);
+      return null;
+    }
+  };
+
+  const [user, setUser] = useState(getUserFromToken);
+  // State untuk cek role dan login
   const [isSuperAdmin, setIsSuperAdmin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
-  // Effect untuk update state internal ketika user berubah
+
+  // Update state user tiap kali route berubah
+  useEffect(() => {
+    setUser(getUserFromToken());
+  }, [location.pathname]);
+
+  // Tambahkan event listener custom untuk update token misalnya dari login
+  useEffect(() => {
+    const updateProfile = () => {
+      setUser(getUserFromToken());
+    };
+
+    window.addEventListener("profileUpdated", updateProfile);
+    return () => window.removeEventListener("profileUpdated", updateProfile);
+  }, []);
+
+  // Update internal state berdasarkan user
   useEffect(() => {
     setIsSuperAdmin(user?.role === "superadmin");
     setIsLoggedIn(Boolean(user));
+    console.log("User updated di Navbar:", user);
   }, [user]);
-  
-  // Reset menu when route changes
+
+  // Reset menu ketika route berubah
   useEffect(() => {
     setIsMenuOpen(false);
     setIsDataMenuOpen(false);
