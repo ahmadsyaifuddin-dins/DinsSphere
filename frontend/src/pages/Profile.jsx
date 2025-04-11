@@ -161,7 +161,7 @@ const Profile = () => {
                       {user.isActive ? "Akun Aktif" : "Akun Tidak Aktif"}
                     </div>
                     
-                    <button className="mt-6 bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg inline-flex items-center transition duration-300">
+                    <button className="mt-6 bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg inline-flex items-center transition duration-300 opacity-50 cursor-not-allowed">
                       <FontAwesomeIcon icon={faEdit} className="mr-2" />
                       Edit Profil
                     </button>
