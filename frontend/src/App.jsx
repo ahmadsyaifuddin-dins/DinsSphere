@@ -37,8 +37,10 @@ const getUserFromToken = () => {
 function App() {
   const navigate = useNavigate();
   
-  // Ambil user langsung dari token pakai jwt-decode
-  const [user, setUser] = useState(getUserFromToken());
+  // Tambahkan state loading
+  const [loading, setLoading] = useState(true);
+  // Ambil user langsung dari token pake jwt-decode
+  const [user, setUser] = useState(null);
   const token = localStorage.getItem("token");
 
   // Fungsi logout sederhana
@@ -48,6 +50,13 @@ function App() {
     localStorage.removeItem("profile");
     setUser(null);
   };
+
+  // Saat mount atau token berubah, decode token dan update state user
+  useEffect(() => {
+    const currentUser = getUserFromToken();
+    setUser(currentUser);
+    setLoading(false);
+  }, [token]);
 
   useEffect(() => {
     const checkTokenExpiration = async () => {
@@ -92,6 +101,15 @@ function App() {
 
     checkTokenExpiration();
   }, [navigate, token]);
+
+  // Selama loading, bisa tampilkan spinner atau komponen loader sederhana
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <>
