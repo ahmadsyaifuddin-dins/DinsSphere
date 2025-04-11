@@ -37,10 +37,34 @@ const DashboardTugasKuliah = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const logDashboardVisit = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        await api.post(
+          "/activities",
+          {
+            type: "page_view",
+            path: "/dashboardTugasKuliah",
+            details: { info: "User visited dashboard" },
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } catch (error) {
+        console.error("Failed to log dashboard visit:", error);
+      }
+    };
+  
     fetchTugasKuliah();
+    logDashboardVisit();
+  
     const token = localStorage.getItem("token");
     setIsAdmin(!!token);
   }, []);
+  
 
   const fetchTugasKuliah = async () => {
     try {
@@ -86,12 +110,21 @@ const DashboardTugasKuliah = () => {
         return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
       }
     });
-
-  const viewTaskDetail = (id) => {
-    navigate(`/DetailTugasKuliah/${id}`);
-    console.log("View detail for task id:", id);
-  };
-
+    const viewTaskDetail = (id) => {
+      // Log detail view activity
+      const token = localStorage.getItem("token");
+      api.post("/activities", {
+        type: "task_view",
+        path: `/DetailTugasKuliah/${id}`,
+        taskId: id,
+        details: { info: "User viewed task details" },
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
+      }).catch(err => console.error("Failed to log task view:", err));
+    
+      navigate(`/DetailTugasKuliah/${id}`);
+    };
+    
   const addTugasKuliah = async (newTask) => {
     try {
       const token = localStorage.getItem("token");

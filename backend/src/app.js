@@ -6,6 +6,8 @@ const tasksRoutes = require("./routes/tasks");
 const viewsProjectRoutes = require("./routes/viewProjects");
 const viewTasksRoutes = require("./routes/viewTasks");
 const authRoutes = require("./routes/auth");
+const userRoutes = require("./routes/users");
+const activityRoutes = require("./routes/activity");
 const getStatusPage = require("./statusPage");
 
 connectDB();
@@ -24,6 +26,10 @@ app.use("/api/tasks", tasksRoutes);
 app.use("/api/viewTasks", viewTasksRoutes);
 app.use("/api/viewProjects", viewsProjectRoutes);
 app.use("/api/auth", authRoutes);
+
+app.use("/api/users", userRoutes);
+
+app.use("/api/activities", activityRoutes)
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
