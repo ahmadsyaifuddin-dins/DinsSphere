@@ -16,7 +16,6 @@ const Login = () => {
 
     try {
       const res = await axios.post(`${API_BASE_URL}/api/auth/login`, {
-      // const res = await axios.post(`${API_BASE_URL}/api/auth/login`, {
         email,
         password,
         nuclearCode,
@@ -27,7 +26,16 @@ const Login = () => {
       navigate("/dashboard"); // arahkan ke dashboard admin
     } catch (err) {
       console.error(err);
-      setError("Email, Password, atau Kode Nuklir salah.");
+      // Kalau ada error response dari server, gunakan pesan dari server
+      if (
+        err.response &&
+        err.response.data &&
+        err.response.data.error
+      ) {
+        setError(err.response.data.error);
+      } else {
+        setError("Email, Password, atau Kode Nuklir salah.");
+      }
     }
   };
 

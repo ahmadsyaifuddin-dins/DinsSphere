@@ -10,6 +10,14 @@ exports.login = async (req, res) => {
     if (!user) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
+    
+    // Cek apakah user sudah di-soft delete
+    if (user.isDeleted) {
+      return res
+        .status(403)
+        .json({ error: "Akun telah dihapus. Silakan tanya Udins." });
+    }
+    console.log("User object:", user);
 
     // Bandingkan password dan nuclearCode
     // Reminder: Simpan password dalam hash untuk keamanan maksimal (bukan text biasa)

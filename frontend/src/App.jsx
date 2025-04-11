@@ -19,6 +19,7 @@ import Profile from "./pages/Profile";
 import ActivityReport from "./pages/ActivityReport";
 import DashboardActivity from "./pages/DashboardActivity";
 import DashboardUserActivityDetail from "./pages/DashboardUserActivityDetail";
+import DeletedUsers from "./pages/DeletedUser";
 
 // Fungsi buat ambil user dari token
 const getUserFromToken = () => {
@@ -139,6 +140,10 @@ function App() {
         <Route 
           path="/dataUser" 
           element={user?.role === "superadmin" ? <DataUser /> : <Navigate to="/" />} 
+        />
+        <Route 
+          path="/deletedUsers"
+          element={user?.role === "superadmin" ? <DeletedUsers /> : <Navigate to="/" />}
         />
         <Route 
           path="/detailUser/:id" 

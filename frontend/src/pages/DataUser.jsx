@@ -1,9 +1,14 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleExclamation, faSpinner, faEye } from "@fortawesome/free-solid-svg-icons";
-import decode from "jwt-decode"; // Tambahkan import ini
+import { 
+  faCircleExclamation, 
+  faSpinner, 
+  faEye 
+} from "@fortawesome/free-solid-svg-icons";
+import decode from "jwt-decode";
+import Swal from "sweetalert2";
 import { API_BASE_URL } from "../config";
 
 const DataUser = () => {
@@ -19,9 +24,7 @@ const DataUser = () => {
       navigate("/login");
       return;
     }
-
     try {
-      // DECODE TOKEN DENGAN JWT-DECODE
       const decoded = decode(token);
       if (decoded.role !== "superadmin") {
         navigate("/");
@@ -35,7 +38,7 @@ const DataUser = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/users`); // Ganti dengan endpoint API Anda
+        const response = await axios.get(`${API_BASE_URL}/api/users`);
         setUsers(response.data);
         setLoading(false);
       } catch (err) {
@@ -43,9 +46,57 @@ const DataUser = () => {
         setLoading(false);
       }
     };
-
     fetchUsers();
   }, []);
+
+  // Fungsi soft delete user
+  const handleDelete = async (userId) => {
+    const confirm = await Swal.fire({
+      title: "Hapus Pengguna",
+      text: "Anda yakin ingin menghapus data pengguna ini? (soft delete)",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Ya, hapus!",
+      cancelButtonText: "Batal",
+    });
+  
+    if (!confirm.isConfirmed) return;
+  
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `${API_BASE_URL}/api/users/${userId}/soft-delete`,
+        { isDeleted: true },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
+      // Filter user yg telah dihapus agar tidak ditampilkan
+      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
+      Swal.fire("Deleted!", "Data pengguna sudah dihapus.", "success");
+    } catch (err) {
+      console.error("Error deleting user:", err);
+      Swal.fire("Error", "Gagal menghapus data pengguna.", "error");
+    }
+  };
+
+  // Fungsi restore (undelete) user
+  const handleRestore = async (userId) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `${API_BASE_URL}/api/users/${userId}/undelete`,
+        null, // payload bisa null karena backend cukup update isDeleted ke false
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      // Setelah restore, refresh data pengguna
+      const response = await axios.get(`${API_BASE_URL}/api/users`);
+      setUsers(response.data);
+      Swal.fire("Restored!", "Data pengguna telah dipulihkan.", "success");
+    } catch (err) {
+      console.error("Error restoring user:", err);
+      Swal.fire("Error", "Gagal memulihkan data pengguna.", "error");
+    }
+  };
 
   return (
     <div className="bg-gray-900 text-white min-h-screen p-4">
@@ -93,23 +144,40 @@ const DataUser = () => {
                   <td className="px-4 py-3 capitalize">{user.role}</td>
                   <td className="px-4 py-3">
                     <span
-                      className={`${
-                        user.isActive
-                          ? "bg-green-600 text-white"
-                          : "bg-red-600 text-white"
-                      } py-1 px-2 rounded text-sm`}
+                      className={`py-1 px-2 rounded text-sm ${
+                        user.isActive ? "bg-green-600" : "bg-red-600"
+                      }`}
                     >
                       {user.isActive ? "Aktif" : "Tidak Aktif"}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
-                    <Link
-                      to={`/detailUser/${user._id}`}
-                      className="text-blue-400 hover:text-blue-600"
-                    >
-                      <FontAwesomeIcon icon={faEye} className="mr-1" />
-                      Lihat Detail
-                    </Link>
+                  <td className="px-4 py-3 flex gap-2 items-center">
+                    {/* Tampilkan tombol restore jika user sudah soft-deleted */}
+                    {user.isDeleted ? (
+                      <button
+                        onClick={() => handleRestore(user._id)}
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded text-sm"
+                      >
+                        Restore
+                      </button>
+                    ) : (
+                      <>
+                        <Link
+                          to={`/detailUser/${user._id}`}
+                          className="text-blue-400 hover:text-blue-600"
+                        >
+                          <FontAwesomeIcon icon={faEye} className="mr-1" />
+                          Lihat Detail
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(user._id)}
+                          className="text-red-400 hover:text-red-600"
+                          title="Hapus User"
+                        >
+                          <FontAwesomeIcon icon={faCircleExclamation} />
+                        </button>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}
