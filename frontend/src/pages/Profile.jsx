@@ -216,10 +216,11 @@ const Profile = () => {
                       </div>
                       <div>
                         <p className="text-gray-400 text-sm">Role</p>
-                        <div className="mt-1">
+                        <div className="mt-1 capitalize">
                           <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
                             ${user.role === 'superadmin' ? 'bg-purple-900/50 text-purple-300 border border-purple-600' : 
                              user.role === 'admin' ? 'bg-blue-900/50 text-blue-300 border border-blue-600' : 
+                             user.role === 'friend' ? 'bg-green-900/50 text-green-300 border border-green-600' : 
                              'bg-gray-700 text-gray-300 border border-gray-600'}`
                           }>
                             {user.role}
