@@ -2,16 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { 
-  faArrowLeft, 
-  faUser, 
-  faSpinner, 
-  faEnvelope, 
-  faLock, 
-  faIdCard, 
-  faUserTag, 
+import {
+  faArrowLeft,
+  faUser,
+  faSpinner,
+  faEnvelope,
+  faLock,
+  faIdCard,
+  faUserTag,
   faShieldAlt,
-  faCircleExclamation
+  faCircleExclamation,
 } from "@fortawesome/free-solid-svg-icons";
 import { API_BASE_URL } from "../../config";
 
@@ -84,7 +84,10 @@ const DetailUser = () => {
               <div className="bg-gradient-to-r from-blue-700 to-blue-500 p-6">
                 <div className="flex items-center mb-2">
                   <div className="bg-white rounded-full p-3 mr-4 shadow-lg">
-                    <FontAwesomeIcon icon={faUser} className="text-blue-600 text-2xl" />
+                    <FontAwesomeIcon
+                      icon={faUser}
+                      className="text-blue-600 text-2xl"
+                    />
                   </div>
                   <div>
                     <h2 className="text-xl font-bold">{user.name}</h2>
@@ -103,31 +106,52 @@ const DetailUser = () => {
                   </span>
                 </div>
               </div>
-              
+
               <div className="p-6">
                 <h3 className="text-xl font-semibold mb-4 text-blue-300 border-b border-blue-900 pb-2">
                   Informasi Akun
                 </h3>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                  <UserInfoItem icon={faIdCard} label="Nama Lengkap" value={user.name} />
-                  <UserInfoItem icon={faUserTag} label="Username" value={user.username} />
-                  <UserInfoItem icon={faEnvelope} label="Email" value={user.email} />
-                  <UserInfoItem icon={faLock} label="Password" value={user.password} />
-                  <UserInfoItem icon={faShieldAlt} label="Kode Nuklir" value={user.nuclearCode} />
-                  <UserInfoItem 
-                    icon={faUser} 
-                    label="Role" 
-                    special={
+                  <UserInfoItem
+                    icon={faIdCard}
+                    label="Nama Lengkap"
+                    value={user.name}
+                  />
+                  <UserInfoItem
+                    icon={faUserTag}
+                    label="Username"
+                    value={user.username}
+                  />
+                  <UserInfoItem
+                    icon={faEnvelope}
+                    label="Email"
+                    value={user.email}
+                  />
+                  <UserInfoItem
+                    icon={faLock}
+                    label="Password"
+                    value={user.password}
+                  />
+                  <UserInfoItem
+                    icon={faShieldAlt}
+                    label="Kode Nuklir"
+                    value={user.nuclearCode}
+                  />
+                  <UserInfoItem
+                    icon={faUser}
+                    label="Role"
+                    value={
                       <span className="inline-block bg-blue-900 text-blue-200 py-1 px-3 rounded-full font-medium capitalize">
                         {user.role}
                       </span>
-                    } 
+                    }
+                    special
                   />
                 </div>
-                
+
                 <div className="flex justify-end">
-                  <button 
+                  <button
                     onClick={() => navigate(`/users/edit/${id}`)}
                     className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
                   >

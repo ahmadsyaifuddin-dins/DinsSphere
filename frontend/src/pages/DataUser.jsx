@@ -175,7 +175,7 @@ const DataUser = () => {
             </Link>
             
             <Link 
-              to="/add-user" 
+            to="/registerFriend" 
               className="flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 rounded-lg text-white transition duration-300"
             >
               <FontAwesomeIcon icon={faPlus} className="mr-2" />
