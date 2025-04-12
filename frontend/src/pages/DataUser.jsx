@@ -167,7 +167,7 @@ const DataUser = () => {
           
           <div className="mt-4 md:mt-0 flex flex-col sm:flex-row gap-3">
             <Link 
-              to="/deleted-users" 
+              to="/deletedUsers" 
               className="flex items-center justify-center px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition duration-300"
             >
               <FontAwesomeIcon icon={faTrash} className="mr-2 text-red-400" />
@@ -208,7 +208,7 @@ const DataUser = () => {
                 <select
                   value={filterRole}
                   onChange={(e) => setFilterRole(e.target.value)}
-                  className="w-full bg-gray-700 border border-gray-600 rounded-lg py-2 pl-10 pr-4 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150"
+                  className="w-full capitalize bg-gray-700 border border-gray-600 rounded-lg py-2 pl-10 pr-4 text-white appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-150"
                 >
                   <option value="">Semua Role</option>
                   {uniqueRoles.map(role => (
@@ -291,9 +291,10 @@ const DataUser = () => {
                         <td className="px-6 py-4 whitespace-nowrap">{user.username}</td>
                         <td className="px-6 py-4 whitespace-nowrap">{user.email}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
                             ${user.role === 'superadmin' ? 'bg-purple-900 text-purple-200' : 
-                             user.role === 'admin' ? 'bg-blue-900 text-blue-200' : 
+                             user.role === 'admin' ? 'bg-blue-900 text-blue-200' :
+                             user.role === 'friend' ? 'bg-green-950 text-green-400' :
                              'bg-gray-700 text-gray-200'}`
                           }>
                             {user.role}

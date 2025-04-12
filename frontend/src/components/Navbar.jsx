@@ -271,14 +271,14 @@ const Navbar = () => {
                                 Aktivitas User
                               </Link>
                               <Link
-                                to="/RegisterFriend"
+                                to="/registerFriend"
                                 className="text-white hover:text-gray-300 text-xl"
                                 onClick={() => {
                                   setIsDataMenuOpen(false);
                                   setIsMenuOpen(false);
                                 }}
                               >
-                                Register Friend
+                                Add User
                               </Link>
                             </motion.div>
                           )}

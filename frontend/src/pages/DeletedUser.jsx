@@ -187,7 +187,7 @@ const DeletedUsers = () => {
           <div>
             <div className="flex items-center">
               <Link 
-                to="/users" 
+                to="/dataUser" 
                 className="mr-4 bg-gray-700 hover:bg-gray-600 p-2 rounded-lg transition duration-200"
                 title="Kembali ke Daftar Pengguna"
               >
@@ -262,7 +262,7 @@ const DeletedUsers = () => {
                   Semua pengguna aktif dalam sistem. Tidak ada data pengguna yang telah dihapus saat ini.
                 </p>
                 <Link
-                  to="/users"
+                  to="/dataUser"
                   className="mt-6 inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200"
                 >
                   <FontAwesomeIcon icon={faArrowLeft} className="mr-2" />
