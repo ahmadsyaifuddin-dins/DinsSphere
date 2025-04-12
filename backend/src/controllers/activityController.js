@@ -1,5 +1,6 @@
 // src/controllers/activityController.js
 const Activity = require("../models/Activity");
+const Task = require("../models/Tasks"); // pastikan model ini direquire
 
 // Logging aktivitas user (POST) – tidak boleh diakses oleh role superadmin
 exports.logActivity = async (req, res) => {
@@ -60,7 +61,8 @@ exports.getAllActivities = async (req, res) => {
   try {
     const activities = await Activity.find()
       .sort({ createdAt: -1 })
-      .populate("userId", "name username email");
+      .populate("userId", "name username email")
+      .populate("taskId", "mataKuliah"); // Sekarang Mongoose udah tahu tentang model Task
     res.json(activities);
   } catch (err) {
     console.error("Error fetching activities:", err);
@@ -74,7 +76,8 @@ exports.getUserActivities = async (req, res) => {
   try {
     const activities = await Activity.find({ userId })
       .sort({ createdAt: -1 })
-      .populate("userId", "name username email");
+      .populate("userId", "name username email")
+      .populate("taskId", "mataKuliah"); // Sekarang Mongoose udah tahu tentang model Task
     res.json(activities);
   } catch (err) {
     console.error("Error fetching user activities:", err);
