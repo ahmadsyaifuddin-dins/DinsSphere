@@ -11,7 +11,13 @@ import TugasKuliahModal from "../components/tugas_kuliah/TugasKuliahModal";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Swal from "sweetalert2";
-import { getProgressColorClass, getStatusColorClass, mataKuliahOptions, filterByProgress, filterByDueDate } from "../utils/helpers";
+import {
+  getProgressColorClass,
+  getStatusColorClass,
+  mataKuliahOptions,
+  filterByProgress,
+  filterByDueDate,
+} from "../utils/helpers";
 import TugasListSkeleton from "../loader/TugasListSkeleton";
 import { API_BASE_URL } from "../config";
 // import MusicPlayer from "../components/tugas_kuliah/MusicPlayer";
@@ -28,11 +34,11 @@ const DashboardTugasKuliah = () => {
   const [sortOrder, setSortOrder] = useState("newest"); // "newest" atau "oldest"
   const [orderMode, setOrderMode] = useState("manual");
   const [filters, setFilters] = useState({
-    status: '',
-    mataKuliah: '',
-    progress: '',
-    dueDate: '',
-    tingkatKesulitan: ''
+    status: "",
+    mataKuliah: "",
+    progress: "",
+    dueDate: "",
+    tingkatKesulitan: "",
   });
   const navigate = useNavigate();
 
@@ -57,14 +63,13 @@ const DashboardTugasKuliah = () => {
         console.error("Failed to log dashboard visit:", error);
       }
     };
-  
+
     fetchTugasKuliah();
     logDashboardVisit();
-  
+
     const token = localStorage.getItem("token");
     setIsAdmin(!!token);
   }, []);
-  
 
   const fetchTugasKuliah = async () => {
     try {
@@ -72,8 +77,8 @@ const DashboardTugasKuliah = () => {
       setIsLoading(true);
       const res = await axios.get(`${API_BASE_URL}/api/tasks`, {
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
       setTugasKuliah(res.data);
     } catch (err) {
@@ -85,19 +90,31 @@ const DashboardTugasKuliah = () => {
 
   // Proses filtering dan sorting
   const processedTasks = tugasKuliah
-    .filter(task => {
-      const textMatch = 
+    .filter((task) => {
+      const textMatch =
         task.namaTugas.toLowerCase().includes(filterText.toLowerCase()) ||
         task.mataKuliah.toLowerCase().includes(filterText.toLowerCase()) ||
-        (task.deskripsiTugas && task.deskripsiTugas.toLowerCase().includes(filterText.toLowerCase()));
-      
-      const statusMatch = !filters.status || task.statusTugas === filters.status;
-      const mataKuliahMatch = !filters.mataKuliah || task.mataKuliah === filters.mataKuliah;
-      const tingkatKesulitanMatch = !filters.tingkatKesulitan || task.tingkatKesulitan === filters.tingkatKesulitan;
+        (task.deskripsiTugas &&
+          task.deskripsiTugas.toLowerCase().includes(filterText.toLowerCase()));
+
+      const statusMatch =
+        !filters.status || task.statusTugas === filters.status;
+      const mataKuliahMatch =
+        !filters.mataKuliah || task.mataKuliah === filters.mataKuliah;
+      const tingkatKesulitanMatch =
+        !filters.tingkatKesulitan ||
+        task.tingkatKesulitan === filters.tingkatKesulitan;
       const progressMatch = filterByProgress(task, filters.progress);
       const dueDateMatch = filterByDueDate(task, filters.dueDate);
-      
-      return textMatch && statusMatch && mataKuliahMatch && progressMatch && dueDateMatch && tingkatKesulitanMatch;
+
+      return (
+        textMatch &&
+        statusMatch &&
+        mataKuliahMatch &&
+        progressMatch &&
+        dueDateMatch &&
+        tingkatKesulitanMatch
+      );
     })
     .sort((a, b) => {
       if (orderMode === "manual") {
@@ -110,21 +127,27 @@ const DashboardTugasKuliah = () => {
         return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
       }
     });
-    const viewTaskDetail = (id) => {
-      // Log detail view activity
-      const token = localStorage.getItem("token");
-      api.post("/activities", {
-        type: "task_view",
-        path: `/DetailTugasKuliah/${id}`,
-        taskId: id,
-        details: { info: "User viewed task details" },
-      }, {
-        headers: { Authorization: `Bearer ${token}` },
-      }).catch(err => console.error("Failed to log task view:", err));
-    
-      navigate(`/DetailTugasKuliah/${id}`);
-    };
-    
+  const viewTaskDetail = (id) => {
+    // Log detail view activity
+    const token = localStorage.getItem("token");
+    api
+      .post(
+        "/activities",
+        {
+          type: "task_view",
+          path: `/DetailTugasKuliah/${id}`,
+          taskId: id,
+          details: { info: "User viewed task details" },
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      )
+      .catch((err) => console.error("Failed to log task view:", err));
+
+    navigate(`/DetailTugasKuliah/${id}`);
+  };
+
   const addTugasKuliah = async (newTask) => {
     try {
       const token = localStorage.getItem("token");
@@ -223,23 +246,49 @@ const DashboardTugasKuliah = () => {
     <div className="relative">
       {/* Jika user belum login, tampilkan overlay peringatan */}
       {!isAdmin && (
-        <div className="fixed inset-0 flex items-center justify-center z-20 bg-opacity-50 backdrop-blur-xs backdrop-brightness-75">
-          <div className="bg-white p-6 rounded shadow-lg text-center">
-            <h2 className="text-2xl font-bold mb-4">Akses Terbatas</h2>
-            <p className="mb-4">
-              Halaman ini hanya dapat diakses oleh orang tertentu.
-              Silakan login terlebih dahulu untuk melanjutkan.
+        <div className="fixed inset-0 flex items-center justify-center z-20 bg-black/40 backdrop-blur-sm backdrop-brightness-75">
+          <div className="bg-gradient-to-br from-white to-gray-100 p-8 rounded-xl shadow-2xl text-center max-w-md w-full border border-gray-200 transform transition-all animate-fadeIn">
+            <div className="mb-4">
+              <div className="h-20 w-20 mx-auto rounded-full bg-yellow-500 flex items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-12 w-12 text-black"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+              </div>
+            </div>
+            <h2 className="text-2xl font-bold mb-2 text-red-700">
+              Halaman Eksklusif!
+            </h2>
+            <p className="mb-2 text-gray-600">
+              Sepertinya kamu penasaran dengan apa yang ada di dalam, ya?
+            </p>
+            <p className="mb-6 text-gray-600">
+              Sayangnya, halaman ini hanya bisa diakses oleh orang-orang
+              kepercayaan Udin.
             </p>
             <button
-              className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition cursor-pointer"
+              className="cursor-pointer w-full bg-blue-950 text-white py-3 px-6 rounded-lg hover:bg-slate-950 transition-all transform hover:scale-105 font-medium shadow-md"
               onClick={() => navigate("/login")}
             >
-              Login
+              Masuk Sekarang
             </button>
+            <p className="mt-4 text-xs text-gray-500">
+              Jika kamu termasuk orang kepercayaan Udins, silakan masuk untuk
+              melihat konten.
+            </p>
           </div>
         </div>
       )}
-
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100">
         <div className="max-w-8xl mx-auto px-2 sm:px-6 lg:px-8 py-4 sm:py-8">
           <HeaderTugasKuliah
@@ -291,7 +340,8 @@ const DashboardTugasKuliah = () => {
             <TugasListSkeleton />
           ) : processedTasks.length === 0 ? (
             <div className="text-center py-8 text-gray-400">
-              {filterText || Object.values(filters).some(value => value !== '') 
+              {filterText ||
+              Object.values(filters).some((value) => value !== "")
                 ? "Tidak ada tugas yang sesuai dengan filter. Coba ubah filter Anda."
                 : "Coming Soon on 8 or 14 Apr 2025!"}
             </div>
