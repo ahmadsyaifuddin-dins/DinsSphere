@@ -31,7 +31,7 @@ const MinimizedPlayer = ({ onClick, isPlaying, isMuted, variants }) => (
             duration: 1.5
           }
         }}
-        className="h-2 w-2 bg-white rounded-full"
+        className="h-2 w-2 bg-cyan-300 rounded-full"
       ></motion.span>
     )}
     {isMuted && isPlaying && (
