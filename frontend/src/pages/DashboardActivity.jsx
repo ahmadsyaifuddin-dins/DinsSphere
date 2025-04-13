@@ -53,7 +53,8 @@ const DashboardActivity = () => {
       CREATE: "bg-blue-600",
       UPDATE: "bg-purple-600",
       DELETE: "bg-red-600",
-      VIEW: "bg-indigo-600",
+      PAGE_VIEW: "bg-indigo-600",
+      TASK_VIEW: "bg-pink-600",
     };
 
     return types[type] || "bg-gray-600";

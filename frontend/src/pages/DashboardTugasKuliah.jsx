@@ -57,9 +57,9 @@ const DashboardTugasKuliah = () => {
           await api.post(
             "/activities",
             {
-              type: "page_view",
+              type: "PAGE_VIEW",
               path: "/dashboardTugasKuliah",
-              details: { info: "User visited dashboard" },
+              details: { info: "User visited dashboard tugas kuliah" },
             },
             {
               headers: {
@@ -146,7 +146,7 @@ const DashboardTugasKuliah = () => {
         .post(
           "/activities",
           {
-            type: "task_view",
+            type: "TASK_VIEW",
             path: `/DetailTugasKuliah/${id}`,
             taskId: id,
             details: { info: "User viewed task details" },

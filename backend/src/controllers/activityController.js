@@ -2,11 +2,11 @@
 const Activity = require("../models/Activity");
 const Task = require("../models/Tasks"); // pastikan model ini direquire
 
-// Logging aktivitas user (POST) – tidak boleh diakses oleh role superadmin
+// Logging aktivitas user (POST) – jangan menangkap aktivitas superAdmin
 exports.logActivity = async (req, res) => {
   // Cek apakah user memiliki role superadmin
   if (req.user && req.user.role === "superadmin") {
-    return res.status(403).json({ error: "Superadmin tidak dapat melakukan log aktivitas" });
+    return res.status(403).json({ error: "Tidak Menangkap Aktivitas Superadmin" });
   }
 
   const { type, path, taskId, details } = req.body;
@@ -82,5 +82,20 @@ exports.getUserActivities = async (req, res) => {
   } catch (err) {
     console.error("Error fetching user activities:", err);
     res.status(500).json({ error: "Failed to fetch user activities" });
+  }
+};
+
+
+exports.getMyActivities = async (req, res) => {
+  try {
+    const activities = await Activity.find({ userId: req.user._id })
+      .sort({ createdAt: -1 })
+      .limit(3) // Batasi hanya 3 aktivitas terbaru
+      .populate("userId", "name username email")
+      .populate("taskId", "mataKuliah");
+    res.json(activities);
+  } catch (err) {
+    console.error("Error fetching my activities:", err);
+    res.status(500).json({ error: "Failed to fetch your activities" });
   }
 };

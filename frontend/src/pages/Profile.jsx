@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { 
@@ -12,7 +12,8 @@ import {
   faCircleCheck, 
   faCircleExclamation,
   faShieldAlt,
-  faEdit
+  faEdit,
+  faHistory
 } from "@fortawesome/free-solid-svg-icons";
 import decode from "jwt-decode";
 import { API_BASE_URL } from "../config";
@@ -20,7 +21,9 @@ import { API_BASE_URL } from "../config";
 const Profile = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [activities, setActivities] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingActivities, setLoadingActivities] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -33,7 +36,6 @@ const Profile = () => {
     try {
       const decoded = decode(token);
       console.log("Decoded Token:", decoded);
-  
       const userId = decoded._id;
   
       if (!userId) {
@@ -41,10 +43,31 @@ const Profile = () => {
         setLoading(false);
         return;
       }
+      
+      // Log aktivitas masuk ke halaman profile
+      const logProfileVisit = async () => {
+        try {
+          await axios.post(
+            `${API_BASE_URL}/api/activities`,
+            {
+              type: "PAGE_VIEW",
+              path: "/profile",
+              details: { info: "User visited profile page" },
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+        } catch (err) {
+          console.error("Error logging profile visit:", err);
+        }
+      };
+      logProfileVisit();
   
       const fetchUser = async () => {
         try {
-          const token = localStorage.getItem("token");
           const response = await axios.get(
             `${API_BASE_URL}/api/users/${userId}`,
             {
@@ -53,7 +76,6 @@ const Profile = () => {
               },
             }
           );
-          
           setUser(response.data);
           setLoading(false);
         } catch (apiError) {
@@ -62,8 +84,26 @@ const Profile = () => {
           setLoading(false);
         }
       };
-
+  
       fetchUser();
+      
+      // Fetch aktivitas user di profile
+      const fetchActivities = async () => {
+        try {
+          const res = await axios.get(
+            `${API_BASE_URL}/api/activities/me`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+          setActivities(res.data);
+          setLoadingActivities(false);
+        } catch (activityError) {
+          console.error("Error fetching user activities:", activityError);
+          setLoadingActivities(false);
+        }
+      };
+      fetchActivities();
     } catch (decodeError) {
       console.error("Token Decoding Error:", decodeError);
       navigate("/login");
@@ -91,7 +131,6 @@ const Profile = () => {
       "bg-indigo-600", "bg-teal-600"
     ];
     
-    // Simple hash function to get consistent color
     const hash = name.split("").reduce((acc, char) => {
       return acc + char.charCodeAt(0);
     }, 0);
@@ -147,20 +186,14 @@ const Profile = () => {
                     </div>
                     <h2 className="mt-4 text-xl font-bold capitalize">{user.name}</h2>
                     <p className="text-gray-400 mb-4">@{user.username}</p>
-                    
                     <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium ${
                       user.isActive
                         ? "bg-green-900/50 text-green-300 border border-green-600"
                         : "bg-red-900/50 text-red-300 border border-red-600"
-                      }`}
-                    >
-                      <FontAwesomeIcon 
-                        icon={user.isActive ? faCircleCheck : faCircleExclamation} 
-                        className={`${user.isActive ? "text-green-400" : "text-red-400"} mr-2`} 
-                      />
+                      }`}>
+                      <FontAwesomeIcon icon={user.isActive ? faCircleCheck : faCircleExclamation} className={`${user.isActive ? "text-green-400" : "text-red-400"} mr-2`} />
                       {user.isActive ? "Akun Aktif" : "Akun Tidak Aktif"}
                     </div>
-                    
                     <button className="mt-6 bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-lg inline-flex items-center transition duration-300 opacity-50 cursor-not-allowed">
                       <FontAwesomeIcon icon={faEdit} className="mr-2" />
                       Edit Profil
@@ -221,8 +254,8 @@ const Profile = () => {
                             ${user.role === 'superadmin' ? 'bg-purple-900/50 text-purple-300 border border-purple-600' : 
                              user.role === 'admin' ? 'bg-blue-900/50 text-blue-300 border border-blue-600' : 
                              user.role === 'friend' ? 'bg-green-900/50 text-green-300 border border-green-600' : 
-                             'bg-gray-700 text-gray-300 border border-gray-600'}`
-                          }>
+                             'bg-gray-700 text-gray-300 border border-gray-600'}`}
+                          >
                             {user.role}
                           </span>
                         </div>
@@ -231,17 +264,43 @@ const Profile = () => {
                   </div>
                 </div>
                 
-                {/* Additional Info Card */}
+                {/* Additional Info Card - User Activity */}
                 <div className="bg-gray-800 rounded-xl shadow-lg border border-gray-700 overflow-hidden mt-6">
-                  <div className="p-6 border-b border-gray-700">
+                  <div className="p-6 border-b border-gray-700 flex items-center">
+                    <FontAwesomeIcon icon={faHistory} className="text-blue-400 text-2xl mr-3" />
                     <h3 className="text-xl font-bold text-blue-400">Aktivitas Terbaru</h3>
                   </div>
                   <div className="p-6">
-                    <div className="text-center py-4">
-                      <p className="text-gray-400">Belum ada riwayat aktivitas untuk ditampilkan.</p>
-                    </div>
+                    {loadingActivities ? (
+                      <div className="flex flex-col items-center justify-center h-32">
+                        <FontAwesomeIcon icon={faSpinner} spin className="text-blue-400 text-4xl mb-4" />
+                        <p className="text-gray-400">Memuat aktivitas...</p>
+                      </div>
+                    ) : activities.length === 0 ? (
+                      <div className="text-center py-4">
+                        <p className="text-gray-400">Belum ada riwayat aktivitas untuk ditampilkan.</p>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        {activities.map((activity, idx) => (
+                          <div key={idx} className="bg-gray-700 rounded p-3 flex items-center gap-3">
+                            <FontAwesomeIcon icon={faHistory} className="text-blue-400" />
+                            <div>
+                              <p className="text-sm">
+                                <span className="font-medium">{activity.type}</span> di 
+                                <span className="font-medium"> {activity.path}</span>
+                              </p>
+                              <p className="text-xs text-gray-400">
+                                {new Date(activity.createdAt).toLocaleString()}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
+                
               </div>
             </div>
           )

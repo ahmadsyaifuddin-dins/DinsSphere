@@ -1,7 +1,7 @@
 // src/routes/activity.js
 const express = require("express");
 const router = express.Router();
-const { logActivity, getActivityReport, getAllActivities, getUserActivities } = require("../controllers/activityController");
+const { logActivity, getActivityReport, getAllActivities, getUserActivities, getMyActivities } = require("../controllers/activityController");
 const verifyUser = require("../middleware/verifyUser");
 
 // Endpoint buat log aktivitas, bisa diakses user tanpa role khusus (kalau ingin proteksi, tambahkan middleware)
@@ -15,5 +15,8 @@ router.get("/all", verifyUser(["admin", "superadmin"]), getAllActivities);
 
 // Detail aktivitas user tertentu (harus admin atau superadmin)
 router.get("/user/:userId", verifyUser(["admin", "superadmin"]), getUserActivities);
+
+// Detail aktivitas sendiri yang login (harus friend, member, admin, superadmin)
+router.get("/me", verifyUser(["friend", "member", "admin", "superadmin"]), getMyActivities);
 
 module.exports = router;
