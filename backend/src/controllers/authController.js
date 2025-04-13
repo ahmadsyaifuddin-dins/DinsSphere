@@ -5,10 +5,15 @@ exports.login = async (req, res) => {
   const { email, password, nuclearCode } = req.body;
 
   try {
+    // Validasi input
+    if (!email || !password || !nuclearCode) {
+      return res.status(400).json({ error: "Harap isi semua kolom yang diperlukan" });
+    }
+
     // Cari user berdasarkan email
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ error: "Invalid credentials" });
+      return res.status(401).json({ error: "Email tidak ditemukan" });
     }
     
     // Cek apakah user sudah di-soft delete
@@ -17,12 +22,15 @@ exports.login = async (req, res) => {
         .status(403)
         .json({ error: "Akun telah dihapus. Silakan tanya Udins." });
     }
-    console.log("User object:", user);
 
-    // Bandingkan password dan nuclearCode
-    // Reminder: Simpan password dalam hash untuk keamanan maksimal (bukan text biasa)
-    if (user.password !== password || user.nuclearCode !== nuclearCode) {
-      return res.status(401).json({ error: "Invalid credentials" });
+    // Bandingkan password
+    if (user.password !== password) {
+      return res.status(401).json({ error: "Password salah" });
+    }
+
+    // Bandingkan nuclearCode
+    if (user.nuclearCode !== nuclearCode) {
+      return res.status(401).json({ error: "Kode Nuklir salah" });
     }
 
     // Buat JWT token
@@ -41,7 +49,7 @@ exports.login = async (req, res) => {
     return res.json({ token });
   } catch (err) {
     console.error("Login error:", err);
-    return res.status(500).json({ error: "Server error" });
+    return res.status(500).json({ error: "Terjadi kesalahan pada server" });
   }
 };
 
