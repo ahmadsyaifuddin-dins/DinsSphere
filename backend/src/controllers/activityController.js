@@ -56,35 +56,60 @@ exports.getActivityReport = async (req, res) => {
   }
 };
 
-// Mengambil semua aktivitas (GET) – diizinkan untuk semua role
+// Mengambil semua aktivitas (GET) dengan pagination
 exports.getAllActivities = async (req, res) => {
+  const { page = 1, limit = 5 } = req.query;
+  const skip = (parseInt(page) - 1) * parseInt(limit);
+  
   try {
     const activities = await Activity.find()
       .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit))
       .populate("userId", "name username email")
-      .populate("taskId", "mataKuliah"); // Sekarang Mongoose udah tahu tentang model Task
-    res.json(activities);
+      .populate("taskId", "mataKuliah");
+    
+    const total = await Activity.countDocuments();
+    
+    res.json({
+      activities,
+      totalPages: Math.ceil(total / parseInt(limit)),
+      currentPage: parseInt(page),
+      totalActivities: total
+    });
   } catch (err) {
     console.error("Error fetching activities:", err);
     res.status(500).json({ error: "Failed to fetch activities" });
   }
 };
 
-// Mengambil aktivitas berdasarkan user (GET) – diizinkan untuk semua role
+// Mengambil aktivitas berdasarkan user (GET) dengan pagination
 exports.getUserActivities = async (req, res) => {
   const { userId } = req.params;
+  const { page = 1, limit = 5 } = req.query;
+  const skip = (parseInt(page) - 1) * parseInt(limit);
+  
   try {
     const activities = await Activity.find({ userId })
       .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit))
       .populate("userId", "name username email")
-      .populate("taskId", "mataKuliah"); // Sekarang Mongoose udah tahu tentang model Task
-    res.json(activities);
+      .populate("taskId", "mataKuliah");
+    
+    const total = await Activity.countDocuments({ userId });
+    
+    res.json({
+      activities,
+      totalPages: Math.ceil(total / parseInt(limit)),
+      currentPage: parseInt(page),
+      totalActivities: total
+    });
   } catch (err) {
     console.error("Error fetching user activities:", err);
     res.status(500).json({ error: "Failed to fetch user activities" });
   }
 };
-
 
 exports.getMyActivities = async (req, res) => {
   try {

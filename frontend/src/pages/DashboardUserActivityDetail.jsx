@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import api from "../services/api";
 import Swal from "sweetalert2";
@@ -24,22 +24,42 @@ const DashboardUserActivityDetail = () => {
   const [activities, setActivities] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [userData, setUserData] = useState(null);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const observer = useRef();
 
-  const fetchUserActivities = async () => {
+  const fetchUserActivities = async (pageNum = 1, append = false) => {
     try {
       const token = localStorage.getItem("token");
 
-      // Fetch user details first
-      const userResponse = await api.get(`/users/${userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUserData(userResponse.data);
+      // Fetch user details first (only on initial load)
+      if (pageNum === 1 && !userData) {
+        const userResponse = await api.get(`/users/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setUserData(userResponse.data);
+      }
 
-      // Fetch user activities
-      const activitiesResponse = await api.get(`/activities/user/${userId}`, {
+      // Set loading state based on whether we're loading the first page or more
+      if (pageNum === 1) {
+        setIsLoading(true);
+      } else {
+        setLoadingMore(true);
+      }
+
+      // Fetch user activities with pagination
+      const activitiesResponse = await api.get(`/activities/user/${userId}?page=${pageNum}&limit=5`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      setActivities(activitiesResponse.data);
+      
+      if (append) {
+        setActivities(prev => [...prev, ...activitiesResponse.data.activities]);
+      } else {
+        setActivities(activitiesResponse.data.activities);
+      }
+      
+      setHasMore(pageNum < activitiesResponse.data.totalPages);
     } catch (err) {
       console.error("Error fetching user activities:", err);
       Swal.fire({
@@ -52,12 +72,34 @@ const DashboardUserActivityDetail = () => {
       });
     } finally {
       setIsLoading(false);
+      setLoadingMore(false);
     }
   };
 
   useEffect(() => {
     fetchUserActivities();
   }, [userId]);
+
+  // Load more data when scrolling to the last element
+  const lastActivityElementRef = useCallback(
+    (node) => {
+      if (isLoading || loadingMore) return;
+      if (observer.current) observer.current.disconnect();
+      
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage(prevPage => {
+            const nextPage = prevPage + 1;
+            fetchUserActivities(nextPage, true);
+            return nextPage;
+          });
+        }
+      });
+      
+      if (node) observer.current.observe(node);
+    },
+    [isLoading, loadingMore, hasMore]
+  );
 
   return (
     <div className="p-6 bg-gradient-to-b from-gray-900 to-gray-800 min-h-screen text-gray-200">
@@ -142,7 +184,7 @@ const DashboardUserActivityDetail = () => {
                 </h2>
               </div>
               <div className="text-gray-400 text-sm">
-                Showing {activities.length} activities
+                Showing activities (scroll to load more)
               </div>
             </div>
 
@@ -189,6 +231,7 @@ const DashboardUserActivityDetail = () => {
                   {activities.map((activity, index) => (
                     <tr
                       key={activity._id}
+                      ref={index === activities.length - 1 ? lastActivityElementRef : null}
                       className={
                         index % 2 === 0 ? "bg-gray-800" : "bg-gray-750"
                       }
@@ -236,6 +279,21 @@ const DashboardUserActivityDetail = () => {
                   ))}
                 </tbody>
               </table>
+              
+              {/* Loading indicator for infinite scroll */}
+              {loadingMore && (
+                <div className="flex justify-center items-center p-4 bg-gray-800 border-t border-gray-700">
+                  <FontAwesomeIcon icon={faSpinner} spin className="text-blue-400 mr-2" />
+                  <span className="text-gray-400">Loading more activities...</span>
+                </div>
+              )}
+              
+              {/* End of results message */}
+              {!isLoading && !loadingMore && !hasMore && activities.length > 0 && (
+                <div className="text-center p-4 text-gray-400 border-t border-gray-700">
+                  End of activity logs
+                </div>
+              )}
             </div>
 
             {/* Activity Summary */}
