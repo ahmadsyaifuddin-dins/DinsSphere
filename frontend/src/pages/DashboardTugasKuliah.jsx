@@ -30,7 +30,7 @@ const DashboardTugasKuliah = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [viewMode, setViewMode] = useState("list"); // "list" atau "grid"
+  const [viewMode, setViewMode] = useState("grid"); // Default to grid for mobile
   const [tugasToEdit, setTugasToEdit] = useState(null);
   const [sortOrder, setSortOrder] = useState("newest"); // "newest" atau "oldest"
   const [orderMode, setOrderMode] = useState("manual");
@@ -41,7 +41,35 @@ const DashboardTugasKuliah = () => {
     dueDate: "",
     tingkatKesulitan: "",
   });
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const navigate = useNavigate();
+
+  // Set initial view mode based on screen size and handle window resize
+  useEffect(() => {
+    // Function to update view mode based on window width
+    const handleResize = () => {
+      const width = window.innerWidth;
+      setWindowWidth(width);
+      
+      // Set view mode based on screen size: grid for mobile, list for tablet and up
+      if (width < 768) { // Common breakpoint for tablet is 768px
+        setViewMode("grid");
+      } else {
+        setViewMode("list");
+      }
+    };
+
+    // Add event listener for window resize
+    window.addEventListener('resize', handleResize);
+    
+    // Set initial view mode
+    handleResize();
+
+    // Clean up event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     const checkAuth = () => {
