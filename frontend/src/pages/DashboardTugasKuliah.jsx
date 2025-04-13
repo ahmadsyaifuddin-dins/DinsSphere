@@ -301,7 +301,7 @@ const DashboardTugasKuliah = () => {
     <div className="relative">
       {/* Jika user belum login, tampilkan overlay peringatan */}
       {!isAdmin && (
-        <div className="fixed inset-0 flex items-center justify-center z-20 bg-black/40 backdrop-blur-xs backdrop-brightness-75">
+        <div className="fixed inset-0 flex items-center justify-center z-20 bg-black/5 backdrop-blur-xs backdrop-brightness-75">
           <div className="bg-gradient-to-br from-white to-gray-100 p-8 rounded-xl shadow-2xl text-center max-w-md w-full border border-gray-200 transform transition-all animate-fadeIn">
             <div className="mb-4">
               <div className="h-20 w-20 mx-auto rounded-full bg-yellow-500 flex items-center justify-center">
