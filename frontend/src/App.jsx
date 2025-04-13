@@ -103,15 +103,7 @@ function App() {
     checkTokenExpiration();
   }, [navigate, token]);
 
-  // Selama loading, bisa tampilkan spinner atau komponen loader sederhana
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p>Loading...</p>
-      </div>
-    );
-  }
-
+  
   return (
     <>
       <Navbar />
