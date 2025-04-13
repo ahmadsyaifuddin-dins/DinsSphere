@@ -24,6 +24,7 @@ import { API_BASE_URL } from "../config";
 
 const DashboardTugasKuliah = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false); // New state to track auth check completion
   const [tugasKuliah, setTugasKuliah] = useState([]);
   const [filterText, setFilterText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,44 +44,54 @@ const DashboardTugasKuliah = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const checkAuth = () => {
+      const token = localStorage.getItem("token");
+      setIsAdmin(!!token);
+      setAuthChecked(true); // Mark auth check as complete
+    };
+
     const logDashboardVisit = async () => {
       try {
         const token = localStorage.getItem("token");
-        await api.post(
-          "/activities",
-          {
-            type: "page_view",
-            path: "/dashboardTugasKuliah",
-            details: { info: "User visited dashboard" },
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
+        if (token) {
+          await api.post(
+            "/activities",
+            {
+              type: "page_view",
+              path: "/dashboardTugasKuliah",
+              details: { info: "User visited dashboard" },
             },
-          }
-        );
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+        }
       } catch (error) {
         console.error("Failed to log dashboard visit:", error);
       }
     };
 
+    // Check authentication first
+    checkAuth();
+    // Then fetch data and log visit
     fetchTugasKuliah();
     logDashboardVisit();
-
-    const token = localStorage.getItem("token");
-    setIsAdmin(!!token);
   }, []);
 
   const fetchTugasKuliah = async () => {
     try {
       const token = localStorage.getItem("token");
       setIsLoading(true);
-      const res = await axios.get(`${API_BASE_URL}/api/tasks`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      setTugasKuliah(res.data);
+      if (token) {
+        const res = await axios.get(`${API_BASE_URL}/api/tasks`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setTugasKuliah(res.data);
+      }
     } catch (err) {
       console.error("Error fetching tasks:", err);
     } finally {
@@ -130,20 +141,22 @@ const DashboardTugasKuliah = () => {
   const viewTaskDetail = (id) => {
     // Log detail view activity
     const token = localStorage.getItem("token");
-    api
-      .post(
-        "/activities",
-        {
-          type: "task_view",
-          path: `/DetailTugasKuliah/${id}`,
-          taskId: id,
-          details: { info: "User viewed task details" },
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      )
-      .catch((err) => console.error("Failed to log task view:", err));
+    if (token) {
+      api
+        .post(
+          "/activities",
+          {
+            type: "task_view",
+            path: `/DetailTugasKuliah/${id}`,
+            taskId: id,
+            details: { info: "User viewed task details" },
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        )
+        .catch((err) => console.error("Failed to log task view:", err));
+    }
 
     navigate(`/DetailTugasKuliah/${id}`);
   };
@@ -241,6 +254,20 @@ const DashboardTugasKuliah = () => {
   const applyFilters = (newFilters) => {
     console.log("Filters applied:", newFilters);
   };
+
+  // Show loading state until authentication check is complete
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100 flex items-center justify-center">
+        <div className="animate-pulse">
+          <svg className="animate-spin h-12 w-12 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+          </svg>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative">
