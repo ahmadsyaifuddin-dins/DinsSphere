@@ -302,7 +302,7 @@ const DashboardTugasKuliah = () => {
       {/* Jika user belum login, tampilkan overlay peringatan */}
       {!isAdmin && (
         <div className="fixed inset-0 flex items-center justify-center z-20 bg-black/5 backdrop-blur-xs backdrop-brightness-75">
-          <div className="bg-gradient-to-br from-white to-gray-100 p-8 rounded-xl shadow-2xl text-center max-w-md w-full border border-gray-200 transform transition-all animate-fadeIn">
+          <div className="bg-slate-950 p-5 rounded-xl shadow-2xl text-center max-w-md w-full border border-yellow-500 transform transition-all animate-fadeIn">
             <div className="mb-4">
               <div className="h-20 w-20 mx-auto rounded-full bg-yellow-500 flex items-center justify-center">
                 <svg
@@ -324,10 +324,10 @@ const DashboardTugasKuliah = () => {
             <h2 className="text-2xl font-bold mb-2 text-red-700">
               Halaman Eksklusif!
             </h2>
-            <p className="mb-2 text-gray-600">
+            <p className="mb-2 text-white">
               Sepertinya kamu penasaran dengan apa yang ada di dalam, ya?
             </p>
-            <p className="mb-6 text-gray-600">
+            <p className="mb-6 text-white">
               Sayangnya, halaman ini hanya bisa diakses oleh orang-orang
               kepercayaan Udin.
             </p>
@@ -337,7 +337,7 @@ const DashboardTugasKuliah = () => {
             >
               Masuk Sekarang
             </button>
-            <p className="mt-4 text-xs text-gray-500">
+            <p className="mt-4 text-xs text-white">
               Jika kamu termasuk orang kepercayaan Udins, silakan masuk untuk
               melihat konten.
             </p>
