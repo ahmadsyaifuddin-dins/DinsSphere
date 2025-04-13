@@ -14,6 +14,8 @@ import {
   faCalendarAlt,
   faExclamationTriangle,
 } from "@fortawesome/free-solid-svg-icons";
+import { getActivityTypeColor } from "../utils/activityHelpers";
+import { formatDetails } from "../utils/formatActivityHelpers";
 
 const DashboardActivity = () => {
   const [activities, setActivities] = useState([]);
@@ -44,48 +46,6 @@ const DashboardActivity = () => {
   useEffect(() => {
     fetchActivities();
   }, []);
-
-  // Helper to get appropriate color for activity type
-  const getActivityTypeColor = (type) => {
-    const types = {
-      LOGIN: "bg-green-600",
-      LOGOUT: "bg-yellow-600",
-      CREATE: "bg-blue-600",
-      UPDATE: "bg-purple-600",
-      DELETE: "bg-red-600",
-      PAGE_VIEW: "bg-indigo-600",
-      TASK_VIEW: "bg-pink-600",
-    };
-
-    return types[type] || "bg-gray-600";
-  };
-
-  // Helper to format JSON details nicely
-  const formatDetails = (details) => {
-    if (!details) return "-";
-    try {
-      const parsed =
-        typeof details === "object" ? details : JSON.parse(details);
-      const keys = Object.keys(parsed);
-
-      if (keys.length === 0) return "-";
-
-      return (
-        <div className="max-w-xs overflow-hidden text-xs">
-          {keys.map((key) => (
-            <div key={key} className="truncate">
-              <span className="font-medium text-blue-400">{key}:</span>{" "}
-              <span className="text-gray-300">
-                {JSON.stringify(parsed[key]).substring(0, 30)}
-              </span>
-            </div>
-          ))}
-        </div>
-      );
-    } catch (e) {
-      return String(details).substring(0, 50);
-    }
-  };
 
   return (
     <div className="p-6 bg-gradient-to-b from-gray-900 to-gray-800 min-h-screen text-gray-200">
