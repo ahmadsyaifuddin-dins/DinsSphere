@@ -90,7 +90,7 @@ const DetailTugasKuliah = () => {
       try {
         const token = localStorage.getItem("token");
         await deleteTask(id, token);
-        navigate("/dashboardTugasKuliah");
+        navigate("/tugasKuliah");
       } catch (error) {
         alert("Gagal menghapus tugas");
       }
@@ -144,7 +144,7 @@ const DetailTugasKuliah = () => {
         <p className="text-red-500">
           {error || "Detail tugas tidak ditemukan."}
         </p>
-        <Link to="/dashboardTugasKuliah">Kembali ke Dashboard</Link>
+        <Link to="/tugasKuliah">Kembali ke Dashboard</Link>
       </div>
     );
   }
@@ -153,7 +153,7 @@ const DetailTugasKuliah = () => {
     <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100 py-8 px-4">
       <div className="max-w-4xl mx-auto">
         <Link
-          to="/dashboardTugasKuliah"
+          to="/tugasKuliah"
           className="inline-flex items-center mb-6 px-4 py-2 bg-gray-800/50 hover:bg-gray-700 rounded-lg backdrop-blur-sm transition duration-300 group"
         >
           <svg

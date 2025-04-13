@@ -26,7 +26,7 @@ const Login = () => {
 
       // Store token in localStorage for admin authentication
       localStorage.setItem("token", res.data.token);
-      navigate("/dashboard"); // Redirect to admin dashboard
+      navigate("/projects"); // Redirect to admin dashboard
     } catch (err) {
       console.error(err);
       // If there's an error response from the server, use the message from the server

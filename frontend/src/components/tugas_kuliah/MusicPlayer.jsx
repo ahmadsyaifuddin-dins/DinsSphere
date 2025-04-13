@@ -190,12 +190,12 @@ const MusicPlayer = () => {
     };
   }, [isExpanded, currentTrackIndex]);
 
-  // Listen for route changes to autoplay on /dashboardTugasKuliah
+  // Listen for route changes to autoplay on /tugasKuliah
   useEffect(() => {
     if (!audioRef.current) return;
     
     // If we navigate to the dashboard tugas kuliah page, try to play the music
-    if (location.pathname === "/dashboardTugasKuliah") {
+    if (location.pathname === "/tugasKuliah") {
       // First try to play with sound
       audioRef.current.muted = false;
       setIsMuted(false);

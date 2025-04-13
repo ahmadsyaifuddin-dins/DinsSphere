@@ -1,4 +1,4 @@
-// DashboardTugasKuliah.jsx
+// TugasKuliah.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import HeaderTugasKuliah from "../layout/HeaderTugasKuliah";
@@ -22,7 +22,7 @@ import TugasListSkeleton from "../loader/TugasListSkeleton";
 import { API_BASE_URL } from "../config";
 // import MusicPlayer from "../components/tugas_kuliah/MusicPlayer";
 
-const DashboardTugasKuliah = () => {
+const TugasKuliah = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [authChecked, setAuthChecked] = useState(false); // New state to track auth check completion
   const [tugasKuliah, setTugasKuliah] = useState([]);
@@ -78,7 +78,7 @@ const DashboardTugasKuliah = () => {
       setAuthChecked(true); // Mark auth check as complete
     };
 
-    const logDashboardVisit = async () => {
+    const logPageVisit = async () => {
       try {
         const token = localStorage.getItem("token");
         if (token) {
@@ -86,8 +86,8 @@ const DashboardTugasKuliah = () => {
             "/activities",
             {
               type: "PAGE_VIEW",
-              path: "/dashboardTugasKuliah",
-              details: { info: "User visited dashboard tugas kuliah" },
+              path: "/tugasKuliah",
+              details: { info: "User visited tugas kuliah page" },
             },
             {
               headers: {
@@ -97,7 +97,7 @@ const DashboardTugasKuliah = () => {
           );
         }
       } catch (error) {
-        console.error("Failed to log dashboard visit:", error);
+        console.error("Failed to log page visit:", error);
       }
     };
 
@@ -105,7 +105,7 @@ const DashboardTugasKuliah = () => {
     checkAuth();
     // Then fetch data and log visit
     fetchTugasKuliah();
-    logDashboardVisit();
+    logPageVisit();
   }, []);
 
   const fetchTugasKuliah = async () => {
@@ -446,4 +446,4 @@ const DashboardTugasKuliah = () => {
   );
 };
 
-export default DashboardTugasKuliah;
+export default TugasKuliah;

@@ -141,7 +141,7 @@ const EditTugasKuliah = () => {
         <div className="bg-red-900 border border-red-500 rounded-xl p-6 max-w-md text-center">
           <p className="text-gray-300">{error}</p>
           <Link
-            to="/dashboardTugasKuliah"
+            to="/tugasKuliah"
             className="mt-4 inline-block px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 rounded-lg transition duration-300"
           >
             Kembali ke Dashboard

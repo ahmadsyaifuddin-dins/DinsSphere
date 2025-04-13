@@ -4,12 +4,12 @@ import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import decode from "jwt-decode";
 import Swal from "sweetalert2";
 
-import Dashboard from "./pages/Dashboard";
-import DashboardTugasKuliah from "./pages/DashboardTugasKuliah";
-import Login from "./pages/Login";
+import Projects from "./pages/Projects";
 import ProjectDetail from "./pages/projectDetail";
+import TugasKuliah from "./pages/TugasKuliah";
 import DetailTugasKuliah from "./pages/DetailTugasKuliah";
 import EditTugasKuliah from "./components/tugas_kuliah/EditTugasKuliah";
+import Login from "./pages/Login";
 import Navbar from "./components/Navbar";
 import MusicPlayer from "./components/tugas_kuliah/MusicPlayer";
 import RegisterFriend from "./pages/RegisterFriend";
@@ -117,9 +117,9 @@ function App() {
       <Navbar />
       <MusicPlayer />
       <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboardTugasKuliah" element={<DashboardTugasKuliah />} />
+        <Route path="/" element={<Projects />} />
+        <Route path="/projects" element={<Projects />} />
+        <Route path="/tugasKuliah" element={<TugasKuliah />} />
         <Route 
           path="/dashboardActivity" 
           element={user?.role === "superadmin" ? <DashboardActivity /> : <Navigate to="/" />} 

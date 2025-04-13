@@ -1,4 +1,4 @@
-// src/pages/Dashboard.jsx
+// src/pages/Projects.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -25,7 +25,7 @@ import ProjectFilters from "../components/projects/Filtering/ProjectFilters";
 import Pagination from "../components/Pagination";
 import { API_BASE_URL } from "../config";
 
-const Dashboard = () => {
+const Projects = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [projects, setProjects] = useState([]);
   const [filterText, setFilterText] = useState("");
@@ -297,4 +297,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Projects;

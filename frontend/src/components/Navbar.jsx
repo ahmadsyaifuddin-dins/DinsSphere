@@ -175,7 +175,7 @@ const Navbar = () => {
                     {/* Menu Utama */}
                     <motion.div variants={linkVariants}>
                       <Link
-                        to="/"
+                        to="/projects"
                         className="text-white hover:text-gray-300 text-2xl font-medium flex items-center gap-3"
                         onClick={() => setIsMenuOpen(false)}
                       >
@@ -193,7 +193,7 @@ const Navbar = () => {
 
                     <motion.div variants={linkVariants}>
                       <Link
-                        to="/dashboardTugasKuliah"
+                        to="/tugasKuliah"
                         className="text-white hover:text-gray-300 text-2xl font-medium flex items-center gap-3"
                         onClick={() => setIsMenuOpen(false)}
                       >
