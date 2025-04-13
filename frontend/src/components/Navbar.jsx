@@ -251,16 +251,6 @@ const Navbar = () => {
                                 Data User
                               </Link>
                               <Link
-                                to="/deletedUsers"
-                                className="text-white hover:text-gray-300 text-xl"
-                                onClick={() => {
-                                  setIsDataMenuOpen(false);
-                                  setIsMenuOpen(false);
-                                }}
-                              >
-                                Deleted Users
-                              </Link>
-                              <Link
                                 to="/dashboardActivity"
                                 className="text-white hover:text-gray-300 text-xl"
                                 onClick={() => {
@@ -269,7 +259,7 @@ const Navbar = () => {
                                 }}
                               >
                                 Aktivitas User
-                              </Link>
+                              </Link>                          
                               <Link
                                 to="/registerFriend"
                                 className="text-white hover:text-gray-300 text-xl"
@@ -279,6 +269,16 @@ const Navbar = () => {
                                 }}
                               >
                                 Add User
+                              </Link>
+                              <Link
+                                to="/deletedUsers"
+                                className="text-white hover:text-gray-300 text-xl"
+                                onClick={() => {
+                                  setIsDataMenuOpen(false);
+                                  setIsMenuOpen(false);
+                                }}
+                              >
+                                Deleted Users
                               </Link>
                             </motion.div>
                           )}
