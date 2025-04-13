@@ -153,8 +153,8 @@ NODE_ENV=development
 ## 📸 Tangkapan Layar
 
 <div align="center">
-  <img src="https://via.placeholder.com/400x225" alt="Dashboard Proyek" width="400" />
-  <img src="https://via.placeholder.com/400x225" alt="Manajemen Tugas" width="400" />
+  <img src="https://github.com/user-attachments/assets/e8c2479e-bb1b-4a40-a077-b93ea1debe49" alt="Dashboard Project" width="500" />
+  <img src="https://github.com/user-attachments/assets/b5b3fd91-a2cd-479f-9505-6f0e888ddedc" alt="Manajemen Tugas Kuliah" width="500" />
 </div>
 
 ---
