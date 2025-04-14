@@ -18,7 +18,6 @@ import RelatedTasks from "../components/DetailTugasKuliah/RelatedTasks";
 import ButtonFooter from "../components/DetailTugasKuliah/ButtonFooter";
 import DetailTugasKuliahSkeleton from "../loader/DetailTugasKuliahSkeleton";
 import { API_BASE_URL } from "../config";
-import MusicPlayer from "../components/tugas_kuliah/MusicPlayer";
 
 const DetailTugasKuliah = () => {
   const { id } = useParams();
