@@ -7,6 +7,4 @@ const api = axios.create({
   baseURL: `${API_BASE_URL}/api`, // atau endpoint API lo
 });
 
-// Interceptor buat nge-handle error 403 dan 401
-
 export default api;
