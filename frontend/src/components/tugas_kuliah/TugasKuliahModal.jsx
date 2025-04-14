@@ -241,11 +241,11 @@ const TugasKuliahModal = ({
                 className={inputClasses}
               >
                 <option value="">Not Available</option>
-                <option value="Damai">Damai</option>
-                <option value="Mudah">Mudah</option>
-                <option value="Sedang">Sedang</option>
-                <option value="Sulit">Sulit</option>
-                <option value="Ngeri ☠️">Ngeri ☠️</option>
+                <option value="Ngopi Santai">Ngopi Santai</option>
+                <option value="Bedagang Sedikit">Bedagang Sedikit</option>
+                <option value="Mikir Keras">Mikir Keras</option>
+                <option value="Lembur Panik Attack 😨">Lembur Panik Attack 😨</option>
+                <option value="Professor Level 🧑‍🦲🔬">Professor Level 🧑‍🦲🔬</option>
               </select>
             </div>
 

@@ -8,11 +8,11 @@ const TugasKuliahCard = ({ task, viewTaskDetail, handleEdit, handleDelete, isAdm
   // Determine difficulty level indicator
   const getDifficultyIndicator = () => {
     switch(task.tingkatKesulitan) {
-      case "Damai": return { stars: 1, color: "bg-emerald-500" };
-      case "Mudah": return { stars: 2, color: "bg-green-500" };
-      case "Sedang": return { stars: 3, color: "bg-yellow-500" };
-      case "Sulit": return { stars: 4, color: "bg-orange-500" };
-      case "Ngeri ☠️": return { stars: 5, color: "bg-red-500" };
+      case "Ngopi Santai": return { stars: 1, color: "bg-emerald-500" };
+      case "Begadang Sedikit": return { stars: 2, color: "bg-green-500" };
+      case "Mikir Keras": return { stars: 3, color: "bg-yellow-500" };
+      case "Lembur Panik Attack 😨": return { stars: 4, color: "bg-orange-500" };
+      case "Professor Level 🧑‍🦲🔬": return { stars: 5, color: "bg-red-500" };
       default: return { stars: 0, color: "bg-gray-500" };
     }
   };
