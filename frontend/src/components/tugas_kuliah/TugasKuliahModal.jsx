@@ -241,9 +241,9 @@ const TugasKuliahModal = ({
                 className={inputClasses}
               >
                 <option value="">Not Available</option>
-                <option value="Ngopi Santai">Ngopi Santai</option>
-                <option value="Begadang Sedikit">Begadang Sedikit</option>
-                <option value="Mikir Keras">Mikir Keras</option>
+                <option value="Ngopi Santai ☕">Ngopi Santai ☕</option>
+                <option value="Begadang Sedikit 🌙">Begadang Sedikit 🌙</option>
+                <option value="Mikir Keras 🧠">Mikir Keras 🧠</option>
                 <option value="Lembur Panik Attack 😨">Lembur Panik Attack 😨</option>
                 <option value="Professor Level 🧑‍🦲🔬">Professor Level 🧑‍🦲🔬</option>
               </select>

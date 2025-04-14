@@ -5,11 +5,11 @@ import { getStatusBadgeClass } from "../../utils/helpers";
 const TaskHeader = ({ task, id }) => {
   // Logika render bintang berdasarkan tingkatKesulitan
   const starLevel =
-    task.tingkatKesulitan === "Ngopi Santai"
+    task.tingkatKesulitan === "Ngopi Santai ☕"
       ? 1
-      : task.tingkatKesulitan === "Begadang Sedikit"
+      : task.tingkatKesulitan === "Begadang Sedikit 🌙"
       ? 2
-      : task.tingkatKesulitan === "Mikir Keras"
+      : task.tingkatKesulitan === "Mikir Keras 🧠"
       ? 3
       : task.tingkatKesulitan === "Lembur Panik Attack 😨"
       ? 4
