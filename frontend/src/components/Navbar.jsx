@@ -12,53 +12,22 @@ import {
   faAngleUp,
   faAngleDown,
   faSpinner,
+  faSignOutAlt
 } from "@fortawesome/free-solid-svg-icons";
-import decode from "jwt-decode";
+import { useAuth } from "../contexts/authContext";
 
 const Navbar = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDataMenuOpen, setIsDataMenuOpen] = useState(false);
-  // Loading state default false (atur kalau perlu ambil dari API)
   const [loading, setLoading] = useState(false);
-
-  // Ambil token dari localStorage terus decode untuk dapetin user
-  const getUserFromToken = () => {
-    const token = localStorage.getItem("token");
-    try {
-      return token ? decode(token) : null;
-    } catch (error) {
-      console.error("Gagal decode token:", error);
-      return null;
-    }
-  };
-
-  const [user, setUser] = useState(getUserFromToken);
-  // State untuk cek role dan login
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  // Update state user tiap kali route berubah
-  useEffect(() => {
-    setUser(getUserFromToken());
-  }, [location.pathname]);
-
-  // Tambahkan event listener custom untuk update token misalnya dari login
-  useEffect(() => {
-    const updateProfile = () => {
-      setUser(getUserFromToken());
-    };
-
-    window.addEventListener("profileUpdated", updateProfile);
-    return () => window.removeEventListener("profileUpdated", updateProfile);
-  }, []);
-
-  // Update internal state berdasarkan user
-  useEffect(() => {
-    setIsSuperAdmin(user?.role === "superadmin");
-    setIsLoggedIn(Boolean(user));
-    console.log("User updated di Navbar:", user);
-  }, [user]);
+  
+  // Gunakan AuthContext untuk mendapatkan data user dan fungsi logout
+  const { user, logout } = useAuth();
+  
+  // State untuk cek role dan login langsung dari AuthContext
+  const isSuperAdmin = user?.role === "superadmin";
+  const isLoggedIn = Boolean(user);
 
   // Reset menu ketika route berubah
   useEffect(() => {
@@ -69,6 +38,12 @@ const Navbar = () => {
   const toggleMenu = () => {
     document.body.classList.toggle("open");
     setIsMenuOpen(!isMenuOpen);
+  };
+  
+  // Handle logout
+  const handleLogout = () => {
+    logout();
+    setIsMenuOpen(false);
   };
 
   const menuVariants = {
@@ -150,144 +125,166 @@ const Navbar = () => {
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            className="fixed top-0 left-0 w-64 h-full bg-gray-900 bg-opacity-95 z-40 overflow-hidden"
+            className="fixed top-0 left-0 w-64 h-full bg-gray-900 bg-opacity-95 z-40 overflow-y-auto"
             initial="closed"
             animate="open"
             exit="closed"
             variants={menuVariants}
           >
-            <nav className="flex flex-col justify-center items-center h-full">
-              <img src="/icon.svg" alt="logo" className="w-25 h-25" />
-              <motion.div className="flex flex-col p-8 w-full space-y-8">
-                {/* Loading State */}
-                {loading && (
-                  <div className="flex justify-center items-center h-full">
-                    <FontAwesomeIcon
-                      icon={faSpinner}
-                      spin
-                      className="text-blue-400 text-3xl animate-spin"
-                    />
-                  </div>
-                )}
+            <nav className="flex flex-col h-full">
+              {/* Logo - fixed at top */}
+              <div className="sticky top-0 bg-gray-900 bg-opacity-95 pt-4 pb-2 z-10 flex justify-center">
+                <img src="/icon.svg" alt="logo" className="w-25 h-25" />
+              </div>
+              
+              {/* Menu container with scroll capability */}
+              <div className="flex-grow overflow-y-auto py-4">
+                <motion.div className="flex flex-col px-8 space-y-8">
+                  {/* Loading State */}
+                  {loading && (
+                    <div className="flex justify-center items-center h-full">
+                      <FontAwesomeIcon
+                        icon={faSpinner}
+                        spin
+                        className="text-blue-400 text-3xl animate-spin"
+                      />
+                    </div>
+                  )}
 
-                {!loading && (
-                  <>
-                    {/* Menu Utama */}
-                    <motion.div variants={linkVariants}>
-                      <Link
-                        to="/projects"
-                        className="text-white hover:text-gray-300 text-2xl font-medium flex items-center gap-3"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <FontAwesomeIcon icon={faCode} />
-                        Projects
-                      </Link>
-                    </motion.div>
-
-                    <motion.div variants={linkVariants}>
-                      <span className="text-gray-500 text-2xl font-medium cursor-not-allowed flex items-center gap-3">
-                        <FontAwesomeIcon icon={faBriefcase} />
-                        Jokian
-                      </span>
-                    </motion.div>
-
-                    <motion.div variants={linkVariants}>
-                      <Link
-                        to="/tugasKuliah"
-                        className="text-white hover:text-gray-300 text-2xl font-medium flex items-center gap-3"
-                        onClick={() => setIsMenuOpen(false)}
-                      >
-                        <FontAwesomeIcon icon={faGraduationCap} />
-                        Tugas Kuliah
-                      </Link>
-                    </motion.div>
-
-                    {/* Profile - Tampilkan hanya jika user login */}
-                    {isLoggedIn && (
-                      <motion.div variants={linkVariants} key="profile-menu">
+                  {!loading && (
+                    <>
+                      {/* Menu Utama */}
+                      <motion.div variants={linkVariants}>
                         <Link
-                          to="/profile"
+                          to="/projects"
                           className="text-white hover:text-gray-300 text-2xl font-medium flex items-center gap-3"
                           onClick={() => setIsMenuOpen(false)}
                         >
-                          <FontAwesomeIcon icon={faUser} />
-                          Profile
+                          <FontAwesomeIcon icon={faCode} />
+                          Projects
                         </Link>
                       </motion.div>
-                    )}
 
-                    {/* Database (SuperAdmin) - Tampilkan hanya jika superadmin */}
-                    {isSuperAdmin && (
-                      <motion.div variants={linkVariants} key="admin-menu">
-                        <div
-                          className="text-white text-2xl font-medium flex items-center gap-3 cursor-pointer mb-5"
-                          onClick={() => setIsDataMenuOpen(!isDataMenuOpen)}
-                        >
-                          <FontAwesomeIcon icon={faDatabase} />
-                          Database
-                          <FontAwesomeIcon
-                            icon={isDataMenuOpen ? faAngleUp : faAngleDown}
-                            className="ml-2 text-gray-400"
-                          />
-                        </div>
-
-                        <AnimatePresence>
-                          {isDataMenuOpen && (
-                            <motion.div
-                              className="ml-8 flex flex-col gap-2"
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: "auto", opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.3, ease: "easeInOut" }}
-                            >
-                              <Link
-                                to="/dataUser"
-                                className="text-white hover:text-gray-300 text-xl"
-                                onClick={() => {
-                                  setIsDataMenuOpen(false);
-                                  setIsMenuOpen(false);
-                                }}
-                              >
-                                Data User
-                              </Link>
-                              <Link
-                                to="/dashboardActivity"
-                                className="text-white hover:text-gray-300 text-xl"
-                                onClick={() => {
-                                  setIsDataMenuOpen(false);
-                                  setIsMenuOpen(false);
-                                }}
-                              >
-                                Aktivitas User
-                              </Link>                          
-                              <Link
-                                to="/registerFriend"
-                                className="text-white hover:text-gray-300 text-xl"
-                                onClick={() => {
-                                  setIsDataMenuOpen(false);
-                                  setIsMenuOpen(false);
-                                }}
-                              >
-                                Add User
-                              </Link>
-                              <Link
-                                to="/deletedUsers"
-                                className="text-white hover:text-gray-300 text-xl"
-                                onClick={() => {
-                                  setIsDataMenuOpen(false);
-                                  setIsMenuOpen(false);
-                                }}
-                              >
-                                Deleted Users
-                              </Link>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
+                      <motion.div variants={linkVariants}>
+                        <span className="text-gray-500 text-2xl font-medium cursor-not-allowed flex items-center gap-3">
+                          <FontAwesomeIcon icon={faBriefcase} />
+                          Jokian
+                        </span>
                       </motion.div>
-                    )}
-                  </>
-                )}
-              </motion.div>
+
+                      <motion.div variants={linkVariants}>
+                        <Link
+                          to="/tugasKuliah"
+                          className="text-white hover:text-gray-300 text-2xl font-medium flex items-center gap-3"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <FontAwesomeIcon icon={faGraduationCap} />
+                          Tugas Kuliah
+                        </Link>
+                      </motion.div>
+
+                      {/* Profile - Tampilkan hanya jika user login */}
+                      {isLoggedIn && (
+                        <motion.div variants={linkVariants} key="profile-menu">
+                          <Link
+                            to="/profile"
+                            className="text-white hover:text-gray-300 text-2xl font-medium flex items-center gap-3"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            <FontAwesomeIcon icon={faUser} />
+                            Profile
+                          </Link>
+                        </motion.div>
+                      )}
+
+                      {/* Database (SuperAdmin) - Tampilkan hanya jika superadmin */}
+                      {isSuperAdmin && (
+                        <motion.div variants={linkVariants} key="admin-menu">
+                          <div
+                            className="text-white text-2xl font-medium flex items-center gap-3 cursor-pointer"
+                            onClick={() => setIsDataMenuOpen(!isDataMenuOpen)}
+                          >
+                            <FontAwesomeIcon icon={faDatabase} />
+                            Database
+                            <FontAwesomeIcon
+                              icon={isDataMenuOpen ? faAngleUp : faAngleDown}
+                              className="ml-2 text-gray-400"
+                            />
+                          </div>
+
+                          {/* Submenu dengan height absolute untuk menghindari pergeseran */}
+                          <div className={`ml-8 mt-2 ${isDataMenuOpen ? 'block' : 'hidden'}`}>
+                            <Link
+                              to="/dataUser"
+                              className="text-white hover:text-gray-300 text-xl block py-1"
+                              onClick={() => {
+                                setIsDataMenuOpen(false);
+                                setIsMenuOpen(false);
+                              }}
+                            >
+                              Data User
+                            </Link>
+                            <Link
+                              to="/dashboardActivity"
+                              className="text-white hover:text-gray-300 text-xl block py-1"
+                              onClick={() => {
+                                setIsDataMenuOpen(false);
+                                setIsMenuOpen(false);
+                              }}
+                            >
+                              Aktivitas User
+                            </Link>                          
+                            <Link
+                              to="/registerFriend"
+                              className="text-white hover:text-gray-300 text-xl block py-1"
+                              onClick={() => {
+                                setIsDataMenuOpen(false);
+                                setIsMenuOpen(false);
+                              }}
+                            >
+                              Add User
+                            </Link>
+                            <Link
+                              to="/deletedUsers"
+                              className="text-white hover:text-gray-300 text-xl block py-1"
+                              onClick={() => {
+                                setIsDataMenuOpen(false);
+                                setIsMenuOpen(false);
+                              }}
+                            >
+                              Deleted Users
+                            </Link>
+                          </div>
+                        </motion.div>
+                      )}
+                    </>
+                  )}
+                </motion.div>
+              </div>
+              
+              {/* Footer menu - fixed at bottom */}
+              <div className="sticky bottom-0 bg-gray-900 bg-opacity-95 pt-2 pb-4 z-10">
+                <motion.div variants={linkVariants} className="px-8 pt-4 border-t border-gray-700">
+                  {isLoggedIn ? (
+                    <button
+                      onClick={handleLogout}
+                      className="text-red-400 hover:text-red-300 text-xl font-medium flex items-center gap-3 w-full"
+                    >
+                      <FontAwesomeIcon icon={faSignOutAlt} />
+                      Logout
+                    </button>
+                  ) : (
+                    <Link
+                      to="/login"
+                      className="text-blue-400 hover:text-blue-300 text-xl font-medium flex items-center gap-3"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <FontAwesomeIcon icon={faUser} />
+                      Login
+                    </Link>
+                  )}
+                </motion.div>
+              </div>
             </nav>
           </motion.div>
         )}

@@ -225,6 +225,7 @@ export const filterByDueDate = (task, dueDateFilter) => {
       label: "Fiqih",
       icon: "https://www.sinarbarualgensindo.com/wp-content/uploads/2020/06/IMG-20200612-WA0030.jpg",
       SKS: 2,
+      namaDosen: "Muhammad Ajrin"
     },
     {
       value: "TIF3601 Jaringan Syaraf Tiruan",
