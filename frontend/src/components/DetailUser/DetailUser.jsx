@@ -152,7 +152,7 @@ const DetailUser = () => {
 
                 <div className="flex justify-end">
                   <button
-                    onClick={() => navigate(`/users/edit/${id}`)}
+                    onClick={() => navigate(`/editUser/${id}`)}
                     className="bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-all duration-300 transform hover:scale-105"
                   >
                     Edit Pengguna

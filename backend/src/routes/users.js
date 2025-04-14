@@ -9,6 +9,9 @@ router.get("/", userController.getAllUsers);
 // GET detail pengguna berdasarkan ID
 router.get("/:id", userController.getUserById);
 
+// Edit Data User (id) untuk hak akses Superadmin
+router.put("/:id", verifyUser(["superadmin"]), userController.EditUser);
+
 // DELETE pengguna berdasarkan ID (soft delete)
 router.put("/:id/soft-delete", verifyUser(["superadmin"]), userController.softDeleteUser);
 

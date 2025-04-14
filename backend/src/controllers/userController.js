@@ -83,3 +83,23 @@ exports.getDeletedUsers = async (req, res, next) => {
     next(error);
   }
 };
+
+// Edit Data User (id) untuk hak akses Superadmin
+exports.EditUser = async (req, res, next) => {
+  try {
+    const userId = req.params.id;
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      req.body,
+      { new: true, runValidators: true }
+    );
+    if (!updatedUser) {
+      const error = new Error("Pengguna tidak ditemukan");
+      error.statusCode = 404;
+      throw error;
+    }
+    res.status(200).json({ message: "Pengguna berhasil diperbarui", updatedUser });
+  } catch (error) {
+    next(error);
+  }
+};

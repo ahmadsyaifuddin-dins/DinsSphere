@@ -18,6 +18,7 @@ import ActivityReport from "../pages/ActivityReport";
 import DashboardActivity from "../pages/DashboardActivity";
 import DashboardUserActivityDetail from "../pages/DashboardUserActivityDetail";
 import DeletedUsers from "../pages/DeletedUser";
+import EditUser from "../components/DetailUser/EditUser";
 
 const AppRoutes = () => {
   const { user } = useAuth();
@@ -106,6 +107,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute requiredRole="superadmin">
             <DetailUser />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/editUser/:id"
+        element={
+          <ProtectedRoute requiredRole="superadmin">
+            <EditUser />
           </ProtectedRoute>
         }
       />
