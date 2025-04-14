@@ -268,7 +268,7 @@ const Navbar = () => {
                   {isLoggedIn ? (
                     <button
                       onClick={handleLogout}
-                      className="text-red-400 hover:text-red-300 text-xl font-medium flex items-center gap-3 w-full"
+                      className="text-red-400 cursor-pointer hover:text-red-300 text-xl font-medium flex items-center gap-3 w-fit"
                     >
                       <FontAwesomeIcon icon={faSignOutAlt} />
                       Logout
@@ -276,7 +276,7 @@ const Navbar = () => {
                   ) : (
                     <Link
                       to="/login"
-                      className="text-blue-400 hover:text-blue-300 text-xl font-medium flex items-center gap-3"
+                      className="text-blue-400 cursor-pointer hover:text-blue-300 text-xl font-medium flex items-center gap-3"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       <FontAwesomeIcon icon={faUser} />
