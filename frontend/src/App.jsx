@@ -2,16 +2,16 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import AppRoutes from "./routes/AppRoutes";
-import LoadingSpinner from "./components/common/LoadingSpinner";
 import Navbar from "./components/Navbar";
 import MusicPlayer from "./components/tugas_kuliah/MusicPlayer";
 import { AuthProvider, useAuth } from "./contexts/authContext";
+import LoadingSpinnerUniversal from "./components/common/LoadingSpinnerUniversal";
 
 function AppContent() {
   const { isInitializing } = useAuth();
 
   if (isInitializing) {
-    return <LoadingSpinner />;
+    return <LoadingSpinnerUniversal />;
   }
 
   return (

@@ -157,7 +157,7 @@ const Navbar = () => {
                       <motion.div variants={linkVariants}>
                         <Link
                           to="/projects"
-                          className="text-white hover:text-gray-300 text-2xl font-medium flex items-center gap-3"
+                          className="text-white hover:text-gray-300 text-xl font-medium flex items-center gap-3"
                           onClick={() => setIsMenuOpen(false)}
                         >
                           <FontAwesomeIcon icon={faCode} />
@@ -166,7 +166,7 @@ const Navbar = () => {
                       </motion.div>
 
                       <motion.div variants={linkVariants}>
-                        <span className="text-gray-500 text-2xl font-medium cursor-not-allowed flex items-center gap-3">
+                        <span className="text-gray-500 text-xl font-medium cursor-not-allowed flex items-center gap-3">
                           <FontAwesomeIcon icon={faBriefcase} />
                           Jokian
                         </span>
@@ -175,7 +175,7 @@ const Navbar = () => {
                       <motion.div variants={linkVariants}>
                         <Link
                           to="/tugasKuliah"
-                          className="text-white hover:text-gray-300 text-2xl font-medium flex items-center gap-3"
+                          className="text-white hover:text-gray-300 text-xl font-medium flex items-center gap-3"
                           onClick={() => setIsMenuOpen(false)}
                         >
                           <FontAwesomeIcon icon={faGraduationCap} />
@@ -188,7 +188,7 @@ const Navbar = () => {
                         <motion.div variants={linkVariants} key="profile-menu">
                           <Link
                             to="/profile"
-                            className="text-white hover:text-gray-300 text-2xl font-medium flex items-center gap-3"
+                            className="text-white hover:text-gray-300 text-xl font-medium flex items-center gap-3"
                             onClick={() => setIsMenuOpen(false)}
                           >
                             <FontAwesomeIcon icon={faUser} />
@@ -201,7 +201,7 @@ const Navbar = () => {
                       {isSuperAdmin && (
                         <motion.div variants={linkVariants} key="admin-menu">
                           <div
-                            className="text-white text-2xl font-medium flex items-center gap-3 cursor-pointer"
+                            className="text-white text-xl font-medium flex items-center gap-3 cursor-pointer"
                             onClick={() => setIsDataMenuOpen(!isDataMenuOpen)}
                           >
                             <FontAwesomeIcon icon={faDatabase} />
@@ -268,7 +268,7 @@ const Navbar = () => {
                   {isLoggedIn ? (
                     <button
                       onClick={handleLogout}
-                      className="text-red-400 cursor-pointer hover:text-red-300 text-xl font-medium flex items-center gap-3 w-fit"
+                      className="text-red-400 cursor-pointer hover:text-red-300 text-3xl font-medium flex items-center gap-3 w-fit"
                     >
                       <FontAwesomeIcon icon={faSignOutAlt} />
                       Logout
@@ -276,7 +276,7 @@ const Navbar = () => {
                   ) : (
                     <Link
                       to="/login"
-                      className="text-blue-400 cursor-pointer hover:text-blue-300 text-xl font-medium flex items-center gap-3"
+                      className="text-blue-400 cursor-pointer hover:text-blue-300 text-3xl font-medium flex items-center gap-3"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       <FontAwesomeIcon icon={faUser} />

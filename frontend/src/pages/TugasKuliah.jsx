@@ -356,7 +356,7 @@ const TugasKuliah = () => {
               {filterText ||
               Object.values(filters).some((value) => value !== "")
                 ? "Tidak ada tugas yang sesuai dengan filter. Coba ubah filter Anda."
-                : "Coming Soon on 8 or 14 Apr 2025!"}
+                : "Gak ada Tugas!"}
             </div>
           ) : viewMode === "list" ? (
             <TugasKuliahList
