@@ -5,8 +5,10 @@ const ButtonFooter = ({ task, handleShareTask, handlePrintTask, exportTaskToPDF 
   return (
     <div className="flex space-x-2">
       <button
-        className="cursor-pointer text-gray-400 hover:text-white transition-colors duration-300"
-        onClick={handleShareTask}
+        className="cursor-default text-gray-400 opacity-50 cursor-not-allowed"
+        onClick={(e) => {
+          e.preventDefault();
+        }}
       >
         <Share2 className="w-5 h-5" />
       </button>
