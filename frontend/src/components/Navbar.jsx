@@ -1,4 +1,3 @@
-// Navbar.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -85,56 +84,95 @@ const Navbar = () => {
   };
 
   return (
-    <div className="navbar-container">
-      {/* Toggle button */}
-      <button
-        className="fixed z-50 top-2 left-2 md:left-6 bg-transparent border-none cursor-pointer p-2 focus:outline-none"
-        onClick={toggleMenu}
-        aria-label="Toggle menu"
-      >
-        <div className="relative w-6 h-6">
-          <motion.span
-            className="absolute left-0 top-0 h-0.5 w-6 bg-white rounded-sm"
-            animate={{
-              rotate: isMenuOpen ? 45 : 0,
-              y: isMenuOpen ? 10 : 0,
-              width: isMenuOpen ? 24 : 8,
-            }}
-            transition={{ duration: 0.5 }}
-          />
-          <motion.span
-            className="absolute left-0 top-[10px] h-0.5 w-6 bg-white rounded-sm"
-            animate={{
-              opacity: isMenuOpen ? 0 : 1,
-            }}
-            transition={{ duration: 0.3 }}
-          />
-          <motion.span
-            className="absolute right-0 top-[20px] h-0.5 w-6 bg-white rounded-sm"
-            animate={{
-              rotate: isMenuOpen ? -45 : 0,
-              y: isMenuOpen ? -10 : 0,
-              width: isMenuOpen ? 24 : 8,
-            }}
-            transition={{ duration: 0.5 }}
-          />
+    <>
+      {/* Fixed Top Header */}
+      <header className="fixed top-0 left-0 right-0 z-40 bg-gray-900 bg-opacity-95 shadow-lg backdrop-blur-sm">
+        <div className="flex items-center justify-between h-14 px-4">
+          {/* Left side: Toggle button */}
+          <button
+            className="bg-transparent border-none cursor-pointer p-2 focus:outline-none"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            <div className="relative w-6 h-6">
+              <motion.span
+                className="absolute left-0 top-0 h-0.5 w-6 bg-white rounded-sm"
+                animate={{
+                  rotate: isMenuOpen ? 45 : 0,
+                  y: isMenuOpen ? 10 : 0,
+                  width: isMenuOpen ? 24 : 8,
+                }}
+                transition={{ duration: 0.5 }}
+              />
+              <motion.span
+                className="absolute left-0 top-[10px] h-0.5 w-6 bg-white rounded-sm"
+                animate={{
+                  opacity: isMenuOpen ? 0 : 1,
+                }}
+                transition={{ duration: 0.3 }}
+              />
+              <motion.span
+                className="absolute right-0 top-[20px] h-0.5 w-6 bg-white rounded-sm"
+                animate={{
+                  rotate: isMenuOpen ? -45 : 0,
+                  y: isMenuOpen ? -10 : 0,
+                  width: isMenuOpen ? 24 : 8,
+                }}
+                transition={{ duration: 0.5 }}
+              />
+            </div>
+          </button>
+
+          {/* Center: App Title with shimmer effect */}
+          <div className="flex-grow text-center">
+            <h1 className="text-xl font-extrabold font-['Oxanium'] tracking-tight relative">
+              <span className="relative inline-block">
+                {/* Base text layer */}
+                <span className="text-transparent">DinsSphere InterConnected</span>
+                
+                {/* Shimmer effect directly on text */}
+                <span className="absolute inset-0 bg-gradient-to-r from-green-400 via-teal-500 to-cyan-500 bg-clip-text text-transparent">DinsSphere InterConnected</span>
+                
+                {/* Moving highlight overlay */}
+                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent bg-clip-text text-transparent animate-shimmer bg-[length:200%_auto]">DinsSphere InterConnected</span>
+              </span>
+            </h1>
+          </div>
+
+          {/* Right side: User info if logged in */}
+          {isLoggedIn && (
+            <div className="flex items-center">
+              <div className="text-white text-sm hidden sm:block mr-2">
+                <span className="text-gray-400">Hello, </span>
+                <span className="font-medium bg-gradient-to-r from-blue-400 to-teal-400 bg-clip-text text-transparent">
+                  {user?.name || user?.username || 'User'}
+                </span>
+              </div>
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-teal-500 flex items-center justify-center">
+                <FontAwesomeIcon icon={faUser} className="text-white text-xs" />
+              </div>
+            </div>
+          )}
         </div>
-      </button>
+      </header>
+
+      {/* Add space for fixed header */}
+      <div className="h-14"></div>
 
       {/* Navigation Menu */}
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            className="fixed top-0 left-0 w-64 h-full bg-gray-900 bg-opacity-95 z-40 overflow-y-auto"
+            className="fixed top-14 left-0 w-64 h-[calc(100%-3.5rem)] bg-gray-900 bg-opacity-95 z-40 overflow-y-auto"
             initial="closed"
             animate="open"
             exit="closed"
             variants={menuVariants}
           >
             <nav className="flex flex-col h-full">
-              {/* Logo - fixed at top */}
+              {/* Logo */}
               <div className="sticky top-0 bg-gray-900 bg-opacity-95 pt-4 pb-2 z-10 flex justify-center">
-                <img src="/icon.svg" alt="logo" className="w-25 h-25" />
+                <img src="/icon.svg" alt="logo" className="w-20 h-20" />
               </div>
               
               {/* Menu container with scroll capability */}
@@ -268,7 +306,7 @@ const Navbar = () => {
                   {isLoggedIn ? (
                     <button
                       onClick={handleLogout}
-                      className="text-red-400 cursor-pointer hover:text-red-300 text-3xl font-medium flex items-center gap-3 w-fit"
+                      className="text-red-400 cursor-pointer hover:text-red-300 text-xl font-medium flex items-center gap-3 w-fit"
                     >
                       <FontAwesomeIcon icon={faSignOutAlt} />
                       Logout
@@ -276,7 +314,7 @@ const Navbar = () => {
                   ) : (
                     <Link
                       to="/login"
-                      className="text-blue-400 cursor-pointer hover:text-blue-300 text-3xl font-medium flex items-center gap-3"
+                      className="text-blue-400 cursor-pointer hover:text-blue-300 text-xl font-medium flex items-center gap-3"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       <FontAwesomeIcon icon={faUser} />
@@ -289,7 +327,18 @@ const Navbar = () => {
           </motion.div>
         )}
       </AnimatePresence>
-    </div>
+
+      {/* Animation styles */}
+      <style>{`
+        @keyframes shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+        .animate-shimmer {
+          animation: shimmer 3s linear infinite;
+        }
+      `}</style>
+    </>
   );
 };
 
