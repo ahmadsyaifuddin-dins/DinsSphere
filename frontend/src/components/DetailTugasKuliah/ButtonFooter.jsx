@@ -5,7 +5,7 @@ const ButtonFooter = ({ task, handleShareTask, handlePrintTask, exportTaskToPDF 
   return (
     <div className="flex space-x-2">
       <button
-        className="cursor-default text-gray-400 opacity-50 cursor-not-allowed"
+        className="text-gray-400 opacity-50 cursor-not-allowed"
         onClick={(e) => {
           e.preventDefault();
         }}
