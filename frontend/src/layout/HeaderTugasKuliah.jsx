@@ -1,31 +1,43 @@
 import React from "react";
 import { LogOut, BookPlus } from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGraduationCap } from "@fortawesome/free-solid-svg-icons";
 
 const HeaderTugasKuliah = ({
   isAdmin,
   setIsModalOpen,
   handleLogout,
-  isLoggingOut
+  isLoggingOut,
 }) => {
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between mb-6 pb-4 border-b border-gray-700">
       <div className="text-center md:text-left mb-4 md:mb-0">
-        <div>
-          {/* Text with direct shimmer effect */}
-          <h1 className="text-2xl sm:text-4xl font-extrabold mb-3 font-['Oxanium'] tracking-tight relative">
+        <div className="flex justify-center sm:justify-start">
+          <h1 className="text-2xl sm:text-4xl font-extrabold font-['Oxanium'] tracking-tight flex items-center">
+            {/* Icon outside the shimmer effect */}
+            <FontAwesomeIcon
+              icon={faGraduationCap}
+              className="mr-3 text-green-400"
+            />
+
+            {/* Text with shimmer effect */}
             <span className="relative inline-block">
               {/* Base text layer */}
               <span className="text-transparent">Tugas Kuliah</span>
-              
-              {/* Shimmer effect directly on text */}
-              <span className="absolute inset-0 bg-gradient-to-r from-green-400 via-teal-500 to-cyan-500 bg-clip-text text-transparent">Tugas Kuliah</span>
-              
+
+              {/* Shimmer effect on text */}
+              <span className="absolute inset-0 bg-gradient-to-r from-green-400 via-teal-500 to-cyan-500 bg-clip-text text-transparent">
+                Tugas Kuliah
+              </span>
+
               {/* Moving highlight overlay */}
-              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent bg-clip-text text-transparent animate-shimmer bg-[length:200%_auto]">Tugas Kuliah</span>
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent bg-clip-text text-transparent animate-shimmer bg-[length:200%_auto]">
+                Tugas Kuliah
+              </span>
             </span>
           </h1>
         </div>
-        
+
         <p className="text-gray-300 text-sm sm:text-lg mt-2">
           {isAdmin
             ? "Kelola semua Tugas Kuliah Semester 6"
