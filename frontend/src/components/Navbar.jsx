@@ -144,13 +144,18 @@ const Navbar = () => {
             <div className="flex items-center">
               <div className="text-white text-sm hidden sm:block mr-2">
                 <span className="text-gray-400">Hello, </span>
-                <span className="font-medium bg-gradient-to-r from-blue-400 to-teal-400 bg-clip-text text-transparent">
+                <Link
+                  to="/profile"
+                  className="font-medium bg-gradient-to-r from-blue-400 to-teal-400 bg-clip-text text-transparent"
+                >
                   {user?.name || user?.username || 'User'}
-                </span>
+                </Link>
               </div>
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-teal-500 flex items-center justify-center">
-                <FontAwesomeIcon icon={faUser} className="text-white text-xs" />
-              </div>
+              <Link to="/profile">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-teal-500 flex items-center justify-center">
+                  <FontAwesomeIcon icon={faUser} className="text-white text-xs" />
+                </div>
+              </Link>
             </div>
           )}
         </div>
