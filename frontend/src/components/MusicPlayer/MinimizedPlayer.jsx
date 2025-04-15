@@ -17,7 +17,7 @@ const MinimizedPlayer = ({ onClick, isPlaying, isMuted, variants }) => (
       rotate: [0, -5, 5, -5, 0],
       transition: { duration: 0.5 }
     }}
-    className={`flex items-center space-x-1 ${isPlaying && !isMuted ? 'bg-gradient-to-r from-green-600 to-blue-600' : 'bg-gradient-to-r from-blue-600 to-green-600'} rounded-full p-2 shadow-lg border border-blue-400 hover:shadow-blue-500/50 transition-all duration-300`}
+    className={`flex items-center space-x-1 ${isPlaying && !isMuted ? 'bg-gradient-to-r from-green-600 to-blue-600' : 'bg-gradient-to-r from-blue-600 to-green-600'} rounded-full p-0.5 md:p-2 shadow-lg border border-blue-400 hover:shadow-blue-500/50 transition-all duration-300`}
     aria-label="Expand music player"
   >
     <Music className="w-4 h-4 text-white" />
