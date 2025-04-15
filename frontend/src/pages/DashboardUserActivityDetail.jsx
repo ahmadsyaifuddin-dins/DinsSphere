@@ -108,7 +108,7 @@ const DashboardUserActivityDetail = () => {
         <div className="flex items-center mb-6">
           <button
             onClick={() => navigate(-1)}
-            className="bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 mr-4 transition-all duration-300"
+            className="cursor-pointer bg-blue-600 hover:bg-blue-700 text-white rounded-full p-2 mr-4 transition-all duration-300"
           >
             <FontAwesomeIcon icon={faArrowLeft} />
           </button>
