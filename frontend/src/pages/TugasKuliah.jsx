@@ -21,15 +21,13 @@ import {
 import TugasListSkeleton from "../loader/TugasListSkeleton";
 import { API_BASE_URL } from "../config";
 import AuthOverlay from "../components/tugas_kuliah/AuthOverlay";
+import { useAuth } from "../contexts/authContext"; // Import useAuth hook
 
 const TugasKuliah = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [authChecked, setAuthChecked] = useState(false); // New state to track auth check completion
   const [tugasKuliah, setTugasKuliah] = useState([]);
   const [filterText, setFilterText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [viewMode, setViewMode] = useState("grid"); // Default to grid for mobile
   const [tugasToEdit, setTugasToEdit] = useState(null);
   const [sortOrder, setSortOrder] = useState("newest"); // "newest" atau "oldest"
@@ -43,6 +41,10 @@ const TugasKuliah = () => {
   });
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const navigate = useNavigate();
+  
+  // Use Auth Context instead of managing auth state manually
+  const { user, isInitializing } = useAuth();
+  const isAdmin = !!user; // User is admin if they are logged in
 
   // Set initial view mode based on screen size and handle window resize
   useEffect(() => {
@@ -72,16 +74,11 @@ const TugasKuliah = () => {
   }, []);
 
   useEffect(() => {
-    const checkAuth = () => {
-      const token = localStorage.getItem("token");
-      setIsAdmin(!!token);
-      setAuthChecked(true); // Mark auth check as complete
-    };
-
     const logPageVisit = async () => {
       try {
-        const token = localStorage.getItem("token");
-        if (token) {
+        // Only log if user is authenticated
+        if (user) {
+          const token = localStorage.getItem("token");
           await api.post(
             "/activities",
             {
@@ -101,17 +98,17 @@ const TugasKuliah = () => {
       }
     };
 
-    // Check authentication first
-    checkAuth();
-    // Then fetch data and log visit
-    fetchTugasKuliah();
-    logPageVisit();
-  }, []);
+    // Wait for auth initialization before fetching data
+    if (!isInitializing) {
+      fetchTugasKuliah();
+      logPageVisit();
+    }
+  }, [isInitializing, user]);
 
   const fetchTugasKuliah = async () => {
     try {
-      const token = localStorage.getItem("token");
       setIsLoading(true);
+      const token = localStorage.getItem("token");
       if (token) {
         const res = await axios.get(`${API_BASE_URL}/api/tasks`, {
           headers: {
@@ -166,10 +163,11 @@ const TugasKuliah = () => {
         return sortOrder === "newest" ? dateB - dateA : dateA - dateB;
       }
     });
+
   const viewTaskDetail = (id) => {
     // Log detail view activity
-    const token = localStorage.getItem("token");
-    if (token) {
+    if (user) {
+      const token = localStorage.getItem("token");
       api
         .post(
           "/activities",
@@ -236,20 +234,6 @@ const TugasKuliah = () => {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      setIsLoggingOut(true);
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      setIsAdmin(false);
-      await fetchTugasKuliah();
-    } catch (err) {
-      console.error("Logout error:", err);
-    } finally {
-      setIsLoggingOut(false);
-    }
-  };
-
   const handleOrderChange = async (newOrder) => {
     try {
       const token = localStorage.getItem("token");
@@ -284,7 +268,7 @@ const TugasKuliah = () => {
   };
 
   // Show loading state until authentication check is complete
-  if (!authChecked) {
+  if (isInitializing) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-gray-100 flex items-center justify-center">
         <div className="animate-pulse">
@@ -308,8 +292,6 @@ const TugasKuliah = () => {
             isAdmin={isAdmin}
             setTugasToEdit={setTugasToEdit}
             setIsModalOpen={setIsModalOpen}
-            handleLogout={handleLogout}
-            isLoggingOut={isLoggingOut}
           />
 
           {/* Tugas Count */}
