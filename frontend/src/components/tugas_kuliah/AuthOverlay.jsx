@@ -27,7 +27,7 @@ const AuthOverlay = ({ isAdmin }) => {
           </div>
         </div>
         <h2 className="text-2xl font-bold mb-2 text-red-700">
-          Area Khusus
+          Restricted Access
         </h2>
         <p className="mb-2 text-white">
           Hai! Terima kasih sudah mengunjungi halaman ini.
