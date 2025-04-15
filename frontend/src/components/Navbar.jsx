@@ -177,7 +177,9 @@ const Navbar = () => {
             <nav className="flex flex-col h-full">
               {/* Logo */}
               <div className="sticky top-0 bg-gray-900 bg-opacity-95 pt-4 pb-2 z-10 flex justify-center">
-                <img src="/icon.svg" alt="logo" className="w-20 h-20" />
+                <Link to="/">
+                  <img src="/icon.svg" alt="logo" className="w-20 h-20" />
+                </Link>
               </div>
               
               {/* Menu container with scroll capability */}

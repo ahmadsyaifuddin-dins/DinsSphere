@@ -19,6 +19,7 @@ import DashboardActivity from "../pages/DashboardActivity";
 import DashboardUserActivityDetail from "../pages/DashboardUserActivityDetail";
 import DeletedUsers from "../pages/DeletedUser";
 import EditUser from "../components/DetailUser/EditUser";
+import Dashboard from "../pages/Dashboard";
 
 const AppRoutes = () => {
   const { user } = useAuth();
@@ -38,7 +39,8 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/" element={<Projects />} />
+      <Route path="/" element={<Dashboard />} />
+      <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/projects" element={<Projects />} />
       <Route path="/tugasKuliah" element={<TugasKuliah />} />
       <Route path="/login" element={<Login />} />
