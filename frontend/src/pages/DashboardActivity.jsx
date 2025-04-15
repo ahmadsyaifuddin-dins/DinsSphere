@@ -32,13 +32,13 @@ const DashboardActivity = () => {
       const res = await api.get(`/activities/all?page=${pageNum}&limit=5`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       if (append) {
-        setActivities(prev => [...prev, ...res.data.activities]);
+        setActivities((prev) => [...prev, ...res.data.activities]);
       } else {
         setActivities(res.data.activities);
       }
-      
+
       setHasMore(pageNum < res.data.totalPages);
     } catch (err) {
       console.error("Error fetching detailed activities:", err);
@@ -65,17 +65,17 @@ const DashboardActivity = () => {
     (node) => {
       if (isLoading || loadingMore) return;
       if (observer.current) observer.current.disconnect();
-      
+
       observer.current = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMore) {
-          setPage(prevPage => {
+          setPage((prevPage) => {
             const nextPage = prevPage + 1;
             fetchActivities(nextPage, true);
             return nextPage;
           });
         }
       });
-      
+
       if (node) observer.current.observe(node);
     },
     [isLoading, loadingMore, hasMore]
@@ -85,8 +85,8 @@ const DashboardActivity = () => {
     <div className="p-6 bg-gradient-to-b from-gray-900 to-gray-800 min-h-screen text-gray-200">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8 border-b border-gray-700 pb-4">
-          <div className="flex items-center">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8 border-b border-gray-700 pb-4">
+          <div className="flex items-center mb-4 md:mb-0">
             <FontAwesomeIcon
               icon={faHistory}
               className="text-blue-400 text-3xl mr-4"
@@ -95,7 +95,7 @@ const DashboardActivity = () => {
               Activity Dashboard
             </h1>
           </div>
-          <span className="bg-blue-900 text-blue-100 px-3 py-1 rounded-full text-sm">
+          <span className="bg-blue-900 text-blue-100 px-3 py-1 rounded-full text-sm self-start md:self-auto">
             System Logs
           </span>
         </div>
@@ -171,7 +171,11 @@ const DashboardActivity = () => {
                 {activities.map((activity, index) => (
                   <tr
                     key={activity._id}
-                    ref={index === activities.length - 1 ? lastActivityElementRef : null}
+                    ref={
+                      index === activities.length - 1
+                        ? lastActivityElementRef
+                        : null
+                    }
                     className={index % 2 === 0 ? "bg-gray-800" : "bg-gray-750"}
                   >
                     <td className="py-3 px-4 whitespace-nowrap text-sm">
@@ -239,21 +243,30 @@ const DashboardActivity = () => {
                 ))}
               </tbody>
             </table>
-            
+
             {/* Loading indicator for infinite scroll */}
             {loadingMore && (
               <div className="flex justify-center items-center p-4 bg-gray-800 border-t border-gray-700">
-                <FontAwesomeIcon icon={faSpinner} spin className="text-blue-400 mr-2" />
-                <span className="text-gray-400">Loading more activities...</span>
+                <FontAwesomeIcon
+                  icon={faSpinner}
+                  spin
+                  className="text-blue-400 mr-2"
+                />
+                <span className="text-gray-400">
+                  Loading more activities...
+                </span>
               </div>
             )}
-            
+
             {/* End of results message */}
-            {!isLoading && !loadingMore && !hasMore && activities.length > 0 && (
-              <div className="text-center p-4 text-gray-400 border-t border-gray-700">
-                End of activity logs
-              </div>
-            )}
+            {!isLoading &&
+              !loadingMore &&
+              !hasMore &&
+              activities.length > 0 && (
+                <div className="text-center p-4 text-gray-400 border-t border-gray-700">
+                  End of activity logs
+                </div>
+              )}
           </div>
         )}
       </div>
