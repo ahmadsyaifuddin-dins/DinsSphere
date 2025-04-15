@@ -15,13 +15,13 @@ const HeaderTugasKuliah = ({
           <h1 className="text-2xl sm:text-4xl font-extrabold mb-3 font-['Oxanium'] tracking-tight relative">
             <span className="relative inline-block">
               {/* Base text layer */}
-              <span className="text-transparent">DinsSphere InterConnected</span>
+              <span className="text-transparent">Tugas Kuliah</span>
               
               {/* Shimmer effect directly on text */}
-              <span className="absolute inset-0 bg-gradient-to-r from-green-400 via-teal-500 to-cyan-500 bg-clip-text text-transparent">DinsSphere InterConnected</span>
+              <span className="absolute inset-0 bg-gradient-to-r from-green-400 via-teal-500 to-cyan-500 bg-clip-text text-transparent">Tugas Kuliah</span>
               
               {/* Moving highlight overlay */}
-              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent bg-clip-text text-transparent animate-shimmer bg-[length:200%_auto]">DinsSphere InterConnected</span>
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent bg-clip-text text-transparent animate-shimmer bg-[length:200%_auto]">Tugas Kuliah</span>
             </span>
           </h1>
         </div>
@@ -43,17 +43,6 @@ const HeaderTugasKuliah = ({
             <span className="transition-opacity duration-500 group-hover:opacity-100">
               Tambah Tugas Kuliah
             </span>
-          </button>
-        )}
-        
-        {isAdmin && (
-          <button
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-            className="group flex items-center px-4 py-2 bg-gradient-to-r from-rose-600/80 to-red-600/80 text-white font-medium rounded-lg shadow-lg hover:shadow-red-500/30 transition-all duration-300 transform hover:-translate-y-1 text-sm cursor-pointer backdrop-blur-sm"
-          >
-            <LogOut className="w-4 h-4 mr-1.5 group-hover:translate-x-1 transition-transform duration-300" />
-            <span>{isLoggingOut ? "Logging out..." : "Logout"}</span>
           </button>
         )}
       </div>
