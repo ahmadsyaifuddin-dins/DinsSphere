@@ -115,7 +115,10 @@ const TugasKuliahList = ({
         tanggalSelesaiWITA: optimisticTask.tanggalSelesaiWITA,
         statusTugas: optimisticTask.statusTugas,
       };
-      await api.patch(`/tasks/${task._id}/complete`, updatedData);
+      const token = localStorage.getItem("token");
+      await api.patch(`/tasks/${task._id}/complete`, updatedData, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
     } catch (error) {
       console.error("Gagal memperbarui status tugas:", error);
       alert("Gagal memperbarui status tugas");
