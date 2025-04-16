@@ -15,7 +15,7 @@ const {
 const verifyUser = require("../middleware/verifyUser");
 
 router.get("/", verifyUser(["admin", "superadmin", "friend", "member"]), getAllTasks);
-router.post("/", verifyUser(["admin", "superadmin"]), createTask);
+router.post("/", verifyUser(["admin", "superadmin", "friend"]), createTask);
 
 // Taruh /related sebelum /:id
 router.get("/related", getRelatedTasks);
