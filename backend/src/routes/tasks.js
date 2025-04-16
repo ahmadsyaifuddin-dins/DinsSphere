@@ -21,7 +21,7 @@ router.post("/", verifyUser(["admin", "superadmin", "friend"]), createTask);
 router.get("/related", getRelatedTasks);
 router.get("/:id", getTaskById);
 
-router.put("/:id", verifyUser(["admin", "superadmin"]), updateTask);
+router.put("/:id", verifyUser(["admin", "superadmin", "friend"]), updateTask);
 router.patch("/:id/complete", verifyUser(["admin", "superadmin"]), toggleTaskCompletion);
 router.delete("/:id", verifyUser(["admin", "superadmin"]), deleteTask);
 router.post("/order", verifyUser(["admin", "superadmin"]), updateTaskOrder);
