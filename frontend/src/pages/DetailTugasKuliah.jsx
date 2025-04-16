@@ -109,7 +109,8 @@ const DetailTugasKuliah = () => {
         tanggalSelesai: optimisticTask.tanggalSelesai,
         statusTugas: optimisticTask.statusTugas,
       };
-      await toggleTaskCompletion(id, updatedData);
+      const token = localStorage.getItem("token");
+      await toggleTaskCompletion(id, updatedData, token);
     } catch (error) {
       alert("Gagal memperbarui status tugas");
       setTask(previousState);

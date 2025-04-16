@@ -12,6 +12,12 @@ export const deleteTask = (id, token) => {
   });
 };
 
-export const toggleTaskCompletion = (id, updatedData) => {
-  return axios.patch(`${API_BASE_URL}/api/tasks/${id}/complete`, updatedData);
+export const toggleTaskCompletion = (id, updatedData, token) => {
+  return axios.patch(
+    `${API_BASE_URL}/api/tasks/${id}/complete`,
+    updatedData,
+    {
+      headers: { Authorization: `Bearer ${token}` },
+    }
+  );
 };
