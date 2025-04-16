@@ -11,7 +11,8 @@ import {
   faAngleUp,
   faAngleDown,
   faSpinner,
-  faSignOutAlt
+  faSignOutAlt,
+  faDashboard
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../contexts/authContext";
 
@@ -184,7 +185,7 @@ const Navbar = () => {
               
               {/* Menu container with scroll capability */}
               <div className="flex-grow overflow-y-auto py-4">
-                <motion.div className="flex flex-col px-8 space-y-8">
+                <motion.div className="flex flex-col px-8 space-y-6">
                   {/* Loading State */}
                   {loading && (
                     <div className="flex justify-center items-center h-full">
@@ -199,6 +200,17 @@ const Navbar = () => {
                   {!loading && (
                     <>
                       {/* Menu Utama */}
+                      <motion.div variants={linkVariants}>
+                        <Link
+                          to="/dashboard"
+                          className="text-white hover:text-gray-300 text-xl font-medium flex items-center gap-3"
+                          onClick={() => setIsMenuOpen(false)}
+                        >
+                          <FontAwesomeIcon icon={faDashboard} />
+                          Beranda
+                        </Link>
+                      </motion.div>
+
                       <motion.div variants={linkVariants}>
                         <Link
                           to="/projects"
