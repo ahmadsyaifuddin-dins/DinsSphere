@@ -8,7 +8,7 @@ const verifyUser = require("../middleware/verifyUser");
 router.post("/", verifyUser(["friend", "member", "admin", "superadmin"]), logActivity);
 
 // Endpoint laporan aktivitas, proteksi bisa ditambah berdasarkan peran, misalnya hanya admin bisa lihat report
-router.get("/report", verifyUser(["admin", "superadmin"]), getActivityReport);
+router.get("/report", verifyUser(["admin", "superadmin", "friend", "member"]), getActivityReport);
 
 // Endpoint untuk ambil semua aktivitas detail
 router.get("/all", verifyUser(["admin", "superadmin"]), getAllActivities);
