@@ -25,6 +25,7 @@ import { useAuth } from "../contexts/authContext"; // Import useAuth hook
 
 const TugasKuliah = () => {
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingViewCounts, setIsLoadingViewCounts] = useState(true); // Add this state for view counts
   const [tugasKuliah, setTugasKuliah] = useState([]);
   const [filterText, setFilterText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -116,11 +117,39 @@ const TugasKuliah = () => {
           },
         });
         setTugasKuliah(res.data);
+        
+        // Start loading view counts after tasks are loaded
+        fetchViewCounts(res.data);
       }
     } catch (err) {
       console.error("Error fetching tasks:", err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Add the fetchViewCounts function
+  const fetchViewCounts = async (tasks) => {
+    setIsLoadingViewCounts(true);
+    try {
+      const updatedTasks = await Promise.all(
+        tasks.map(async (task) => {
+          try {
+            const response = await axios.get(
+              `${API_BASE_URL}/api/viewTasks/${task._id}`
+            );
+            return { ...task, viewCount: response.data.count || 0 };
+          } catch (error) {
+            console.error("Error fetching view count for task", task._id, error);
+            return { ...task, viewCount: 0 };
+          }
+        })
+      );
+      setTugasKuliah(updatedTasks);
+    } catch (error) {
+      console.error("Error in fetchViewCounts:", error);
+    } finally {
+      setIsLoadingViewCounts(false);
     }
   };
 
@@ -351,6 +380,7 @@ const TugasKuliah = () => {
               isAdmin={isAdmin}
               onOrderChange={handleOrderChange}
               mataKuliahOptions={mataKuliahOptions}
+              isLoadingViewCounts={isLoadingViewCounts}
             />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -362,6 +392,7 @@ const TugasKuliah = () => {
                   handleEdit={handleEdit}
                   handleDelete={handleDelete}
                   isAdmin={isAdmin}
+                  isLoadingViewCounts={isLoadingViewCounts}
                 />
               ))}
             </div>

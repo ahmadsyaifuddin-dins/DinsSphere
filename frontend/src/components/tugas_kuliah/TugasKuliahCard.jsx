@@ -1,7 +1,7 @@
 import React from 'react';
 import { getStatusBadgeClass, getProgressColorClass, getRemainingDays } from "../../utils/helpers";
 
-const TugasKuliahCard = ({ task, viewTaskDetail, handleEdit, handleDelete, isAdmin }) => {
+const TugasKuliahCard = ({ task, viewTaskDetail, handleEdit, handleDelete, isAdmin, isLoadingViewCounts }) => {
   // Calculate remaining days
   const remainingDays = getRemainingDays(task.tanggalDeadline);
   
@@ -127,11 +127,22 @@ const TugasKuliahCard = ({ task, viewTaskDetail, handleEdit, handleDelete, isAdm
             onClick={() => viewTaskDetail(task._id)}
             className="cursor-pointer grow flex items-center justify-center gap-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-all duration-300 shadow-md shadow-blue-900/20"
           >
+            {/* View Counter Badge */}
+            {isLoadingViewCounts ? (
+              <span className="ml-1 bg-gray-700 text-gray-300 text-xs px-1.5 rounded-full flex items-center">
+                <span className="animate-pulse">...</span>
+              </span>
+            ) : (
+              <span className="text-gray-300 text-xs px-1 rounded-full flex items-center">
+                {task.viewCount || 0}
+              </span>
+            )}
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
               <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
               <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
             </svg>
             Detail
+    
           </button>
           
           {isAdmin && (
