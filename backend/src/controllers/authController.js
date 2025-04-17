@@ -38,6 +38,7 @@ exports.login = async (req, res) => {
       {
         _id: user._id.toString(), // Tambahkan _id ke payload
         name: user.name,
+        username: user.username,
         email: user.email,
         role: user.role,
       },

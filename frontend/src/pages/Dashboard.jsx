@@ -1,9 +1,22 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useAuth } from "../contexts/authContext"; // <— tarik user
+
 import GoogleGeminiEffect from "../components/Dashboard/GoogleGeminiEffect";
 import ActivityReport from "./ActivityReport";
 
 function Dashboard() {
+  // ambil user dari context
+  const { user } = useAuth();
+
+  // ambil first name aja
+  const firstName = user?.username?.split(" ")[0] || "";
+  useEffect(() => {
+    console.log("Logged in user:", user);
+  }, [user]);
+  // kalo udah login: "Nama TerKoneksi", kalo belum: "TerKoneksi"
+  const titleText = user ? `${firstName} TerKoneksi` : "TerKoneksi";
+
   // State untuk animasi SVG paths
   const [pathLengths, setPathLengths] = useState([0, 0, 0, 0, 0]);
 
@@ -43,18 +56,17 @@ function Dashboard() {
       <section className="relative h-screen flex items-center justify-center">
         <GoogleGeminiEffect
           pathLengths={pathLengths}
-          title="TerKoneksi"
+          title={titleText}
           description="Stay connected, stay real – DinsSphere nyatuin kita semua."
         />
       </section>
 
       {/* Konten Dashboard lainnya bisa diletakkan di sini */}
-      
+
       {/* Section untuk Activity Report */}
       <section className="bg-slate-950 py-8">
         <ActivityReport />
       </section>
-
     </div>
   );
 }
