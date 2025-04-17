@@ -129,11 +129,11 @@ const TugasKuliahCard = ({ task, viewTaskDetail, handleEdit, handleDelete, isAdm
           >
             {/* View Counter Badge */}
             {isLoadingViewCounts ? (
-              <span className="ml-1 bg-gray-700 text-gray-300 text-xs px-1.5 rounded-full flex items-center">
+              <span className="text-gray-200 text-xs px-1.5 rounded-full flex items-center">
                 <span className="animate-pulse">...</span>
               </span>
             ) : (
-              <span className="text-gray-300 text-xs px-1 rounded-full flex items-center">
+              <span className="text-gray-200 text-xs px-1 rounded-full flex items-center">
                 {task.viewCount || 0}
               </span>
             )}
