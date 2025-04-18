@@ -8,54 +8,56 @@
  * @returns {string}
  */
 function generateTaskSubject(task, action) {
-    // Emoji berdasarkan action
-    const emoji = action === 'Baru' ? '🆕' : '🔄';
-    return `${emoji} Tugas ${action}: ${task.namaTugas}`;
+  // Emoji berdasarkan action
+  const emoji = action === "Baru" ? "🆕" : "🔄";
+  return `${emoji} Tugas ${action}: ${task.namaTugas}`;
+}
+
+/**
+ * Generate HTML content email untuk tugas
+ * @param {Object} task - Objek tugas
+ * @param {string} action - 'Baru' atau 'Diupdate'
+ * @returns {string}
+ */
+function generateTaskHtml(task, action) {
+  const title = task.namaTugas;
+  const course = task.mataKuliah;
+  const deadline = task.tanggalDeadline;
+  const difficulty = task.tingkatKesulitan; // Sudah termasuk emoji
+  const id = task._id;
+
+  // Format tanggal deadline
+  const formattedDeadline = deadline
+    ? new Date(deadline).toLocaleString("id-ID", {
+        timeZone: "Asia/Makassar", // <<< tambahin ini
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : "-";
+
+  // Emoji berdasarkan action
+  const actionEmoji = action === "Baru" ? "🆕" : "🔄";
+
+  // Warna header berdasarkan action (biru untuk baru, orange untuk update)
+  const headerColor = action === "Baru" ? "#1a73e8" : "#f6931d";
+
+  // Warna berdasarkan tingkat kesulitan (mengecek string apakah mengandung kata tertentu)
+  let difficultyColor = "#1a73e8"; // default blue
+
+  if (difficulty.includes("Ngopi Santai")) {
+    difficultyColor = "#28a745"; // green
+  } else if (difficulty.includes("Begadang Sedikit")) {
+    difficultyColor = "#17a2b8"; // teal
+  } else if (difficulty.includes("Mikir Keras")) {
+    difficultyColor = "#ffc107"; // yellow
+  } else if (difficulty.includes("Lembur Panik")) {
+    difficultyColor = "#fd7e14"; // orange
+  } else if (difficulty.includes("Professor Level")) {
+    difficultyColor = "#dc3545"; // red
   }
-  
-  /**
-   * Generate HTML content email untuk tugas
-   * @param {Object} task - Objek tugas
-   * @param {string} action - 'Baru' atau 'Diupdate'
-   * @returns {string}
-   */
-  function generateTaskHtml(task, action) {
-    const title = task.namaTugas;
-    const course = task.mataKuliah;
-    const deadline = task.tanggalDeadlineWITA;
-    const difficulty = task.tingkatKesulitan; // Sudah termasuk emoji
-    const id = task._id;
-    
-    // Format tanggal deadline
-    const formattedDeadline = deadline
-      ? new Date(deadline).toLocaleString('id-ID', {
-          day: 'numeric', month: 'long', year: 'numeric',
-          hour: '2-digit', minute: '2-digit'
-        })
-      : '-';
-    
-    // Emoji berdasarkan action
-    const actionEmoji = action === 'Baru' ? '🆕' : '🔄';
-    
-    // Warna header berdasarkan action (biru untuk baru, orange untuk update)
-    const headerColor = action === 'Baru' ? '#1a73e8' : '#f6931d';
-    
-    // Warna berdasarkan tingkat kesulitan (mengecek string apakah mengandung kata tertentu)
-    let difficultyColor = "#1a73e8"; // default blue
-    
-    if (difficulty.includes("Ngopi Santai")) {
-      difficultyColor = "#28a745"; // green
-    } else if (difficulty.includes("Begadang Sedikit")) {
-      difficultyColor = "#17a2b8"; // teal
-    } else if (difficulty.includes("Mikir Keras")) {
-      difficultyColor = "#ffc107"; // yellow
-    } else if (difficulty.includes("Lembur Panik")) {
-      difficultyColor = "#fd7e14"; // orange
-    } else if (difficulty.includes("Professor Level")) {
-      difficultyColor = "#dc3545"; // red
-    }
-    
-    return `
+
+  return `
       <!DOCTYPE html>
       <html>
       <head>
@@ -157,7 +159,9 @@ function generateTaskSubject(task, action) {
           
           <div style="text-align: center; margin-top: 25px;">
             <p>Untuk melihat deskripsi lengkap dan mengerjakan:</p>
-            <a href="${process.env.CLIENT_URL}/DetailTugasKuliah/${id}" class="action-button">
+            <a href="${
+              process.env.CLIENT_URL
+            }/DetailTugasKuliah/${id}" class="action-button">
               Lihat Detail Tugas
             </a>
           </div>
@@ -170,9 +174,9 @@ function generateTaskSubject(task, action) {
       </body>
       </html>
     `;
-  }
-  
-  module.exports = {
-    generateTaskSubject,
-    generateTaskHtml,
-  };
+}
+
+module.exports = {
+  generateTaskSubject,
+  generateTaskHtml,
+};
