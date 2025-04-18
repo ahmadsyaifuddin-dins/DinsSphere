@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
-import { FaFilter, FaTimes } from 'react-icons/fa';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState } from "react";
+import { FaFilter, FaTimes } from "react-icons/fa";
+import { motion, AnimatePresence } from "framer-motion";
 
-const FilterPanel = ({ 
-  filterText, 
-  setFilterText, 
+const FilterPanel = ({
+  filterText,
+  setFilterText,
   mataKuliahOptions,
   filters,
   setFilters,
-  applyFilters
+  applyFilters,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [localFilters, setLocalFilters] = useState(filters);
 
   const handleFilterChange = (filterType, value) => {
-    setLocalFilters(prev => ({
+    setLocalFilters((prev) => ({
       ...prev,
-      [filterType]: value
+      [filterType]: value,
     }));
   };
 
@@ -27,11 +27,11 @@ const FilterPanel = ({
 
   const handleResetFilters = () => {
     const resetFilters = {
-      status: '',
-      mataKuliah: '',
-      progress: '',
-      dueDate: '',
-      tingkatKesulitan: ''
+      status: "",
+      mataKuliah: "",
+      progress: "",
+      dueDate: "",
+      tingkatKesulitan: "",
     };
     setLocalFilters(resetFilters);
     setFilters(resetFilters);
@@ -41,20 +41,26 @@ const FilterPanel = ({
   return (
     <div className="mb-4 bg-gray-800 rounded-lg border border-gray-700">
       {/* Filter Header */}
-      <div className="flex justify-between items-center p-3 cursor-pointer"
-           onClick={() => setIsExpanded(!isExpanded)}>
+      <div
+        className="flex justify-between items-center p-3 cursor-pointer"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
         <div className="flex items-center space-x-2">
           <FaFilter className="text-blue-400" />
           <span className="font-medium text-gray-200">Filter Tugas</span>
         </div>
         <div className="flex items-center space-x-2">
-          {(filters.status || filters.mataKuliah || filters.progress || filters.dueDate || filters.tingkatKesulitan) && (
+          {(filters.status ||
+            filters.mataKuliah ||
+            filters.progress ||
+            filters.dueDate ||
+            filters.tingkatKesulitan) && (
             <span className="text-xs px-2 py-1 bg-blue-500 text-white rounded-full">
               Filters Applied
             </span>
           )}
           <span className="text-gray-400 text-sm">
-            {isExpanded ? 'Sembunyikan' : 'Tampilkan'}
+            {isExpanded ? "Sembunyikan" : "Tampilkan"}
           </span>
         </div>
       </div>
@@ -92,12 +98,16 @@ const FilterPanel = ({
                   </label>
                   <select
                     value={localFilters.status}
-                    onChange={(e) => handleFilterChange('status', e.target.value)}
+                    onChange={(e) =>
+                      handleFilterChange("status", e.target.value)
+                    }
                     className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Semua Status</option>
                     <option value="Belum Dikerjakan">Belum Dikerjakan</option>
-                    <option value="Sedang dikerjain...">Sedang Dikerjain...</option>
+                    <option value="Sedang dikerjain...">
+                      Sedang Dikerjain...
+                    </option>
                     <option value="Selesai">Selesai</option>
                     <option value="Tertunda">Tertunda</option>
                   </select>
@@ -110,7 +120,9 @@ const FilterPanel = ({
                   </label>
                   <select
                     value={localFilters.mataKuliah}
-                    onChange={(e) => handleFilterChange('mataKuliah', e.target.value)}
+                    onChange={(e) =>
+                      handleFilterChange("mataKuliah", e.target.value)
+                    }
                     className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Semua Mata Kuliah</option>
@@ -129,7 +141,9 @@ const FilterPanel = ({
                   </label>
                   <select
                     value={localFilters.progress}
-                    onChange={(e) => handleFilterChange('progress', e.target.value)}
+                    onChange={(e) =>
+                      handleFilterChange("progress", e.target.value)
+                    }
                     className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Semua Progress</option>
@@ -150,7 +164,9 @@ const FilterPanel = ({
                   </label>
                   <select
                     value={localFilters.dueDate}
-                    onChange={(e) => handleFilterChange('dueDate', e.target.value)}
+                    onChange={(e) =>
+                      handleFilterChange("dueDate", e.target.value)
+                    }
                     className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Semua Deadline</option>
@@ -174,16 +190,24 @@ const FilterPanel = ({
                   </label>
                   <select
                     value={localFilters.tingkatKesulitan}
-                    onChange={(e) => handleFilterChange('tingkatKesulitan', e.target.value)}
+                    onChange={(e) =>
+                      handleFilterChange("tingkatKesulitan", e.target.value)
+                    }
                     className="w-full p-2 bg-gray-700 border border-gray-600 rounded-md text-gray-200 focus:ring-blue-500 focus:border-blue-500"
                   >
                     <option value="">Semua Tingkat</option>
                     <option value="Not Available">Not Available</option>
-                    <option value="Damai">Damai</option>
-                    <option value="Mudah">Mudah</option>
-                    <option value="Sedang">Sedang</option>
-                    <option value="Sulit">Sulit</option>
-                    <option value="Ngeri ☠️">Ngeri ☠️</option>
+                    <option value="Ngopi Santai ☕">Ngopi Santai ☕</option>
+                    <option value="Begadang Sedikit 🌙">
+                      Begadang Sedikit 🌙
+                    </option>
+                    <option value="Mikir Keras 🧠">Mikir Keras 🧠</option>
+                    <option value="Lembur Panik Attack 😨">
+                      Lembur Panik Attack 😨
+                    </option>
+                    <option value="Professor Level 🧑‍🦲🔬">
+                      Professor Level 🧑‍🦲🔬
+                    </option>
                   </select>
                 </div>
               </div>

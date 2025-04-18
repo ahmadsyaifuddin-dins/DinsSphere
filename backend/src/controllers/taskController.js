@@ -1,6 +1,8 @@
 // controllers/taskController.js
 const Task = require("../models/Tasks");
-const Activity = require("../models/Activity"); // Import model Activity untuk logging
+const Activity = require("../models/Activity");
+// Tambahkan import mailService
+const { notifyNewTask, notifyUpdateTask } = require("../services/mailService");
 
 // CREATE
 exports.createTask = async (req, res) => {
@@ -30,7 +32,7 @@ exports.createTask = async (req, res) => {
         const activity = new Activity({
           userId: req.user._id,
           type: "createTugasKuliah",
-          path: req.originalUrl, // atau req.path
+          path: req.originalUrl,
           taskId: savedTask._id,
           details: `Created new Tugas Kuliah: ${savedTask._id}`,
         });
@@ -39,6 +41,11 @@ exports.createTask = async (req, res) => {
         console.error("Error logging create Tugas Kuliah activity:", logError);
       }
     }
+
+    // Kirim notifikasi email (non-blocking)
+    notifyNewTask(savedTask).catch(err =>
+      console.error("Error sending new task email:", err)
+    );
 
     res.status(201).json(savedTask);
   } catch (error) {
@@ -89,10 +96,11 @@ exports.updateTask = async (req, res) => {
         hour12: false,
       }).replace(/(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/, "$3-$1-$2T$4:$5:$6");
     }
-    const updatedTask = await Task.findByIdAndUpdate(req.params.id, taskData, {
-      new: true,
-      runValidators: true,
-    });
+    const updatedTask = await Task.findByIdAndUpdate(
+      req.params.id,
+      taskData,
+      { new: true, runValidators: true }
+    );
     if (!updatedTask)
       return res.status(404).json({ message: "Task not found" });
 
@@ -102,7 +110,7 @@ exports.updateTask = async (req, res) => {
         const activity = new Activity({
           userId: req.user._id,
           type: "updateTugasKuliah",
-          path: req.originalUrl, // atau req.path
+          path: req.originalUrl,
           taskId: updatedTask._id,
           details: `Updated Tugas Kuliah: ${updatedTask._id}`,
         });
@@ -111,6 +119,11 @@ exports.updateTask = async (req, res) => {
         console.error("Error logging Update Tugas Kuliah activity:", logError);
       }
     }
+
+    // Kirim notifikasi email update (non-blocking)
+    notifyUpdateTask(updatedTask).catch(err =>
+      console.error("Error sending update task email:", err)
+    );
 
     res.status(200).json(updatedTask);
   } catch (error) {
@@ -145,7 +158,7 @@ exports.updateTaskOrder = async (req, res) => {
   }
 };
 
-// Optional: toggle completion (bisa dimasukkan ke controller juga)
+// Optional: toggle completion
 exports.toggleTaskCompletion = async (req, res) => {
   try {
     const task = await Task.findById(req.params.id);
@@ -171,7 +184,7 @@ exports.getRelatedTasks = async (req, res) => {
   try {
     const relatedTasks = await Task.find({
       mataKuliah,
-      _id: { $ne: exclude }, // exclude current task
+      _id: { $ne: exclude },
     }).limit(5);
     res.json(relatedTasks);
   } catch (error) {
