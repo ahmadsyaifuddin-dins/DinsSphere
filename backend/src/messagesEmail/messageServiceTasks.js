@@ -22,7 +22,7 @@ function generateTaskSubject(task, action) {
   function generateTaskHtml(task, action) {
     const title = task.namaTugas;
     const course = task.mataKuliah;
-    const deadline = task.tanggalDeadline;
+    const deadline = task.tanggalDeadlineWITA;
     const difficulty = task.tingkatKesulitan; // Sudah termasuk emoji
     const id = task._id;
     
