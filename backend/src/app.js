@@ -9,6 +9,7 @@ const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/users");
 const activityRoutes = require("./routes/activity");
 const getStatusPage = require("./statusPage");
+const cronRoutes = require("./routes/cron");
 
 connectDB();
 
@@ -30,6 +31,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 
 app.use("/api/activities", activityRoutes)
+
+app.use("/api/cron", cronRoutes);
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
