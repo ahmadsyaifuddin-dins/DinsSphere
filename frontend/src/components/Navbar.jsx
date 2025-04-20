@@ -12,7 +12,7 @@ import {
   faAngleDown,
   faSpinner,
   faSignOutAlt,
-  faDashboard
+  faDashboard,
 } from "@fortawesome/free-solid-svg-icons";
 import { useAuth } from "../contexts/authContext";
 
@@ -21,10 +21,10 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isDataMenuOpen, setIsDataMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  
+
   // Gunakan AuthContext untuk mendapatkan data user dan fungsi logout
   const { user, logout } = useAuth();
-  
+
   // State untuk cek role dan login langsung dari AuthContext
   const isSuperAdmin = user?.role === "superadmin";
   const isLoggedIn = Boolean(user);
@@ -39,7 +39,7 @@ const Navbar = () => {
     document.body.classList.toggle("open");
     setIsMenuOpen(!isMenuOpen);
   };
-  
+
   // Handle logout
   const handleLogout = () => {
     logout();
@@ -127,16 +127,24 @@ const Navbar = () => {
           {/* Center: App Title with shimmer effect */}
           <div className="flex-grow text-center">
             <h1 className="text-xl font-extrabold font-['Oxanium'] tracking-tight relative">
-              <span className="relative inline-block">
-                {/* Base text layer */}
-                <span className="text-transparent">DinsSphere InterConnected</span>
-                
-                {/* Shimmer effect directly on text */}
-                <span className="absolute inset-0 bg-gradient-to-r from-green-400 via-teal-500 to-cyan-500 bg-clip-text text-transparent">DinsSphere InterConnected</span>
-                
-                {/* Moving highlight overlay */}
-                <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent bg-clip-text text-transparent animate-shimmer bg-[length:200%_auto]">DinsSphere InterConnected</span>
-              </span>
+              <Link to="/">
+                <span className="relative inline-block">
+                  {/* Base text layer */}
+                  <span className="text-transparent">
+                    DinsSphere InterConnected
+                  </span>
+
+                  {/* Shimmer effect directly on text */}
+                  <span className="absolute inset-0 bg-gradient-to-r from-green-400 via-teal-500 to-cyan-500 bg-clip-text text-transparent">
+                    DinsSphere InterConnected
+                  </span>
+
+                  {/* Moving highlight overlay */}
+                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent bg-clip-text text-transparent animate-shimmer bg-[length:200%_auto]">
+                    DinsSphere InterConnected
+                  </span>
+                </span>
+              </Link>
             </h1>
           </div>
 
@@ -149,12 +157,15 @@ const Navbar = () => {
                   to="/profile"
                   className="font-medium bg-gradient-to-r from-blue-400 to-teal-400 bg-clip-text text-transparent"
                 >
-                  {user?.name || user?.username || 'User'}
+                  {user?.name || user?.username || "User"}
                 </Link>
               </div>
               <Link to="/profile">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-teal-500 flex items-center justify-center">
-                  <FontAwesomeIcon icon={faUser} className="text-white text-xs" />
+                  <FontAwesomeIcon
+                    icon={faUser}
+                    className="text-white text-xs"
+                  />
                 </div>
               </Link>
             </div>
@@ -182,7 +193,7 @@ const Navbar = () => {
                   <img src="/icon.svg" alt="logo" className="w-20 h-20" />
                 </Link>
               </div>
-              
+
               {/* Menu container with scroll capability */}
               <div className="flex-grow overflow-y-auto py-4">
                 <motion.div className="flex flex-col px-8 space-y-6">
@@ -270,7 +281,11 @@ const Navbar = () => {
                           </div>
 
                           {/* Submenu dengan height absolute untuk menghindari pergeseran */}
-                          <div className={`ml-8 mt-2 ${isDataMenuOpen ? 'block' : 'hidden'}`}>
+                          <div
+                            className={`ml-8 mt-2 ${
+                              isDataMenuOpen ? "block" : "hidden"
+                            }`}
+                          >
                             <Link
                               to="/dataUser"
                               className="text-white hover:text-gray-300 text-xl block py-1"
@@ -290,7 +305,7 @@ const Navbar = () => {
                               }}
                             >
                               Aktivitas User
-                            </Link>                          
+                            </Link>
                             <Link
                               to="/registerFriend"
                               className="text-white hover:text-gray-300 text-xl block py-1"
@@ -318,10 +333,13 @@ const Navbar = () => {
                   )}
                 </motion.div>
               </div>
-              
+
               {/* Footer menu - fixed at bottom */}
               <div className="sticky bottom-0 bg-gray-900 bg-opacity-95 pt-2 pb-4 z-10">
-                <motion.div variants={linkVariants} className="px-8 pt-4 border-t border-gray-700">
+                <motion.div
+                  variants={linkVariants}
+                  className="px-8 pt-4 border-t border-gray-700"
+                >
                   {isLoggedIn ? (
                     <button
                       onClick={handleLogout}
