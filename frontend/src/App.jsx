@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import AppRoutes from "./routes/AppRoutes";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/Navigation/Navbar";
 import MusicPlayer from "./components/tugas_kuliah/MusicPlayer";
 import { AuthProvider, useAuth } from "./contexts/authContext";
 import LoadingSpinnerUniversal from "./components/common/LoadingSpinnerUniversal";
