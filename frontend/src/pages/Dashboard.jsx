@@ -1,22 +1,21 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useAuth } from "../contexts/authContext"; // <— tarik user
+import { useAuth } from "../contexts/authContext";
 
 import GoogleGeminiEffect from "../components/Dashboard/GoogleGeminiEffect";
 import ActivityReport from "./ActivityReport";
+import Greeting from "../components/Dashboard/Greeting";
 
 function Dashboard() {
-  // ambil user dari context
   const { user } = useAuth();
-
-  // ambil first name aja
   const firstName = user?.username?.split(" ")[0] || "";
+  
   useEffect(() => {
     console.log("Logged in user:", user);
   }, [user]);
-  // kalo udah login: "Nama TerKoneksi", kalo belum: "TerKoneksi"
+  
   const titleText = user ? `${firstName} TerKoneksi` : "TerKoneksi";
-
+  
   // State untuk animasi SVG paths
   const [pathLengths, setPathLengths] = useState([0, 0, 0, 0, 0]);
 
@@ -53,12 +52,20 @@ function Dashboard() {
   return (
     <div className="relative w-full min-h-screen bg-slate-950 text-white overflow-hidden">
       {/* Bagian Hero */}
-      <section className="relative h-screen flex items-center justify-center">
-        <GoogleGeminiEffect
-          pathLengths={pathLengths}
-          title={titleText}
-          description="Stay connected, stay real – DinsSphere nyatuin kita semua."
-        />
+      <section className="relative h-screen flex flex-col items-center justify-center">
+        {/* Title/main effect - sekarang di atas */}
+        <div className="relative w-full z-10">
+          <GoogleGeminiEffect
+            pathLengths={pathLengths}
+            title={titleText}
+            description="Stay connected, stay real – DinsSphere nyatuin kita semua."
+          />
+        </div>
+        
+        {/* Greeting - sekarang di bawah titleText */}
+        <div className="mt-3 z-20 text-center">
+          <Greeting user={user} />
+        </div>
       </section>
 
       {/* Konten Dashboard lainnya bisa diletakkan di sini */}
