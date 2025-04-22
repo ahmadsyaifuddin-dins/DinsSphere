@@ -18,6 +18,7 @@ import RelatedTasks from "../components/DetailTugasKuliah/RelatedTasks";
 import ButtonFooter from "../components/DetailTugasKuliah/ButtonFooter";
 import DetailTugasKuliahSkeleton from "../loader/DetailTugasKuliahSkeleton";
 import { API_BASE_URL } from "../config";
+import TaskErrorState from "../components/DetailTugasKuliah/TaskErrorState";
 
 const DetailTugasKuliah = () => {
   const { id } = useParams();
@@ -139,14 +140,7 @@ const DetailTugasKuliah = () => {
   }
 
   if (error || !task) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-900">
-        <p className="text-red-500">
-          {error || "Detail tugas tidak ditemukan."}
-        </p>
-        <Link to="/tugasKuliah">Kembali ke Dashboard</Link>
-      </div>
-    );
+    return <TaskErrorState error={error} />; // Replace with the new component
   }
 
   return (
