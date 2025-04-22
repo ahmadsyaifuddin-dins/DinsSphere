@@ -12,7 +12,7 @@ export default function NotFound() {
         </div>
         
         <h2 className="text-2xl font-semibold mb-4">Halaman Tidak Ditemukan</h2>
-        <p className="text-blue-200 mb-4">Wah, sepertinya halaman yang kamu cari tidak tersedia di DinsSphere mungkin dah di hapus oleh Developer :) </p>
+        <p className="text-blue-200 mb-4">Wah, sepertinya halaman yang kamu cari tidak tersedia di DinsSphere mungkin dah di hapus atau diganti rutenya oleh Developer :) </p>
         <p className="text-blue-200 mb-2">Silakan kembali ke beranda!</p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
