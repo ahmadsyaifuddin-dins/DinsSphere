@@ -49,9 +49,6 @@ const AppRoutes = () => {
       <Route path="/projectDetail/:id" element={<ProjectDetail />} />
       <Route path="/DetailTugasKuliah/:id" element={<DetailTugasKuliah />} />
 
-      {/* “Catch-all” route: semua path yang nggak match bakal ke sini */}
-      <Route path="*" element={<NotFound />} />
-
       {/* Protected Routes */}
       <Route 
         path="/activityReport" 
@@ -134,6 +131,9 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+      
+      {/* “Catch-all” route: semua path yang nggak match bakal ke sini */}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 };

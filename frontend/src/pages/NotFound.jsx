@@ -9,7 +9,7 @@ export default function NotFound() {
       <p className="text-xl mb-6">Waduh, halaman yang kamu cari gak ada :)</p>
       <Link
         to="/"
-        className="px-6 py-3 rounded-2xl shadow-md bg-blue-500 hover:shadow-lg transition"
+        className="px-6 py-3 rounded-2xl shadow-md bg-slate-950 hover:shadow-2xl transition"
       >
         Balik ke Home
       </Link>
