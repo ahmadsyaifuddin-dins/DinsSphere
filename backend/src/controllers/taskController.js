@@ -81,6 +81,13 @@ exports.getTaskById = async (req, res) => {
 exports.updateTask = async (req, res) => {
   try {
     const taskData = req.body;
+    
+    // Fetch the current task data before updating
+    const currentTask = await Task.findById(req.params.id);
+    if (!currentTask) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+    
     // Set tanggal selesai kalau status berubah ke "Selesai"
     if (taskData.statusTugas === "Selesai" && !taskData.tanggalSelesai) {
       const now = new Date();
@@ -96,14 +103,13 @@ exports.updateTask = async (req, res) => {
         hour12: false,
       }).replace(/(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/, "$3-$1-$2T$4:$5:$6");
     }
+    
     const updatedTask = await Task.findByIdAndUpdate(
       req.params.id,
       taskData,
       { new: true, runValidators: true }
     );
-    if (!updatedTask)
-      return res.status(404).json({ message: "Task not found" });
-
+    
     // Log aktivitas jika bukan superadmin
     if (req.user && req.user.role !== "superadmin") {
       try {
@@ -120,10 +126,21 @@ exports.updateTask = async (req, res) => {
       }
     }
 
-    // Kirim notifikasi email update (non-blocking)
-    notifyUpdateTask(updatedTask).catch(err =>
-      console.error("Error sending update task email:", err)
+    // Cek apakah perlu mengirim notifikasi email
+    // Jangan kirim notif jika superadmin hanya mengubah progress atau statusTugas
+    const shouldSendNotification = !(
+      req.user && 
+      req.user.role === "superadmin" && 
+      Object.keys(taskData).length <= 2 && 
+      (Object.keys(taskData).includes("progress") || Object.keys(taskData).includes("statusTugas"))
     );
+
+    // Kirim notifikasi email update (non-blocking) jika diperlukan
+    if (shouldSendNotification) {
+      notifyUpdateTask(updatedTask).catch(err =>
+        console.error("Error sending update task email:", err)
+      );
+    }
 
     res.status(200).json(updatedTask);
   } catch (error) {
