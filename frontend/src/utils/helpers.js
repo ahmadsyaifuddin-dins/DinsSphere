@@ -282,7 +282,7 @@ export const filterByDueDate = (task, dueDateFilter) => {
     {
       value: "TIF3609 Pengolahan Citra",
       label: "Pengolahan Citra",
-      icon: "https://elearning2.be.bisa.ai/course/media/2022-08-14_140142_course.png",
+      icon: "https://cdn-icons-png.flaticon.com/512/6062/6062271.png",
       namaDosen : "Abdurrahman Sidik, S.Sn., M.Ds.",
       SKS : 2,
     },
