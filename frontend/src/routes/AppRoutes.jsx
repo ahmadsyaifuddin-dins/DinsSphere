@@ -20,6 +20,7 @@ import DashboardUserActivityDetail from "../pages/DashboardUserActivityDetail";
 import DeletedUsers from "../pages/DeletedUser";
 import EditUser from "../components/DetailUser/EditUser";
 import Dashboard from "../pages/Dashboard";
+import NotFound from "../pages/NotFound";
 
 const AppRoutes = () => {
   const { user } = useAuth();
@@ -47,6 +48,9 @@ const AppRoutes = () => {
       <Route path="/profile" element={<Profile />} />
       <Route path="/projectDetail/:id" element={<ProjectDetail />} />
       <Route path="/DetailTugasKuliah/:id" element={<DetailTugasKuliah />} />
+
+      {/* “Catch-all” route: semua path yang nggak match bakal ke sini */}
+      <Route path="*" element={<NotFound />} />
 
       {/* Protected Routes */}
       <Route 
