@@ -49,7 +49,7 @@ const Login = () => {
         </div>
         
         <p className="text-gray-400 text-center mb-8 text-sm">
-          Restricted access. admin Created accounts only.
+          Restricted access. Udins Created accounts only.
         </p>
         
         {error && (
@@ -142,8 +142,8 @@ const Login = () => {
           </button>
         </form>
         <div className="mt-8 text-center text-xs text-gray-500">
-          <p>This system is restricted to accounts created by admin only.</p>
-          <p className="mt-1">Created and managed by admin.</p>
+          <p>This system is restricted to accounts created by Udins only.</p>
+          <p className="mt-1">Created and managed by Udins.</p>
         </div>
       </div>
     </div>
