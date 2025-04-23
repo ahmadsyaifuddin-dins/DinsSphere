@@ -49,7 +49,7 @@ const Login = () => {
         </div>
         
         <p className="text-gray-400 text-center mb-8 text-sm">
-          Restricted access. Udins Created accounts only.
+          Restricted access. Admin Created accounts only.
         </p>
         
         {error && (
