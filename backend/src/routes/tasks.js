@@ -19,7 +19,7 @@ router.post("/", verifyUser(["admin", "superadmin", "friend"]), createTask);
 
 // Taruh /related sebelum /:id
 router.get("/related", getRelatedTasks);
-router.get("/:id", getTaskById);
+router.get("/:id", verifyUser(["admin", "superadmin", "friend", "member"]), getTaskById);
 
 router.put("/:id", verifyUser(["admin", "superadmin", "friend"]), updateTask);
 router.patch("/:id/complete", verifyUser(["admin", "superadmin"]), toggleTaskCompletion);
