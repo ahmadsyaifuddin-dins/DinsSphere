@@ -34,12 +34,22 @@ const DetailTugasKuliah = () => {
 
     const fetchTaskAndViews = async () => {
       try {
-        const taskRes = await axios.get(`${API_BASE_URL}/api/tasks/${id}`);
+        const token = localStorage.getItem("token");
+        const taskRes = await axios.get(`${API_BASE_URL}/api/tasks/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (isMounted) {
           setTask(taskRes.data);
           setLoading(false);
           const viewRes = await axios.get(
-            `${API_BASE_URL}/api/viewTasks/${id}`
+            `${API_BASE_URL}/api/viewTasks/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
           setViewCount(viewRes.data.count || 0);
         }

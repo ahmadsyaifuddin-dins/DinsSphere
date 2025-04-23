@@ -33,16 +33,16 @@ const AuthOverlay = ({ isAdmin }) => {
           Hai! Terima kasih sudah mengunjungi halaman ini.
         </p>
         <p className="mb-6 text-white">
-          Halaman ini dikhususkan untuk pengguna yang telah terdaftar di sistem DinsSphere.
+          Halaman ini hanya bisa di akses oleh Admin karna Akses resource terbatas jadi hanya bisa digunakan oleh akun admin di sistem DinsSphere.
         </p>
         <button
           className="cursor-pointer w-full bg-blue-950 text-white py-3 px-6 rounded-lg hover:bg-slate-950 transition-all transform hover:scale-105 font-medium shadow-md"
           onClick={() => navigate("/login")}
         >
-          Masuk Sekarang
+          Masuk Sekarang Admin
         </button>
         <p className="mt-4 text-xs text-white">
-          Silakan masuk untuk mengakses konten khusus ini.
+          Jika kamu admin silahkan masuk
         </p>
       </div>
     </div>
