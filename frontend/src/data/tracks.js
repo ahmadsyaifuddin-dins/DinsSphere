@@ -2,8 +2,8 @@
 const tracks = [
   {
     id: 1,
-    title: "Alphaville - Forever Young",
-    src: "/Music/Alphaville - Forever Young.mp3",
+    title: "Hitler Speech - German people help yourself!",
+    src: "/Music/Hitler Speech German people help yourself!.mp3",
   },
   {
     id: 2,
@@ -22,8 +22,8 @@ const tracks = [
   },
   {
     id: 5,
-    title: "Hitler Speech - German people help yourself!",
-    src: "/Music/Hitler Speech German people help yourself!.mp3",
+    title: "Alphaville - Forever Young",
+    src: "/Music/Alphaville - Forever Young.mp3",
   },
   {
     id: 6,
