@@ -45,11 +45,6 @@ const DetailTugasKuliah = () => {
           setLoading(false);
           const viewRes = await axios.get(
             `${API_BASE_URL}/api/viewTasks/${id}`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
           );
           setViewCount(viewRes.data.count || 0);
         }
