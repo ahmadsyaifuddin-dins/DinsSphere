@@ -7,8 +7,8 @@ const tracks = [
   },
   {
     id: 2,
-    title: "DJ MAU DIBILANG SOK OKE 🥳",
-    src: "/Music/DJ_MAU_DIBILANG_SOK_OKE_SLOW.mp3",
+    title: "Alphaville - Forever Young",
+    src: "/Music/Alphaville - Forever Young.mp3",
   },
   {
     id: 3,
@@ -22,8 +22,8 @@ const tracks = [
   },
   {
     id: 5,
-    title: "Alphaville - Forever Young",
-    src: "/Music/Alphaville - Forever Young.mp3",
+    title: "DJ MAU DIBILANG SOK OKE 🥳",
+    src: "/Music/DJ_MAU_DIBILANG_SOK_OKE_SLOW.mp3",
   },
   {
     id: 6,
