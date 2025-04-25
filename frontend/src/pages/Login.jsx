@@ -49,7 +49,7 @@ const Login = () => {
         </div>
         
         <p className="text-gray-400 text-center mb-8 text-sm">
-          Restricted access. Udins Created accounts only.
+          Restricted access. Admin Created accounts only.
         </p>
         
         {error && (
@@ -75,7 +75,7 @@ const Login = () => {
                 className="w-full pl-10 p-3 rounded-lg bg-gray-900 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="your-email@example.com"
+                placeholder="adminEmail@example.com"
                 required
               />
             </div>
@@ -142,8 +142,8 @@ const Login = () => {
           </button>
         </form>
         <div className="mt-8 text-center text-xs text-gray-500">
-          <p>This system is restricted to accounts created by Udins only.</p>
-          <p className="mt-1">Created and managed by Udins.</p>
+          <p>This system is restricted to accounts created by Admin only.</p>
+          <p className="mt-1">Created and managed by Admin.</p>
         </div>
       </div>
     </div>
