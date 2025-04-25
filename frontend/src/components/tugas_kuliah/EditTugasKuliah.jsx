@@ -1,14 +1,12 @@
+// src/components/EditTugasKuliah.jsx
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { getTask } from "../../services/taskService";
-import { API_BASE_URL } from "../../config";
+import { getTask, updateTask } from "../../services/taskService";
 
 const EditTugasKuliah = () => {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Tambahkan properti jamDeadline dalam state
   const [formData, setFormData] = useState({
     namaTugas: "",
     tingkatKesulitan: "",
@@ -20,42 +18,27 @@ const EditTugasKuliah = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // Ambil detail tugas saat mount
   useEffect(() => {
     const fetchTask = async () => {
       try {
         setLoading(true);
-        const response = await getTask(id);
-        const task = response.data;
+        const res = await getTask(id);
+        const task = res.data;
 
-        // Pisahkan tanggal dan jam dari tanggalDeadline jika ada
-        let tglDeadline = "";
-        let jamDeadline = "";
+        let tgl = "";
+        let jam = "";
         if (task.tanggalDeadline) {
-          // Create date object from ISO string
-          const deadlineDate = new Date(task.tanggalDeadline);
-
-          // Format date as YYYY-MM-DD for the date input
-          tglDeadline =
-            deadlineDate.getFullYear() +
-            "-" +
-            String(deadlineDate.getMonth() + 1).padStart(2, "0") +
-            "-" +
-            String(deadlineDate.getDate()).padStart(2, "0");
-
-          // Format time as HH:MM for the time input
-          jamDeadline =
-            String(deadlineDate.getHours()).padStart(2, "0") +
-            ":" +
-            String(deadlineDate.getMinutes()).padStart(2, "0");
+          const d = new Date(task.tanggalDeadline);
+          tgl = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+          jam = `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
         }
 
         setFormData({
           namaTugas: task.namaTugas || "",
           tingkatKesulitan: task.tingkatKesulitan || "",
           deskripsiTugas: task.deskripsiTugas || "",
-          tanggalDeadline: tglDeadline,
-          jamDeadline: jamDeadline,
+          tanggalDeadline: tgl,
+          jamDeadline: jam,
           progress: task.progress || 0,
         });
       } catch (err) {
@@ -69,32 +52,20 @@ const EditTugasKuliah = () => {
     fetchTask();
   }, [id]);
 
-  // Handle perubahan input
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((p) => ({ ...p, [name]: value }));
   };
 
-  // Handle submit form buat update tugas
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Gabungkan tanggalDeadline dan jamDeadline
     const { tanggalDeadline, jamDeadline, ...rest } = formData;
-    let deadline = null;
+    let deadlineISO = null;
     let deadlineWITA = null;
 
     if (tanggalDeadline && jamDeadline) {
-      // Create a Date object with the local timezone
       const localDate = new Date(`${tanggalDeadline}T${jamDeadline}:00`);
-
-      // Store ISO string for backend processing
-      deadline = localDate.toISOString();
-
-      // Also store formatted string in WITA timezone
+      deadlineISO = localDate.toISOString();
       deadlineWITA = localDate
         .toLocaleString("id-ID", {
           timeZone: "Asia/Makassar",
@@ -106,20 +77,20 @@ const EditTugasKuliah = () => {
           second: "2-digit",
           hour12: false,
         })
-        .replace(/(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/, "$3-$1-$2T$4:$5:$6");
+        .replace(
+          /(\d+)\/(\d+)\/(\d+), (\d+):(\d+):(\d+)/,
+          "$3-$1-$2T$4:$5:$6"
+        );
     }
 
     const payload = {
       ...rest,
-      tanggalDeadline: deadline,
+      tanggalDeadline: deadlineISO,
       tanggalDeadlineWITA: deadlineWITA,
     };
 
     try {
-      const token = localStorage.getItem("token");
-      await axios.put(`${API_BASE_URL}/api/tasks/${id}`, payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await updateTask(id, payload);
       navigate(`/detailTugasKuliah/${id}`);
     } catch (err) {
       console.error("Error updating task:", err);
