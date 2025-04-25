@@ -2,8 +2,10 @@
 import axios from "axios";
 import { API_BASE_URL } from "../config";
 
-export const getTask = (id) => {
-  return axios.get(`${API_BASE_URL}/api/tasks/${id}`);
+export const getTask = (id, token) => {
+  return axios.get(`${API_BASE_URL}/api/tasks/${id}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
 };
 
 export const deleteTask = (id, token) => {
