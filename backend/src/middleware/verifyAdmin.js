@@ -18,8 +18,8 @@ function verifyAdmin(req, res, next) {
       }
     }
 
-    // Pastikan role-nya admin
-    if (decoded.role !== "admin") {
+    // Pastikan role-nya admin dan superAdmin
+    if (!["admin", "superadmin"].includes(decoded.role)) {
       return res.status(403).json({ error: "Access denied" });
     }
 
