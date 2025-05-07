@@ -2,8 +2,8 @@
 const tracks = [
   {
     id: 1,
-    title: "Hitler Speech - German people help yourself!",
-    src: "/Music/Hitler Speech German people help yourself!.mp3",
+    title: "Hava Nagila Original",
+    src: "/Music/Hava Nagila Original.mp3",
   },
   {
     id: 2,
@@ -12,13 +12,13 @@ const tracks = [
   },
   {
     id: 3,
-    title: "Hava Nagila Original",
-    src: "/Music/Hava Nagila Original.mp3",
+    title: "Dance of the Sun and Fire 🔥",
+    src: "/Music/Nightcore - Dance of the Sun and Fire.mp3",
   },
   {
     id: 4,
-    title: "Dance of the Sun and Fire 🔥",
-    src: "/Music/Nightcore - Dance of the Sun and Fire.mp3",
+    title: "Hitler Speech - German people help yourself!",
+    src: "/Music/Hitler Speech German people help yourself!.mp3",
   },
   {
     id: 5,
